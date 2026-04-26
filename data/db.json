@@ -1,0 +1,373 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "nom": "Admin CoopEnergie",
+      "email": "admin@coopernegie.com",
+      "tel": "698123456",
+      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMy.MrAJJ1K5qXWbxQvLKq8YVp4QZGkHkWO",
+      "role": "super_admin",
+      "avatar": null,
+      "createdAt": "2026-04-24T00:00:00.000Z"
+    },
+    {
+      "id": "u2",
+      "nom": "Marie Ateba",
+      "email": "marie@email.com",
+      "tel": "697111222",
+      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMy.MrAJJ1K5qXWbxQvLKq8YVp4QZGkHkWO",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-23T00:00:00.000Z"
+    },
+    {
+      "id": "u032fd07a",
+      "nom": "fsddsa fwewfs",
+      "email": "ngueneambass@gmai.com",
+      "tel": "672378322",
+      "password": "$2a$10$mKdDquH5yLG.9HBUh1SBduXHlm9fSmAQXi6BNcNIQlojXrY1NSkTy",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-24T21:18:45.976Z"
+    },
+    {
+      "id": "u25988269",
+      "nom": "yae",
+      "email": "nguenass@gmai.com",
+      "tel": "67237835",
+      "password": "$2a$10$N08leCckeZ9349EusYsls.U19GnyN8ER9aJyJGVLw2PSwYtD8hQq6",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-24T21:27:56.104Z"
+    },
+    {
+      "id": "u515db0c8",
+      "nom": "ngds",
+      "email": "",
+      "tel": "654",
+      "password": "$2a$10$vDTltB6k.do5pQth9aZqnuYsQSNWTfcHqyCnu.AAALc.WMY1mzQEy",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-24T21:52:46.191Z"
+    },
+    {
+      "id": "u2300660e",
+      "nom": "ngv",
+      "email": "",
+      "tel": "321",
+      "password": "$2a$10$6RG1MEQIAHl8durls8TER.vz6trqBKwmUkuSOQSG2ptl5DdvXY.N2",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-24T22:12:41.934Z"
+    },
+    {
+      "id": "u3ad3ef47",
+      "nom": "yae",
+      "email": "nuenass@gmai.com",
+      "tel": "123",
+      "password": "$2a$10$boGqUy..ON4AjLoy1.lVteCDflTn7gOhCDpwHBsAYf62LZKsHIoA.",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-25T19:00:08.729Z"
+    },
+    {
+      "id": "uc4076bdd",
+      "nom": "ksj",
+      "email": "",
+      "tel": "6999",
+      "password": "$2a$10$uX0uUZNQ10CBScs44FJ/DusZ5VM5ZpfsJuXe10dNFfIEh2QPYJQ7q",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-26T07:38:58.311Z"
+    },
+    {
+      "id": "uf153489a",
+      "nom": "uio",
+      "email": "",
+      "tel": "6998",
+      "password": "$2a$10$sA/cWXb0TLc9IcCnavxd1OPMTIvTTxtV6wvC1.gfLYyxVH2QCCiVO",
+      "role": "membre",
+      "avatar": null,
+      "createdAt": "2026-04-26T14:04:03.956Z"
+    }
+  ],
+  "chat_messages": [
+    {
+      "id": "msg1777065568865",
+      "userId": "u032fd07a",
+      "nom": "fsddsa fwewfs",
+      "message": "bonsoir",
+      "room": "general",
+      "createdAt": "2026-04-24T21:19:28.865Z"
+    },
+    {
+      "id": "msg177714363905302f2",
+      "userId": "u3ad3ef47",
+      "nom": "yae",
+      "message": "yo",
+      "room": "general",
+      "createdAt": "2026-04-25T19:00:39.053Z"
+    }
+  ],
+  "chat_rooms": [
+    {
+      "id": "general",
+      "nom": "💬 Discussion générale",
+      "description": "Tous les membres",
+      "isPrivate": false
+    },
+    {
+      "id": "c1",
+      "nom": "🌿 Coopérative Bonamoussadi",
+      "description": "Espace des membres",
+      "isPrivate": true,
+      "coopId": "c1"
+    },
+    {
+      "id": "c2",
+      "nom": "⚡ Énergie Rurale Mbalmayo",
+      "description": "Espace des membres",
+      "isPrivate": true,
+      "coopId": "c2"
+    },
+    {
+      "id": "c3",
+      "nom": "👩‍🌾 Femmes Solaires Biyem-Assi",
+      "description": "Espace des membres",
+      "isPrivate": true,
+      "coopId": "c3"
+    }
+  ],
+  "cooperatives": [
+    {
+      "id": "c1",
+      "nom": "Coopérative Solaire Bonamoussadi",
+      "objectif": 500000,
+      "collecte": 187000,
+      "lieu": "Bonamoussadi, Douala",
+      "description": "Achat groupé de panneaux solaires",
+      "membres": 11,
+      "maxMembres": 15,
+      "cotMin": 5000,
+      "createdBy": "u1",
+      "createdAt": "2026-03-01",
+      "statut": "actif"
+    },
+    {
+      "id": "c2",
+      "nom": "Énergie Rurale Mbalmayo",
+      "objectif": 350000,
+      "collecte": 95000,
+      "lieu": "Mbalmayo",
+      "description": "Microgrid solaire",
+      "membres": 6,
+      "maxMembres": 10,
+      "cotMin": 3000,
+      "createdBy": "u1",
+      "createdAt": "2026-02-15",
+      "statut": "actif"
+    },
+    {
+      "id": "c3",
+      "nom": "Femmes Solaires Biyem-Assi",
+      "objectif": 200000,
+      "collecte": 178000,
+      "lieu": "Biyem-Assi, Yaoundé",
+      "description": "Groupement de femmes",
+      "membres": 12,
+      "maxMembres": 12,
+      "cotMin": 4000,
+      "createdBy": "u1",
+      "createdAt": "2026-01-10",
+      "statut": "actif"
+    }
+  ],
+  "cotisations": [
+    {
+      "id": "ct1",
+      "userId": "u2",
+      "nom": "Marie Ateba",
+      "tel": "697111222",
+      "email": "marie@email.com",
+      "coopId": "c1",
+      "montant": 10000,
+      "txn": "OM26890234",
+      "date": "2026-02-15",
+      "statut": "confirme",
+      "message": "",
+      "screenshot": null,
+      "createdAt": "2026-02-15T10:00:00Z",
+      "verifiedBy": "u1",
+      "verifiedAt": "2026-02-16T10:00:00Z"
+    },
+    {
+      "id": "ctdbeb9341",
+      "userId": null,
+      "nom": "fsddsa fwewfs",
+      "tel": "672378322",
+      "email": "ngueneambass@gmai.com",
+      "coopId": "c1",
+      "montant": 5000,
+      "txn": "123",
+      "message": "",
+      "screenshot": null,
+      "statut": "pending",
+      "date": "2026-04-24",
+      "createdAt": "2026-04-24T21:22:27.151Z",
+      "verifiedBy": null,
+      "verifiedAt": null
+    },
+    {
+      "id": "ctd44c43af",
+      "userId": null,
+      "nom": "fsddsa fwewfs",
+      "tel": "672378322",
+      "email": "ngueneambass@gmai.com",
+      "coopId": "c1",
+      "montant": 6555,
+      "txn": "41212",
+      "message": "wqwq",
+      "screenshot": null,
+      "statut": "pending",
+      "date": "2026-04-24",
+      "createdAt": "2026-04-24T21:22:53.323Z",
+      "verifiedBy": null,
+      "verifiedAt": null
+    },
+    {
+      "id": "ct3d163fd0",
+      "userId": "uc4076bdd",
+      "nom": "ikk",
+      "tel": "6999",
+      "email": "ngudeambass@gmai.com",
+      "coopId": "c1",
+      "montant": 424457,
+      "txn": "4785",
+      "message": "",
+      "screenshot": null,
+      "statut": "pending",
+      "date": "2026-04-26",
+      "createdAt": "2026-04-26T14:01:05.256Z",
+      "verifiedBy": null,
+      "verifiedAt": null
+    },
+    {
+      "id": "ct2f6d649a",
+      "userId": "uf153489a",
+      "nom": "uio",
+      "tel": "6998",
+      "email": "",
+      "coopId": "c1",
+      "montant": 10000,
+      "txn": "7889",
+      "message": "",
+      "screenshot": null,
+      "statut": "pending",
+      "date": "2026-04-26",
+      "createdAt": "2026-04-26T14:05:01.005Z",
+      "verifiedBy": null,
+      "verifiedAt": null
+    }
+  ],
+  "membres": [
+    {
+      "id": "m1",
+      "userId": "u2",
+      "nom": "Marie Ateba",
+      "tel": "697111222",
+      "email": "marie@email.com",
+      "coopId": "c1",
+      "createdAt": "2026-02-10"
+    },
+    {
+      "id": "ma6037bb5",
+      "userId": "u25988269",
+      "nom": "yae",
+      "tel": "67237835",
+      "email": "nguenass@gmai.com",
+      "coopId": "c1",
+      "createdAt": "2026-04-24"
+    },
+    {
+      "id": "mf15fde12",
+      "userId": "uc4076bdd",
+      "nom": "ikk",
+      "tel": "6999",
+      "email": "ngudeambass@gmai.com",
+      "coopId": "c1",
+      "createdAt": "2026-04-26"
+    },
+    {
+      "id": "m00911038",
+      "userId": "uf153489a",
+      "nom": "uio",
+      "tel": "6998",
+      "email": "",
+      "coopId": "c1",
+      "createdAt": "2026-04-26"
+    }
+  ],
+  "votes": [
+    {
+      "id": "v1",
+      "question": "Quel équipement acheter ?",
+      "coopId": "c1",
+      "options": [
+        "Panneau 200W",
+        "Batterie 100Ah",
+        "Kit complet"
+      ],
+      "votes": [
+        10,
+        1,
+        4
+      ],
+      "fin": "2026-04-30",
+      "seuil": 50,
+      "statut": "actif",
+      "createdBy": "u1",
+      "createdAt": "2026-04-01T00:00:00Z",
+      "voters": [
+        "u3ad3ef47"
+      ]
+    }
+  ],
+  "blockchain": [
+    {
+      "id": "b1",
+      "type": "COOP_CRÉÉE",
+      "desc": "Coopérative Solaire Bonamoussadi",
+      "montant": null,
+      "hash": "a1b2c3d4e5f6a7b8",
+      "prev": "0000000000000000",
+      "date": "2026-03-01",
+      "createdAt": "2026-03-01T00:00:00Z",
+      "userId": "u1"
+    },
+    {
+      "id": "b177714370600205ec0f",
+      "type": "VOTE",
+      "desc": "\"Quel équipement acheter ?\"",
+      "montant": null,
+      "hash": "b1f4677b6f59d994",
+      "prev": "a1b2c3d4e5f6a7b8",
+      "date": "2026-04-25",
+      "createdAt": "2026-04-25T19:01:46.002Z",
+      "userId": "u3ad3ef47"
+    }
+  ],
+  "notifications": [],
+  "push_subscriptions": [],
+  "config": {
+    "om_numero": "698 123 456",
+    "om_nom": "CoopEnergie Admin",
+    "admin_pin": "$2a$10$N9qo8uLOickgx2ZMRZoMy.MrAJJ1K5qXWbxQvLKq8YVp4QZGkHkWO",
+    "sms": {
+      "service": "none",
+      "twilio_sid": "",
+      "twilio_token": "",
+      "twilio_from": "",
+      "templates": {}
+    }
+  }
+}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoopÉnergie — Coopératives Solaires Transparentes au Cameroun</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sun: #F5A623; --sun-deep: #E07B00; --sun-glow: rgba(245,166,35,0.35);
+      --green: #1A7A4A; --green-light: #2DB36B; --green-pale: #E6F7EE;
+      --night: #0D1F16; --sand: #FDF6EC;
+      --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--night);
+      color: white;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+
+    /* ── ORBS ── */
+    .orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; }
+    .o1 { width:700px;height:700px;background:radial-gradient(circle,rgba(245,166,35,.18),transparent 70%);top:-250px;right:-200px;animation:drift 9s ease-in-out infinite; }
+    .o2 { width:500px;height:500px;background:radial-gradient(circle,rgba(45,179,107,.13),transparent 70%);bottom:-150px;left:-50px;animation:drift 12s ease-in-out infinite reverse; }
+    .o3 { width:300px;height:300px;background:radial-gradient(circle,rgba(245,166,35,.08),transparent 70%);top:40%;left:40%;animation:drift 7s ease-in-out infinite 2s; }
+    @keyframes drift { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(20px,-20px) scale(1.04)} 66%{transform:translate(-15px,12px) scale(0.97)} }
+
+    /* ── STARS ── */
+    .stars { position: absolute; inset: 0; pointer-events: none; }
+    .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--d) ease-in-out infinite var(--delay); }
+    @keyframes twinkle { 0%,100%{opacity:var(--op);transform:scale(1)} 50%{opacity:.05;transform:scale(.5)} }
+
+    /* ── CONTAINER ── */
+    .container {
+      text-align: center; max-width: 680px; padding: 3rem 2rem;
+      position: relative; z-index: 1;
+      animation: slideUp .7s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── LOGO ── */
+    .logo-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, var(--sun), var(--sun-deep));
+      border-radius: 22px; display: flex; align-items: center; justify-content: center;
+      font-size: 40px; margin: 0 auto 28px;
+      box-shadow: 0 16px 48px var(--sun-glow);
+      animation: float 5s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-10px) rotate(2deg)} }
+
+    .logo { font-family: var(--font-head); font-size: 3.2rem; font-weight: 800; margin-bottom: 6px; line-height: 1; }
+    .logo span { color: var(--sun); }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,166,35,.1); border: 1px solid rgba(245,166,35,.25);
+      border-radius: 100px; padding: 7px 18px;
+      font-size: 12px; color: var(--sun); font-weight: 600; letter-spacing: .5px;
+      margin-bottom: 28px; animation: slideUp .7s ease .2s both;
+    }
+    .badge-dot { width: 7px; height: 7px; background: var(--sun); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.65)} }
+
+    /* ── TITLE ── */
+    h1 {
+      font-family: var(--font-head); font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700; line-height: 1.3; margin-bottom: 18px;
+      animation: slideUp .7s ease .1s both;
+    }
+    h1 em { font-style: normal; color: var(--sun); }
+
+    p {
+      color: rgba(255,255,255,.6); line-height: 1.8; margin-bottom: 40px;
+      font-size: 16px; font-weight: 300; max-width: 520px; margin-left: auto; margin-right: auto;
+      animation: slideUp .7s ease .15s both;
+    }
+
+    /* ── BUTTONS ── */
+    .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; animation: slideUp .7s ease .25s both; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--sun), var(--sun-deep));
+      color: var(--night); padding: 15px 32px; border-radius: 100px;
+      text-decoration: none; font-weight: 700; font-size: 15px;
+      font-family: var(--font-body); box-shadow: 0 8px 28px var(--sun-glow);
+      transition: all .25s; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px var(--sun-glow); }
+
+    .btn-outline {
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.8); padding: 15px 32px; border-radius: 100px;
+      text-decoration: none; font-weight: 500; font-size: 15px;
+      font-family: var(--font-body); transition: all .25s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); color: white; transform: translateY(-2px); }
+
+    /* ── STATS ── */
+    .stats-row {
+      display: flex; gap: 0; margin-top: 52px; padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,.07);
+      flex-wrap: wrap; justify-content: center;
+      animation: slideUp .7s ease .35s both;
+    }
+    .stat-item { flex: 1; min-width: 120px; padding: 0 24px; position: relative; }
+    .stat-item:not(:last-child)::after { content:''; position:absolute; right:0; top:20%; height:60%; width:1px; background:rgba(255,255,255,.08); }
+    .stat-n { font-family: var(--font-head); font-weight: 800; font-size: 30px; color: var(--sun); line-height: 1; margin-bottom: 5px; }
+    .stat-l { font-size: 12px; color: rgba(255,255,255,.4); line-height: 1.4; max-width: 110px; margin: 0 auto; }
+
+    /* ── FEATURES ── */
+    .features {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      margin-top: 32px; animation: slideUp .7s ease .3s both;
+    }
+    .feat-tag {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 100px; padding: 7px 14px; font-size: 12px; color: rgba(255,255,255,.6);
+      transition: all .2s;
+    }
+    .feat-tag:hover { background: rgba(255,255,255,.1); color: white; }
+
+    /* ── FOOTER ── */
+    .footer-tag { margin-top: 44px; font-size: 11px; color: rgba(255,255,255,.25); animation: slideUp .7s ease .4s both; }
+    .footer-tag a { color: rgba(255,255,255,.35); text-decoration: none; transition: color .2s; }
+    .footer-tag a:hover { color: rgba(255,255,255,.7); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .logo { font-size: 2.4rem; }
+      .stats-row { gap: 20px; }
+      .stat-item::after { display: none; }
+      .stat-item { flex: none; min-width: 40%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="stars" id="stars"></div>
+
+  <div class="container">
+    <div class="logo-icon">☀️</div>
+    <div class="logo">Coop<span>Énergie</span></div>
+
+    <div class="badge">
+      <div class="badge-dot"></div>
+      🇨🇲 Miabe Hackathon 2026 · Projet CM-02 · DTC
+    </div>
+
+    <h1>Coopératives solaires<br><em>transparentes sur blockchain</em></h1>
+
+    <p>
+      CoopÉnergie permet à des groupes de Camerounais de s'organiser en coopératives
+      d'achat de panneaux solaires, gérer leurs fonds collectifs de façon transparente
+      et accéder ensemble à l'énergie qu'aucun membre ne pourrait financer seul.
+    </p>
+
+    <div class="actions">
+      <a href="plateforme.html" class="btn-primary">🚀 Accéder à la plateforme</a>
+      <a href="vitrine.html" class="btn-outline">🌐 Découvrir le projet</a>
+    </div>
+
+    <div class="features">
+      <div class="feat-tag">⛓️ Blockchain transparente</div>
+      <div class="feat-tag">🗳️ Vote démocratique</div>
+      <div class="feat-tag">💰 Orange Money</div>
+      <div class="feat-tag">📊 Rapport automatique</div>
+      <div class="feat-tag">💬 Chat en temps réel</div>
+      <div class="feat-tag">📄 Export PDF</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-n" id="cnt-1">0%</div>
+        <div class="stat-l">des Camerounais sans électricité</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n" id="cnt-2">0%</div>
+        <div class="stat-l">de réduction avec l'achat groupé</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n" id="cnt-3">ODD 7</div>
+        <div class="stat-l">Énergie propre & accessible</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n" id="cnt-4">0K</div>
+        <div class="stat-l">foyers camerounais équipés de solaire</div>
+      </div>
+    </div>
+
+    <div class="footer-tag">
+      Projet CM-02 · <a href="https://www.miabehackathon.com" target="_blank">miabehackathon.com</a>
+      · DTC — Darollo Technologies Corporation · © 2026 CoopÉnergie
+    </div>
+  </div>
+
+  <script>
+    // Stars
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 60; i++) {
+      const s = document.createElement('div');
+      const size = Math.random() * 2.5 + 0.5;
+      s.className = 'star';
+      s.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}%; top:${Math.random()*100}%;
+        --d:${2 + Math.random()*4}s;
+        --delay:-${Math.random()*4}s;
+        --op:${0.1 + Math.random()*0.5};
+      `;
+      starsEl.appendChild(s);
+    }
+
+    // Counters
+    function animateCount(el, target, suffix, dur=1800) {
+      let start = null;
+      const step = ts => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * ease) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    setTimeout(() => {
+      animateCount(document.getElementById('cnt-1'), 45, '%');
+      animateCount(document.getElementById('cnt-2'), 40, '%');
+      animateCount(document.getElementById('cnt-4'), 80, 'K');
+    }, 600);
+  </script>
+</body>
+</html>

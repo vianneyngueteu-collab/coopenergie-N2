@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CoopÉnergie — Plateforme</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sun: #F5A623; --sun-deep: #E07B00; --sun-glow: rgba(245,166,35,0.28);
+      --green: #1A7A4A; --green-light: #2DB36B; --green-pale: #E6F7EE; --green-dim: rgba(26,122,74,0.1);
+      --night: #0D1F16; --night-mid: #132A1E;
+      --sand: #FDF6EC; --white: #ffffff;
+      --text: #0D1F16; --text-muted: #4A6655; --text-faint: #8A9A8F;
+      --border: rgba(13,31,22,0.09); --border-hover: rgba(26,122,74,0.25);
+      --shadow-sm: 0 2px 8px rgba(13,31,22,0.06);
+      --shadow: 0 4px 24px rgba(13,31,22,0.09);
+      --shadow-lg: 0 16px 48px rgba(13,31,22,0.14);
+      --radius: 16px; --radius-lg: 24px; --radius-xl: 32px;
+      --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+      --header-h: 64px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--sand); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+    /* ══ GLOBAL LOADER ══ */
+    #global-loader {
+      position: fixed; inset: 0; background: var(--night); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+      transition: opacity 0.4s ease;
+    }
+    #global-loader.hide { opacity: 0; pointer-events: none; }
+    .loader-logo { font-family: var(--font-head); font-weight: 800; font-size: 28px; color: white; }
+    .loader-logo span { color: var(--sun); }
+    .loader-bar { width: 200px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .loader-bar-fill { height: 100%; background: var(--sun); border-radius: 3px; animation: loadBar 1.5s ease infinite; }
+    @keyframes loadBar { 0%{width:0;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0;margin-left:100%} }
+
+    /* ══ OFFLINE BANNER ══ */
+    #offline-banner {
+      display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 8000;
+      background: #e74c3c; color: white; text-align: center;
+      padding: 10px; font-size: 13px; font-weight: 600;
+    }
+    #offline-banner.show { display: block; }
+
+    /* ══ LOGIN ══ */
+    #login-container {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--night) 0%, #0a2018 60%, #1a3a2a 100%);
+      padding: 2rem; position: relative; overflow: hidden;
+    }
+    .l-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+    .l-orb1 { width:600px;height:600px;background:radial-gradient(circle,rgba(245,166,35,.15),transparent 70%);top:-200px;right:-150px;animation:drift 8s ease-in-out infinite; }
+    .l-orb2 { width:400px;height:400px;background:radial-gradient(circle,rgba(45,179,107,.12),transparent 70%);bottom:-100px;left:50px;animation:drift 10s ease-in-out infinite reverse; }
+    @keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(18px,-18px)} }
+    .login-card {
+      background: white; border-radius: var(--radius-xl); padding: 48px;
+      max-width: 480px; width: 100%; position: relative; z-index: 1;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.25);
+      animation: slideUp .5s ease;
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .login-logo { text-align: center; margin-bottom: 32px; }
+    .login-logo .icon { width:56px;height:56px;background:linear-gradient(135deg,var(--sun),var(--sun-deep));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;box-shadow:0 8px 24px var(--sun-glow); }
+    .login-logo h1 { font-family:var(--font-head);font-weight:800;font-size:28px;color:var(--night); }
+    .login-logo h1 span { color:var(--sun); }
+    .login-logo p { font-size:13px;color:var(--text-muted);margin-top:4px; }
+    .login-tabs { display:flex;background:rgba(13,31,22,.06);border-radius:12px;padding:4px;margin-bottom:28px; }
+    .ltab { flex:1;text-align:center;padding:10px;background:none;border:none;font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;border-radius:10px;transition:all .2s; }
+    .ltab.active { background:white;color:var(--green);box-shadow:0 2px 8px rgba(13,31,22,.1); }
+    .lform { display:none; }
+    .lform.active { display:block; }
+    .fg { margin-bottom:16px; }
+    .fg label { display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px; }
+    .fg input,.fg select,.fg textarea { width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:14px;font-family:var(--font-body);font-size:14px;background:white;transition:all .2s;outline:none;color:var(--text); }
+    .fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--green);box-shadow:0 0 0 4px rgba(26,122,74,.08); }
+    .fg input.error-input { border-color:#e74c3c; }
+    .frow { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+    .btn-login { width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#0d5a35);color:white;border:none;border-radius:14px;font-family:var(--font-head);font-weight:700;font-size:15px;cursor:pointer;transition:all .25s;box-shadow:0 6px 20px rgba(26,122,74,.35);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px; }
+    .btn-login:hover { transform:translateY(-2px);box-shadow:0 10px 28px rgba(26,122,74,.45); }
+    .btn-login:disabled { opacity:.6;cursor:not-allowed;transform:none; }
+    .lerr { color:#e74c3c;font-size:13px;text-align:center;margin-top:12px;padding:10px;background:rgba(231,76,60,.08);border-radius:10px;display:none; }
+    .lerr.show { display:block; }
+    .demo-box { margin-top:20px;padding:14px;background:rgba(26,122,74,.06);border-radius:14px;border:1px solid rgba(26,122,74,.12); }
+    .demo-box p { font-size:11px;color:var(--text-muted);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
+    .demo-btn { background:none;border:1px solid rgba(26,122,74,.2);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--green);cursor:pointer;text-align:left;transition:all .2s;font-family:var(--font-body);width:100%;margin-bottom:6px;display:block; }
+    .demo-btn:hover { background:var(--green-pale);border-color:var(--green); }
+
+    /* ══ APP ══ */
+    #app { display:none; min-height:100vh; }
+    .app-header {
+      background:var(--night); height:var(--header-h); padding:0 32px;
+      display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; z-index:100;
+      border-bottom:1px solid rgba(255,255,255,0.07);
+      box-shadow:0 4px 24px rgba(0,0,0,.2);
+    }
+    .app-logo { font-family:var(--font-head);font-weight:800;font-size:20px;color:white;text-decoration:none;display:flex;align-items:center;gap:8px; }
+    .logo-pulse { width:8px;height:8px;background:var(--green-light);border-radius:50%;animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+    .app-logo span { color:var(--sun); }
+    .nav-wrap { display:flex;gap:3px;align-items:center; }
+    .nbtn { background:transparent;border:none;padding:8px 14px;border-radius:100px;color:rgba(255,255,255,.55);font-family:var(--font-body);font-weight:500;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;position:relative; }
+    .nbtn:hover { background:rgba(255,255,255,.08);color:white; }
+    .nbtn.active { background:var(--green);color:white; }
+    .nbtn-badge { position:absolute;top:4px;right:6px;width:16px;height:16px;background:#e74c3c;border-radius:50%;font-size:9px;font-weight:700;color:white;display:none;align-items:center;justify-content:center; }
+    .nbtn-badge.show { display:flex; }
+    .usr-sec { display:flex;align-items:center;gap:10px; }
+    .usr-pill { display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border-radius:100px;padding:5px 14px 5px 6px;cursor:pointer; }
+    .usr-av { width:30px;height:30px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white; }
+    .usr-name { color:white;font-size:13px;font-weight:500; }
+    .role-pill { background:var(--sun);color:var(--night);padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
+    .logout-btn { background:rgba(255,255,255,.08);border:none;padding:8px 14px;border-radius:100px;color:rgba(255,255,255,.6);cursor:pointer;font-size:12px;font-family:var(--font-body);transition:all .2s; }
+    .logout-btn:hover { background:rgba(255,255,255,.15);color:white; }
+
+    /* ══ PAGES ══ */
+    .page { display:none;padding:36px 40px;max-width:1400px;margin:0 auto; }
+    .page.active { display:block;animation:pageIn .3s ease; }
+    @keyframes pageIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .ph { margin-bottom:36px; }
+    .ph h2 { font-family:var(--font-head);font-weight:800;font-size:30px;color:var(--night); }
+    .ph p { font-size:14px;color:var(--text-muted);margin-top:5px;line-height:1.6; }
+    .ph-row { display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px; }
+    .ph-actions { display:flex;gap:10px;flex-wrap:wrap;align-items:center; }
+
+    /* ══ CARDS ══ */
+    .card { background:white;border-radius:var(--radius-lg);border:1px solid var(--border);transition:all .25s; }
+    .card:hover { box-shadow:var(--shadow-lg); }
+    .card-p { padding:28px; }
+    .card-p-sm { padding:20px 24px; }
+
+    /* ══ STATS GRID ══ */
+    .stats-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:36px; }
+    .stat-card { background:white;border-radius:var(--radius-lg);padding:26px;border:1px solid var(--border);transition:all .25s;position:relative;overflow:hidden; }
+    .stat-card::after { content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius-lg) var(--radius-lg) 0 0; }
+    .stat-card.g::after { background:linear-gradient(90deg,var(--green),var(--green-light)); }
+    .stat-card.s::after { background:linear-gradient(90deg,var(--sun-deep),var(--sun)); }
+    .stat-card.b::after { background:linear-gradient(90deg,#3B82F6,#60A5FA); }
+    .stat-card:hover { transform:translateY(-4px);box-shadow:var(--shadow-lg); }
+    .stat-icon { font-size:24px;margin-bottom:10px; }
+    .stat-num { font-family:var(--font-head);font-weight:800;font-size:40px;line-height:1; }
+    .stat-num.g { color:var(--green); } .stat-num.s { color:var(--sun-deep); } .stat-num.b { color:#3B82F6; }
+    .stat-lbl { font-size:13px;color:var(--text-muted);margin-top:5px; }
+    .stat-sub { font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px; }
+    .stat-sub.up { color:var(--green-light); } .stat-sub.warn { color:var(--sun-deep); } .stat-sub.muted { color:var(--text-faint); }
+
+    /* ══ COOP CARDS ══ */
+    .coop-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px; }
+    .coop-card { background:white;border-radius:var(--radius-lg);padding:26px;border:1px solid var(--border);transition:all .3s;position:relative;overflow:hidden; }
+    .coop-card:hover { transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--border-hover); }
+    .coop-card-top { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px; }
+    .coop-name { font-family:var(--font-head);font-weight:700;font-size:17px;color:var(--night);line-height:1.25; }
+    .coop-lieu { font-size:12px;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:4px; }
+    .coop-desc-text { font-size:13px;color:var(--text-muted);margin-bottom:14px;line-height:1.6; }
+    .prog-wrap { background:rgba(13,31,22,.06);border-radius:100px;height:8px;overflow:hidden;margin:10px 0; }
+    .prog-fill { height:100%;border-radius:100px;background:linear-gradient(90deg,var(--green),var(--green-light));transition:width .8s cubic-bezier(.4,0,.2,1); }
+    .prog-fill.full { background:linear-gradient(90deg,var(--sun-deep),var(--sun)); }
+    .coop-amounts { display:flex;justify-content:space-between;font-size:13px;margin-bottom:14px; }
+    .coop-amounts .col { color:var(--green);font-weight:700; }
+    .coop-amounts .tgt { color:var(--text-muted); }
+    .coop-meta { display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px; }
+    .coop-meta-tag { display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted);background:var(--sand);padding:4px 10px;border-radius:100px;border:1px solid var(--border); }
+    .coop-full-badge { position:absolute;top:14px;right:14px;background:var(--sun);color:var(--night);font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px; }
+    .coop-actions { display:flex;gap:8px;flex-wrap:wrap; }
+
+    /* ══ BUTTONS ══ */
+    .btn { display:inline-flex;align-items:center;gap:6px;border:none;border-radius:100px;font-family:var(--font-body);font-weight:600;cursor:pointer;transition:all .2s;font-size:13px; }
+    .btn-p { background:var(--green);color:white;padding:10px 20px; }
+    .btn-p:hover { background:var(--green-light);transform:translateY(-1px); }
+    .btn-s { background:var(--sand);color:var(--text);padding:10px 20px;border:1.5px solid var(--border); }
+    .btn-s:hover { border-color:var(--green);color:var(--green); }
+    .btn-sun { background:linear-gradient(135deg,var(--sun),var(--sun-deep));color:var(--night);padding:10px 20px;box-shadow:0 4px 16px var(--sun-glow); }
+    .btn-sun:hover { transform:translateY(-2px);box-shadow:0 8px 24px var(--sun-glow); }
+    .btn-danger { background:rgba(231,76,60,.1);color:#e74c3c;padding:8px 16px;border:1.5px solid rgba(231,76,60,.2); }
+    .btn-danger:hover { background:rgba(231,76,60,.2); }
+    .btn-ghost { background:transparent;color:var(--text-muted);padding:8px 14px;border:1.5px solid var(--border); }
+    .btn-ghost:hover { border-color:var(--green);color:var(--green); }
+    .btn-icon { background:rgba(13,31,22,.06);border:none;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s; }
+    .btn-icon:hover { background:var(--green-pale); }
+    .btn-sm { padding:7px 14px;font-size:12px; }
+    .btn-lg { padding:14px 28px;font-size:15px; }
+
+    /* ══ FORMS ══ */
+    .form-sec { background:white;border-radius:var(--radius-lg);padding:32px;border:1px solid var(--border); }
+    .form-sec h3 { font-family:var(--font-head);font-weight:700;font-size:19px;margin-bottom:22px; }
+    .ig { margin-bottom:16px; }
+    .ig label { display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.4px; }
+    .ig input,.ig select,.ig textarea { width:100%;padding:12px 15px;border:1.5px solid var(--border);border-radius:13px;font-family:var(--font-body);font-size:14px;background:white;transition:all .2s;outline:none;color:var(--text); }
+    .ig input:focus,.ig select:focus,.ig textarea:focus { border-color:var(--green);box-shadow:0 0 0 4px rgba(26,122,74,.07); }
+    .ig-hint { font-size:11px;color:var(--text-faint);margin-top:5px; }
+    .ig-err { font-size:11px;color:#e74c3c;margin-top:4px;display:none; }
+    .ig-err.show { display:block; }
+    .irow { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+    .form-result { margin-top:14px;padding:13px;border-radius:12px;font-size:13px;display:none; }
+    .form-result.ok { background:var(--green-pale);color:var(--green);border:1px solid rgba(26,122,74,.2);display:block; }
+    .form-result.err { background:rgba(231,76,60,.08);color:#e74c3c;border:1px solid rgba(231,76,60,.2);display:block; }
+
+    /* ══ SEARCH & FILTER ══ */
+    .search-bar { display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:24px; }
+    .search-input { flex:1;min-width:200px;padding:10px 16px 10px 40px;border:1.5px solid var(--border);border-radius:100px;font-family:var(--font-body);font-size:14px;background:white;outline:none;transition:all .2s;position:relative; }
+    .search-input:focus { border-color:var(--green);box-shadow:0 0 0 4px rgba(26,122,74,.07); }
+    .search-wrap { position:relative;flex:1;min-width:200px; }
+    .search-wrap::before { content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none; }
+    .filter-select { padding:10px 14px;border:1.5px solid var(--border);border-radius:100px;font-family:var(--font-body);font-size:13px;background:white;outline:none;cursor:pointer; }
+    .filter-select:focus { border-color:var(--green); }
+
+    /* ══ CHART SVG ══ */
+    .chart-wrap { background:white;border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border);margin-bottom:28px; }
+    .chart-title { font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between; }
+    .chart-legend { display:flex;gap:16px;flex-wrap:wrap; }
+    .chart-legend-item { display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted); }
+    .chart-dot { width:10px;height:10px;border-radius:50%; }
+    svg.chart { width:100%;overflow:visible; }
+
+    /* ══ ACTIVITY FEED ══ */
+    .activity-feed { display:flex;flex-direction:column;gap:10px; }
+    .activity-item { display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:white;border-radius:14px;border:1px solid var(--border);transition:all .2s; }
+    .activity-item:hover { border-color:var(--border-hover);box-shadow:var(--shadow-sm); }
+    .act-icon { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+    .act-icon.g { background:var(--green-pale); }
+    .act-icon.s { background:rgba(245,166,35,.12); }
+    .act-icon.b { background:rgba(59,130,246,.1); }
+    .act-info { flex:1; }
+    .act-txt { font-size:13px;font-weight:500;color:var(--text); }
+    .act-time { font-size:11px;color:var(--text-faint);margin-top:2px; }
+
+    /* ══ COTISATIONS ══ */
+    .cotiser-grid { display:grid;grid-template-columns:1.3fr 1fr;gap:28px; }
+    .om-card { background:var(--night);border-radius:var(--radius-lg);padding:30px;color:white;text-align:center; }
+    .om-card h3 { font-family:var(--font-head);font-weight:700;font-size:17px;color:white;margin-bottom:18px; }
+    .om-num { font-family:var(--font-head);font-weight:800;font-size:34px;color:var(--sun);margin:14px 0;letter-spacing:2px;cursor:pointer;transition:all .2s; }
+    .om-num:hover { opacity:.8; }
+    .om-copy-hint { font-size:11px;color:rgba(255,255,255,.4);margin-bottom:16px; }
+    .om-steps { text-align:left;margin-top:20px; }
+    .om-step { display:flex;gap:12px;margin-bottom:14px; }
+    .om-step-n { width:22px;height:22px;border-radius:50%;background:rgba(245,166,35,.2);color:var(--sun);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .om-step p { font-size:12px;color:rgba(255,255,255,.65);line-height:1.5; }
+    .cot-hist { margin-top:22px; }
+    .cot-hist h3 { font-family:var(--font-head);font-weight:700;font-size:17px;margin-bottom:16px; }
+    .cot-item { display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border); }
+    .cot-item:last-child { border-bottom:none; }
+    .cot-av { width:38px;height:38px;border-radius:50%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--green);flex-shrink:0; }
+    .cot-info { flex:1; }
+    .cot-name { font-weight:600;font-size:13px; }
+    .cot-detail { font-size:11px;color:var(--text-muted);margin-top:2px; }
+    .cot-right { text-align:right; }
+    .cot-amt { font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--green); }
+    .pill { font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px; }
+    .pill-ok { background:var(--green-pale);color:var(--green); }
+    .pill-wait { background:rgba(245,166,35,.15);color:var(--sun-deep); }
+    .pill-rej { background:rgba(231,76,60,.1);color:#e74c3c; }
+
+    /* ══ COOP DETAIL VIEW ══ */
+    .coop-detail-header { background:var(--night);border-radius:var(--radius-lg);padding:32px;margin-bottom:24px;color:white;position:relative;overflow:hidden; }
+    .coop-detail-header::before { content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(245,166,35,.15),transparent 70%);border-radius:50%; }
+    .cdh-title { font-family:var(--font-head);font-weight:800;font-size:26px;color:white;margin-bottom:6px; }
+    .cdh-lieu { font-size:14px;color:rgba(255,255,255,.55);margin-bottom:20px; }
+    .cdh-prog-wrap { background:rgba(255,255,255,.1);border-radius:100px;height:10px;overflow:hidden;margin:12px 0; }
+    .cdh-prog-fill { height:100%;border-radius:100px;background:linear-gradient(90deg,var(--green),var(--green-light)); }
+    .cdh-amounts { display:flex;justify-content:space-between;align-items:baseline; }
+    .cdh-col { font-family:var(--font-head);font-weight:700;font-size:24px;color:var(--sun); }
+    .cdh-tgt { font-size:13px;color:rgba(255,255,255,.5); }
+    .detail-tabs { display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap; }
+    .dtab { background:white;border:1.5px solid var(--border);padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .2s;font-family:var(--font-body); }
+    .dtab.active { background:var(--green);border-color:var(--green);color:white; }
+    .dtab-content { display:none; }
+    .dtab-content.active { display:block; }
+
+    /* ══ VOTES ══ */
+    .vote-card { background:white;border-radius:var(--radius-lg);padding:30px;border:1px solid var(--border);margin-bottom:20px;transition:all .25s; }
+    .vote-card:hover { box-shadow:var(--shadow-lg); }
+    .vote-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px; }
+    .vote-q { font-family:var(--font-head);font-weight:700;font-size:19px;color:var(--night);flex:1;margin-right:16px; }
+    .vote-meta-row { display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px; }
+    .vote-meta-item { font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px; }
+    .vote-timer { font-size:13px;font-weight:700;color:var(--sun-deep);background:rgba(245,166,35,.1);padding:4px 12px;border-radius:100px; }
+    .voted-badge { font-size:11px;font-weight:700;color:var(--green);background:var(--green-pale);padding:4px 12px;border-radius:100px;border:1px solid rgba(26,122,74,.2); }
+    .vote-opts { display:flex;flex-direction:column;gap:8px;margin-bottom:18px; }
+    .vopt { display:flex;align-items:center;gap:12px;padding:13px 17px;border:1.5px solid var(--border);border-radius:13px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden; }
+    .vopt:hover { border-color:var(--green);background:rgba(26,122,74,.03); }
+    .vopt.selected { border-color:var(--green);background:rgba(26,122,74,.06); }
+    .vopt .vfill { position:absolute;left:0;top:0;bottom:0;background:rgba(26,122,74,.07);z-index:0;border-radius:12px;transition:width .6s ease; }
+    .vopt-content { display:flex;align-items:center;gap:12px;flex:1;position:relative;z-index:1; }
+    .vradio { width:18px;height:18px;border-radius:50%;border:2px solid rgba(13,31,22,.2);flex-shrink:0;transition:all .2s;display:flex;align-items:center;justify-content:center; }
+    .vopt.selected .vradio { border-color:var(--green); }
+    .vopt.selected .vradio::after { content:'';width:8px;height:8px;border-radius:50%;background:var(--green);display:block; }
+    .vopt-text { font-size:14px;color:var(--text);flex:1; }
+    .vopt-pct { font-size:13px;font-weight:700;color:var(--green);position:relative;z-index:1; }
+    .vopt-count { font-size:11px;color:var(--text-muted);position:relative;z-index:1; }
+    .vote-actions { display:flex;gap:10px;align-items:center;flex-wrap:wrap; }
+    .vote-share-btn { background:none;border:1px dashed var(--border);padding:7px 14px;border-radius:100px;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:var(--font-body); }
+    .vote-share-btn:hover { border-color:var(--green);color:var(--green); }
+
+    /* ══ ADMIN ══ */
+    .admin-tabs { display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap; }
+    .atab { background:white;border:1.5px solid var(--border);padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .2s;font-family:var(--font-body); }
+    .atab.active { background:var(--green);border-color:var(--green);color:white; }
+    .asec { display:none; }
+    .asec.active { display:block; }
+    .pay-card { background:white;border-radius:var(--radius);padding:18px 22px;border:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:all .2s; }
+    .pay-card:hover { box-shadow:var(--shadow);border-color:var(--border-hover); }
+    .pay-info { flex:1; }
+    .pay-name { font-weight:700;font-size:14px; }
+    .pay-det { font-size:12px;color:var(--text-muted);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap; }
+    .pay-det span { display:flex;align-items:center;gap:3px; }
+    .pay-amt { font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--green);margin:0 12px;white-space:nowrap; }
+    .pay-acts { display:flex;gap:8px;flex-shrink:0; }
+    .screenshot-btn { background:rgba(59,130,246,.1);color:#3B82F6;border:1px solid rgba(59,130,246,.2);padding:6px 12px;border-radius:100px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font-body); }
+    .admin-search { display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap; }
+    .tbl-wrap { background:white;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border); }
+    .tbl-head { display:grid;gap:12px;padding:13px 20px;background:rgba(13,31,22,.04);font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px; }
+    .tbl-row { display:grid;gap:12px;padding:14px 20px;border-top:1px solid var(--border);font-size:13px;align-items:center;transition:background .2s; }
+    .tbl-row:hover { background:rgba(13,31,22,.02); }
+    .tbl-5 { grid-template-columns:2fr 1.2fr 1fr 1fr 1fr; }
+    .tbl-4 { grid-template-columns:2fr 1fr 1fr 1fr; }
+    .admin-kpi { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px; }
+    .kpi-card { background:white;border-radius:var(--radius);padding:20px;border:1px solid var(--border);text-align:center; }
+    .kpi-n { font-family:var(--font-head);font-weight:700;font-size:28px;color:var(--green); }
+    .kpi-l { font-size:12px;color:var(--text-muted);margin-top:4px; }
+    .role-select { padding:6px 12px;border:1.5px solid var(--border);border-radius:100px;font-size:12px;font-family:var(--font-body);outline:none;cursor:pointer; }
+
+    /* ══ CSV EXPORT ══ */
+    .export-row { display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px; }
+
+    /* ══ BLOCKCHAIN ══ */
+    .bc-header { background:var(--night);border-radius:var(--radius-lg);padding:28px;margin-bottom:26px;display:flex;gap:28px;flex-wrap:wrap; }
+    .bc-stat { text-align:center;flex:1;min-width:100px; }
+    .bc-stat-n { font-family:var(--font-head);font-weight:800;font-size:32px;color:var(--sun); }
+    .bc-stat-l { font-size:12px;color:rgba(255,255,255,.45);margin-top:4px; }
+    .bc-filters { display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap; }
+    .bc-filter { background:white;border:1.5px solid var(--border);padding:7px 16px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .2s;font-family:var(--font-body); }
+    .bc-filter.active { background:var(--night);border-color:var(--night);color:white; }
+    .bc-integrity { background:var(--green-pale);border:1px solid rgba(26,122,74,.2);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px; }
+    .bc-integrity-txt { font-size:13px;color:var(--green);font-weight:600; }
+    .bc-blocks { display:flex;flex-direction:column;gap:10px; }
+    .bc-block { background:white;border-radius:var(--radius);padding:18px 22px;border:1px solid var(--border);display:flex;align-items:center;gap:14px;transition:all .2s;cursor:default; }
+    .bc-block:hover { box-shadow:var(--shadow);transform:translateX(4px); }
+    .bc-num { font-family:var(--font-head);font-weight:800;font-size:11px;color:rgba(13,31,22,.2);min-width:28px; }
+    .bc-ico { width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+    .bc-ico.coop { background:var(--green-pale); }
+    .bc-ico.cot { background:rgba(245,166,35,.12); }
+    .bc-ico.vote { background:rgba(59,130,246,.1); }
+    .bc-body { flex:1; }
+    .bc-type { font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px; }
+    .bc-desc { font-weight:600;font-size:13px; }
+    .bc-hash-row { display:flex;align-items:center;gap:8px;margin-top:3px; }
+    .bc-hash { font-family:monospace;font-size:10px;color:var(--text-faint); }
+    .bc-copy-hash { background:none;border:none;cursor:pointer;font-size:11px;color:var(--text-faint);transition:color .2s; }
+    .bc-copy-hash:hover { color:var(--green); }
+    .bc-right { text-align:right; }
+    .bc-amt { font-family:var(--font-head);font-weight:700;color:var(--green);font-size:14px; }
+    .bc-date { font-size:11px;color:var(--text-faint); }
+    .bc-chain-ind { display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green-light);justify-content:flex-end;margin-top:4px; }
+    .bc-dot { width:6px;height:6px;border-radius:50%;background:var(--green-light);animation:pulse 2s infinite; }
+    .bc-chain-visual { display:flex;align-items:center;font-size:10px;color:var(--text-faint);margin-top:3px;gap:4px; }
+
+    /* ══ PROFIL ══ */
+    .profil-grid { display:grid;grid-template-columns:300px 1fr;gap:28px; }
+    .profil-card { background:white;border-radius:var(--radius-lg);padding:30px;border:1px solid var(--border);text-align:center; }
+    .pav { width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:white;margin:0 auto 16px;font-family:var(--font-head); }
+    .pname { font-family:var(--font-head);font-weight:700;font-size:21px; }
+    .prole { font-size:13px;color:var(--text-muted);margin-top:4px; }
+    .pstats { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px; }
+    .ps-item { background:var(--sand);border-radius:12px;padding:14px;text-align:center; }
+    .ps-n { font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--green); }
+    .ps-l { font-size:10px;color:var(--text-muted);margin-top:2px; }
+    .progress-perso { background:var(--green-pale);border:1px solid rgba(26,122,74,.2);border-radius:14px;padding:16px;margin-top:16px;text-align:left; }
+    .pp-title { font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px; }
+    .pp-bar-wrap { background:rgba(26,122,74,.15);border-radius:100px;height:8px;overflow:hidden; }
+    .pp-bar-fill { height:100%;border-radius:100px;background:linear-gradient(90deg,var(--green),var(--green-light));transition:width .6s; }
+    .pp-label { font-size:11px;color:var(--text-muted);margin-top:6px; }
+    .badge-participation { display:flex;align-items:center;gap:8px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);border-radius:12px;padding:10px 14px;margin-top:14px; }
+    .bp-icon { font-size:20px; }
+    .bp-txt { font-size:12px;font-weight:600;color:var(--sun-deep); }
+    .edit-profil-form { display:none; }
+    .edit-profil-form.show { display:block; }
+
+    /* ══ RAPPORT AUTO ══ */
+    .rapport-card { background:var(--night);border-radius:var(--radius-lg);padding:32px;color:white;margin-bottom:24px; }
+    .rapport-card h3 { font-family:var(--font-head);font-weight:700;font-size:20px;color:white;margin-bottom:8px; }
+    .rapport-card p { font-size:14px;color:rgba(255,255,255,.6);margin-bottom:20px;line-height:1.65; }
+    .rapport-stats { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px; }
+    .rs-item { background:rgba(255,255,255,.06);border-radius:14px;padding:16px;text-align:center; }
+    .rs-n { font-family:var(--font-head);font-weight:700;font-size:22px;color:var(--sun); }
+    .rs-l { font-size:11px;color:rgba(255,255,255,.5);margin-top:4px; }
+    .plan-achat { background:rgba(45,179,107,.1);border:1px solid rgba(45,179,107,.25);border-radius:14px;padding:18px;margin-bottom:16px; }
+    .pa-title { font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--green-light);margin-bottom:10px; }
+    .pa-item { font-size:13px;color:rgba(255,255,255,.7);padding:5px 0;display:flex;align-items:flex-start;gap:8px; }
+    .pa-item::before { content:'→';color:var(--green-light);flex-shrink:0; }
+    .delai-card { background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:14px;padding:16px;display:flex;align-items:center;gap:16px;margin-bottom:16px; }
+    .delai-n { font-family:var(--font-head);font-weight:800;font-size:36px;color:var(--sun); }
+    .delai-info p { font-size:13px;color:rgba(255,255,255,.6);line-height:1.5; }
+
+    /* ══ CHAT ══ */
+    .chat-panel { position:fixed;bottom:20px;right:20px;width:360px;height:500px;background:white;border-radius:24px;box-shadow:0 16px 48px rgba(13,31,22,.2),0 0 0 1px rgba(13,31,22,.08);display:flex;flex-direction:column;z-index:200;transition:all .3s cubic-bezier(.4,0,.2,1);overflow:hidden; }
+    .chat-panel.minimized { height:56px;width:200px;border-radius:28px; }
+    .chat-hdr { background:var(--night);padding:13px 17px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;flex-shrink:0; }
+    .chat-hdr-l { display:flex;align-items:center;gap:9px; }
+    .chat-online { width:8px;height:8px;background:var(--green-light);border-radius:50%;animation:pulse 2s infinite; }
+    .chat-hdr h4 { font-family:var(--font-head);font-size:14px;font-weight:700;color:white; }
+    .chat-unread { background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px;display:none; }
+    .chat-unread.show { display:inline-block; }
+    .chat-toggle { background:rgba(255,255,255,.1);border:none;color:white;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+    .chat-toggle:hover { background:rgba(255,255,255,.2); }
+    .chat-body { display:flex;flex-direction:column;flex:1;overflow:hidden; }
+    .chat-rooms { display:flex;gap:5px;padding:9px 11px;background:var(--green-pale);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0; }
+    .chat-rooms::-webkit-scrollbar { height:0; }
+    .croom { background:white;border:1px solid var(--border);padding:5px 11px;border-radius:100px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--text-muted);transition:all .2s;font-family:var(--font-body);position:relative; }
+    .croom.active { background:var(--green);color:white;border-color:var(--green); }
+    .croom-unread { position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:#e74c3c;border-radius:50%;font-size:8px;font-weight:700;color:white;display:none;align-items:center;justify-content:center; }
+    .croom-unread.show { display:flex; }
+    .chat-msgs { flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px; }
+    .chat-msgs::-webkit-scrollbar { width:4px; }
+    .chat-msgs::-webkit-scrollbar-thumb { background:rgba(13,31,22,.1);border-radius:4px; }
+    .chat-msg { max-width:82%; }
+    .chat-msg.mine { align-self:flex-end; }
+    .chat-msg.other { align-self:flex-start; }
+    .msg-sender { font-size:10px;font-weight:700;color:var(--text-muted);margin-bottom:2px; }
+    .msg-bubble { padding:9px 12px;border-radius:17px;font-size:13px;line-height:1.5; }
+    .chat-msg.mine .msg-bubble { background:var(--green);color:white;border-radius:17px 17px 4px 17px; }
+    .chat-msg.other .msg-bubble { background:var(--sand);color:var(--text);border-radius:17px 17px 17px 4px;border:1px solid var(--border); }
+    .msg-time { font-size:10px;color:var(--text-faint);margin-top:2px;text-align:right; }
+    .typing-indicator { align-self:flex-start;padding:8px 14px;background:var(--sand);border-radius:17px 17px 17px 4px;border:1px solid var(--border);font-size:12px;color:var(--text-muted);display:none; }
+    .typing-indicator.show { display:flex;align-items:center;gap:4px; }
+    .typing-dot { width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:typeDot 1.2s infinite; }
+    .typing-dot:nth-child(2) { animation-delay:.2s; }
+    .typing-dot:nth-child(3) { animation-delay:.4s; }
+    @keyframes typeDot { 0%,100%{transform:translateY(0);opacity:.4} 50%{transform:translateY(-4px);opacity:1} }
+    .chat-input-area { padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0;align-items:center; }
+    .chat-inp { flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:100px;font-family:var(--font-body);font-size:13px;outline:none;transition:border-color .2s; }
+    .chat-inp:focus { border-color:var(--green); }
+    .chat-send { background:var(--green);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0; }
+    .chat-send:hover { background:var(--green-light);transform:scale(1.08); }
+
+    /* ══ MODAL ══ */
+    .modal-bg { position:fixed;inset:0;background:rgba(13,31,22,.75);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px; }
+    .modal-bg.open { display:flex; }
+    .modal { background:white;border-radius:var(--radius-xl);padding:34px;max-width:520px;width:100%;animation:slideUp .3s ease;max-height:90vh;overflow-y:auto; }
+    .modal-hdr { display:flex;justify-content:space-between;align-items:center;margin-bottom:26px; }
+    .modal-hdr h2 { font-family:var(--font-head);font-weight:700;font-size:22px; }
+    .modal-close { background:rgba(13,31,22,.07);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s; }
+    .modal-close:hover { background:rgba(13,31,22,.14); }
+    .modal-actions { display:flex;gap:10px;justify-content:flex-end;margin-top:24px; }
+
+    /* ══ TOAST ══ */
+    #toasts { position:fixed;top:76px;right:20px;z-index:400;display:flex;flex-direction:column;gap:8px;pointer-events:none; }
+    .toast { background:white;border-radius:14px;padding:13px 16px;box-shadow:0 8px 32px rgba(13,31,22,.15);border-left:4px solid var(--green);display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;animation:toastIn .3s ease;min-width:260px;pointer-events:all;max-width:360px; }
+    .toast.err { border-color:#e74c3c; }
+    .toast.warn { border-color:var(--sun); }
+    .toast.info { border-color:#3B82F6; }
+    @keyframes toastIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateX(16px)} }
+
+    /* ══ EMPTY ══ */
+    .empty { text-align:center;padding:56px 20px; }
+    .empty .ei { font-size:52px;margin-bottom:14px; }
+    .empty h3 { font-family:var(--font-head);font-weight:700;font-size:19px;margin-bottom:8px; }
+    .empty p { font-size:14px;color:var(--text-muted);line-height:1.65; }
+
+    /* ══ SPINNER ══ */
+    .spin { width:36px;height:36px;border:3px solid rgba(26,122,74,.15);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin:40px auto; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width:900px) {
+      .app-header { padding:0 16px;flex-wrap:wrap;height:auto;padding-top:8px;padding-bottom:8px;gap:8px; }
+      .nav-wrap { order:3;width:100%;overflow-x:auto;padding-bottom:6px;gap:2px; }
+      .nav-wrap::-webkit-scrollbar { height:0; }
+      .page { padding:20px 16px; }
+      .cotiser-grid,.profil-grid,.irow { grid-template-columns:1fr; }
+      .coop-grid { grid-template-columns:1fr; }
+      .stats-grid { grid-template-columns:1fr 1fr; }
+      .chat-panel { width:calc(100% - 24px);right:12px;bottom:12px;border-radius:20px 20px 20px 20px; }
+      .chat-panel.minimized { width:180px; }
+      .tbl-head,.tbl-row { grid-template-columns:1fr 1fr !important; }
+      .hide-m { display:none !important; }
+      .admin-kpi { grid-template-columns:1fr 1fr; }
+      .bc-header { flex-direction:column;gap:16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="global-loader">
+  <div class="loader-logo">Coop<span>Énergie</span></div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- OFFLINE BANNER -->
+<div id="offline-banner">⚠️ Connexion perdue — certaines fonctionnalités peuvent être indisponibles</div>
+
+<!-- TOASTS -->
+<div id="toasts"></div>
+
+<!-- ─── LOGIN ─── -->
+<div id="login-container" style="display:none;">
+  <div class="l-orb l-orb1"></div>
+  <div class="l-orb l-orb2"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon">☀️</div>
+      <h1>Coop<span>Énergie</span></h1>
+      <p>Coopératives solaires transparentes · Cameroun 🇨🇲</p>
+    </div>
+    <div class="login-tabs">
+      <button class="ltab active" onclick="switchTab('login')">Connexion</button>
+      <button class="ltab" onclick="switchTab('register')">Inscription</button>
+    </div>
+    <!-- LOGIN -->
+    <div id="lf-login" class="lform active">
+      <div class="fg"><label>Téléphone ou Email</label><input type="text" id="li-id" placeholder="698 123 456 ou email@..." onkeypress="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label>Mot de passe</label><input type="password" id="li-pwd" placeholder="••••••••" onkeypress="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-login" id="btn-login" onclick="doLogin()">Se connecter →</button>
+      <div id="lerr-login" class="lerr"></div>
+      <div class="demo-box">
+        <p>Comptes de démo</p>
+        <button class="demo-btn" onclick="fillDemo('698123456','admin123')">⚙️ Super Admin — 698123456 / admin123</button>
+        <button class="demo-btn" onclick="fillDemo('697111222','marie123')">👤 Marie Ateba — 697111222 / marie123</button>
+        <button class="demo-btn" onclick="fillDemo('699333444','jean123')">👤 Jean Ndongo — 699333444 / jean123</button>
+      </div>
+    </div>
+    <!-- REGISTER -->
+    <div id="lf-register" class="lform">
+      <div class="frow">
+        <div class="fg"><label>Nom complet *</label><input type="text" id="rg-nom" placeholder="Jean Dupont"></div>
+        <div class="fg"><label>Téléphone *</label><input type="tel" id="rg-tel" placeholder="699 000 000"></div>
+      </div>
+      <div class="fg"><label>Email (optionnel)</label><input type="email" id="rg-email" placeholder="email@exemple.com"></div>
+      <div class="fg"><label>Mot de passe *</label><input type="password" id="rg-pwd" placeholder="••••••••"></div>
+      <div class="fg"><label>Rejoindre une coopérative</label><select id="rg-coop"><option value="">-- Choisir --</option></select></div>
+      <button class="btn-login" id="btn-register" onclick="doRegister()">Créer mon compte →</button>
+      <div id="lerr-register" class="lerr"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── APP ─── -->
+<div id="app">
+  <div class="app-header">
+    <a href="#" class="app-logo"><div class="logo-pulse"></div>Coop<span>Énergie</span></a>
+    <div class="nav-wrap">
+      <button class="nbtn active" onclick="gotoPage('home',this)">🏠 Accueil</button>
+      <button class="nbtn" onclick="gotoPage('coops',this)">🌿 Coopératives</button>
+      <button class="nbtn" onclick="gotoPage('cotiser',this)">💰 Cotiser</button>
+      <button class="nbtn" onclick="gotoPage('vote',this)">🗳️ Votes</button>
+      <button class="nbtn" onclick="gotoPage('rapport',this)">📊 Rapport</button>
+      <button class="nbtn" id="admin-btn" style="display:none" onclick="gotoPage('admin',this)">⚙️ Admin<span class="nbtn-badge" id="admin-badge"></span></button>
+      <button class="nbtn" onclick="gotoPage('blockchain',this)">⛓️ Blockchain</button>
+      <button class="nbtn" onclick="gotoPage('profil',this)">👤 Profil</button>
+    </div>
+    <div class="usr-sec">
+      <div class="usr-pill">
+        <div class="usr-av" id="usr-av">U</div>
+        <span class="usr-name" id="usr-name">Membre</span>
+        <span class="role-pill" id="role-pill">Membre</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div id="page-home" class="page active"></div>
+  <div id="page-coops" class="page"></div>
+  <div id="page-cotiser" class="page"></div>
+  <div id="page-vote" class="page"></div>
+  <div id="page-rapport" class="page"></div>
+  <div id="page-admin" class="page"></div>
+  <div id="page-blockchain" class="page"></div>
+  <div id="page-profil" class="page"></div>
+</div>
+
+<!-- ─── MODAL CRÉER COOP ─── -->
+<div id="modal-coop" class="modal-bg">
+  <div class="modal">
+    <div class="modal-hdr"><h2>🌿 Nouvelle coopérative</h2><button class="modal-close" onclick="closeModal('modal-coop')">✕</button></div>
+    <div class="ig"><label>Nom *</label><input type="text" id="mc-nom" placeholder="Ex: SolarDouala Makepe"></div>
+    <div class="irow">
+      <div class="ig"><label>Objectif (FCFA) *</label><input type="number" id="mc-obj" placeholder="500 000"></div>
+      <div class="ig"><label>Cotisation min. (FCFA)</label><input type="number" id="mc-cotmin" placeholder="5 000"></div>
+    </div>
+    <div class="irow">
+      <div class="ig"><label>Localité *</label><input type="text" id="mc-lieu" placeholder="Douala, Yaoundé..."></div>
+      <div class="ig"><label>Max membres</label><input type="number" id="mc-max" placeholder="20"></div>
+    </div>
+    <div class="ig"><label>Description</label><textarea id="mc-desc" rows="3" placeholder="Objectif de la coopérative..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-s" onclick="closeModal('modal-coop')">Annuler</button>
+      <button class="btn btn-p" onclick="createCoop()">✅ Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL SCREENSHOT ─── -->
+<div id="modal-screenshot" class="modal-bg">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-hdr"><h2>📸 Preuve de paiement</h2><button class="modal-close" onclick="closeModal('modal-screenshot')">✕</button></div>
+    <div id="screenshot-content" style="text-align:center;"><div class="spin"></div></div>
+  </div>
+</div>
+
+<!-- ─── MODAL COOP DETAIL ─── -->
+<div id="modal-coop-detail" class="modal-bg">
+  <div class="modal" style="max-width:700px;"><div class="modal-hdr"><h2 id="md-title">Détails</h2><button class="modal-close" onclick="closeModal('modal-coop-detail')">✕</button></div><div id="md-content"></div></div>
+</div>
+
+<!-- ─── CHAT ─── -->
+<div id="chat-panel" class="chat-panel minimized">
+  <div class="chat-hdr" onclick="toggleChat()">
+    <div class="chat-hdr-l">
+      <div class="chat-online"></div>
+      <h4>💬 Discussion</h4>
+      <span class="chat-unread" id="chat-unread-total">0</span>
+    </div>
+    <button class="chat-toggle" id="chat-toggle-btn">+</button>
+  </div>
+  <div class="chat-body" id="chat-body" style="display:none;">
+    <div class="chat-rooms" id="chat-rooms"></div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="typing-indicator" id="typing-ind"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div><span style="margin-left:4px;font-size:12px;">quelqu'un écrit…</span></div>
+    <div class="chat-input-area">
+      <input type="text" class="chat-inp" id="chat-inp" placeholder="Votre message…" onkeypress="handleChatKey(event)" oninput="handleTyping()">
+      <button class="chat-send" onclick="sendMsg()">→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:3000/api';
+let token = localStorage.getItem('ce_token');
+let user = null, role = 'membre', socket = null;
+let currentRoom = 'general', chatOpen = false;
+let DB = { cooperatives:[], cotisations:[], membres:[], votes:[], blockchain:[] };
+let unreadByRoom = {};
+let typingTimer = null;
+let bcFilter = 'all';
+
+// ══ UTILS ══
+function toast(msg, type='ok', dur=3500) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = `toast ${type==='ok'?'':''+type}`;
+  const icons = {ok:'✅',err:'❌',warn:'⚠️',info:'ℹ️'};
+  t.innerHTML = `<span>${icons[type]||'✅'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.animation='toastOut .3s ease forwards'; setTimeout(()=>t.remove(),300); }, dur);
+}
+function escHtml(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function fmtNum(n) { return (n||0).toLocaleString('fr-FR'); }
+function fmtK(n) { return n>=1000000?`${(n/1000000).toFixed(1)}M`:`${(n/1000).toFixed(0)}k`; }
+function fmtDate(s) { if(!s) return ''; try { return new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}); } catch{return s;} }
+function timeAgo(s) {
+  const d = Math.floor((Date.now()-new Date(s))/1000);
+  if(d<60) return 'à l\'instant';
+  if(d<3600) return `il y a ${Math.floor(d/60)}min`;
+  if(d<86400) return `il y a ${Math.floor(d/3600)}h`;
+  return fmtDate(s);
+}
+function pct(v,t) { return t>0?Math.min(Math.round(v/t*100),100):0; }
+function getInitials(n) { return (n||'U').split(' ').map(w=>w[0]).join('').toUpperCase().substring(0,2); }
+function isAdmin() { return ['admin','super_admin'].includes(role); }
+function validatePhone(t) { return /^6[5-9]\d{7}$/.test(t.replace(/\s/g,'')); }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Copier dans le presse-papier
+async function copyToClipboard(text, label='') {
+  try { await navigator.clipboard.writeText(text); toast(`${label||'Copié'} dans le presse-papier !`,'ok',2000); }
+  catch { toast('Impossible de copier','warn'); }
+}
+
+// ══ OFFLINE DETECTION ══
+window.addEventListener('offline', ()=>document.getElementById('offline-banner').classList.add('show'));
+window.addEventListener('online', ()=>document.getElementById('offline-banner').classList.remove('show'));
+
+// ══ AUTH ══
+function switchTab(t) {
+  document.getElementById('lf-login').classList.toggle('active',t==='login');
+  document.getElementById('lf-register').classList.toggle('active',t==='register');
+  document.querySelectorAll('.ltab').forEach((b,i)=>b.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));
+}
+function fillDemo(t,p) { document.getElementById('li-id').value=t; document.getElementById('li-pwd').value=p; }
+
+async function doLogin() {
+  const id = document.getElementById('li-id').value.trim();
+  const pwd = document.getElementById('li-pwd').value;
+  const btn = document.getElementById('btn-login');
+  const err = document.getElementById('lerr-login');
+  if(!id||!pwd) { err.textContent='Identifiant et mot de passe requis.'; err.classList.add('show'); return; }
+  btn.disabled=true; btn.textContent='Connexion…';
+  try {
+    const res = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifiant:id,password:pwd})});
+    const data = await res.json();
+    if(!data.success) throw new Error(data.error||'Identifiants incorrects.');
+    localStorage.setItem('ce_token',data.token);
+    token=data.token; user=data.user; role=data.user.role;
+    await showApp();
+  } catch(e) { err.textContent=e.message; err.classList.add('show'); }
+  finally { btn.disabled=false; btn.textContent='Se connecter →'; }
+}
+
+async function doRegister() {
+  const nom=document.getElementById('rg-nom').value.trim();
+  const tel=document.getElementById('rg-tel').value.trim();
+  const email=document.getElementById('rg-email').value.trim();
+  const pwd=document.getElementById('rg-pwd').value;
+  const coopId=document.getElementById('rg-coop').value;
+  const err=document.getElementById('lerr-register');
+  const btn=document.getElementById('btn-register');
+  if(!nom||!tel||!pwd) { err.textContent='Nom, téléphone et mot de passe requis.'; err.classList.add('show'); return; }
+  btn.disabled=true;
+  try {
+    const res=await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom,tel,email,password:pwd,coopId:coopId||undefined})});
+    const data=await res.json();
+    if(!data.success) throw new Error(data.error);
+    localStorage.setItem('ce_token',data.token);
+    token=data.token; user=data.user; role=data.user.role;
+    await showApp();
+  } catch(e) { err.textContent=e.message; err.classList.add('show'); }
+  finally { btn.disabled=false; }
+}
+
+function doLogout() {
+  localStorage.removeItem('ce_token'); token=null; user=null;
+  if(socket) socket.disconnect();
+  document.getElementById('login-container').style.display='flex';
+  document.getElementById('app').style.display='none';
+  toast('À bientôt !','info');
+}
+
+async function showApp() {
+  document.getElementById('login-container').style.display='none';
+  document.getElementById('app').style.display='block';
+  const ini = getInitials(user?.nom);
+  document.getElementById('usr-av').textContent=ini;
+  document.getElementById('usr-name').textContent=user?.nom||'Membre';
+  document.getElementById('role-pill').textContent=isAdmin()?'Admin':'Membre';
+  if(isAdmin()) document.getElementById('admin-btn').style.display='inline-flex';
+  await Promise.all([loadCoopsForSelect(), loadData()]);
+  initSocket();
+}
+
+async function loadCoopsForSelect() {
+  try {
+    const r=await fetch(API+'/cooperatives');
+    const coops=await r.json();
+    const s=document.getElementById('rg-coop');
+    s.innerHTML='<option value="">-- Choisir --</option>'+coops.map(c=>`<option value="${c.id}">${c.nom}</option>`).join('');
+  } catch(e){}
+}
+
+// ══ DATA ══
+async function loadData() {
+  try {
+    const r=await fetch(API+'/data');
+    const d=await r.json();
+    DB={cooperatives:d.cooperatives||[],cotisations:d.cotisations||[],membres:d.membres||[],votes:d.votes||[],blockchain:d.blockchain||[]};
+    const pending=DB.cotisations.filter(c=>c.statut==='pending').length;
+    const badge=document.getElementById('admin-badge');
+    badge.textContent=pending; badge.classList.toggle('show',pending>0);
+    renderCurrent();
+  } catch(e){ console.error('Erreur data:',e); }
+}
+
+function gotoPage(page, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderPage(page);
+}
+
+function renderCurrent() {
+  const id=document.querySelector('.page.active')?.id?.replace('page-','');
+  if(id) renderPage(id);
+}
+
+function renderPage(p) {
+  const map={home:renderHome,coops:renderCoops,cotiser:renderCotiser,vote:renderVotes,rapport:renderRapport,admin:renderAdmin,blockchain:renderBlockchain,profil:renderProfil};
+  if(p==='admin'&&!isAdmin()) return;
+  if(map[p]) map[p]();
+}
+
+// ══ HOME ══
+function renderHome() {
+  const total=DB.cooperatives.reduce((s,c)=>s+c.collecte,0);
+  const totalObj=DB.cooperatives.reduce((s,c)=>s+c.objectif,0);
+  const conf=DB.cotisations.filter(c=>c.statut==='confirme');
+  const pending=DB.cotisations.filter(c=>c.statut==='pending');
+  const pctG=pct(total,totalObj);
+
+  // Chart data par mois
+  const parMois={};
+  conf.forEach(c=>{const m=(c.date||'').substring(0,7);if(m)parMois[m]=(parMois[m]||0)+c.montant;});
+  const months=Object.keys(parMois).sort().slice(-6);
+  const maxVal=Math.max(...months.map(m=>parMois[m]),1);
+
+  // Activité récente
+  const recentes=[
+    ...conf.slice(-5).map(c=>({t:'cot',nom:c.nom,txt:`a cotisé ${fmtNum(c.montant)} FCFA`,coop:DB.cooperatives.find(cp=>cp.id===c.coopId)?.nom||'',date:c.createdAt})),
+    ...DB.votes.filter(v=>v.statut==='actif').slice(-3).map(v=>({t:'vote',nom:'Admin',txt:`a créé un vote : "${v.question.substring(0,40)}…"`,coop:DB.cooperatives.find(c=>c.id===v.coopId)?.nom||'',date:v.createdAt})),
+    ...DB.cooperatives.slice(-2).map(c=>({t:'coop',nom:'Admin',txt:`a créé la coopérative "${c.nom}"`,coop:'',date:c.createdAt+'T00:00:00Z'}))
+  ].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
+
+  document.getElementById('page-home').innerHTML=`
+    <div class="ph ph-row">
+      <div><h2>Tableau de bord 🌿</h2><p>Bienvenue, <strong>${user?.nom||'Membre'}</strong> — voici l'état de votre plateforme CoopÉnergie.</p></div>
+      <div class="ph-actions">
+        ${isAdmin()?`<button class="btn btn-p" onclick="openModal('modal-coop')">+ Coopérative</button>`:''}
+        <button class="btn btn-s" onclick="gotoPage('rapport',document.querySelectorAll('.nbtn')[4])">📊 Rapport</button>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card g"><div class="stat-icon">🌿</div><div class="stat-num g">${DB.cooperatives.length}</div><div class="stat-lbl">Coopératives actives</div><div class="stat-sub muted">📍 ${[...new Set(DB.cooperatives.map(c=>c.lieu.split(',')[0]))].join(', ')}</div></div>
+      <div class="stat-card g"><div class="stat-icon">👥</div><div class="stat-num g">${DB.membres.length}</div><div class="stat-lbl">Membres enregistrés</div><div class="stat-sub up">↑ Croissance active</div></div>
+      <div class="stat-card s"><div class="stat-icon">💰</div><div class="stat-num s">${fmtK(total)}</div><div class="stat-lbl">FCFA collectés sur ${fmtK(totalObj)}</div><div class="stat-sub ${pctG>=75?'up':'warn'}">↑ ${pctG}% de l'objectif global</div></div>
+      <div class="stat-card ${pending.length>0?'s':'g'}"><div class="stat-icon">${pending.length>0?'⏳':'✅'}</div><div class="stat-num ${pending.length>0?'s':'g'}">${pending.length}</div><div class="stat-lbl">Cotisation${pending.length>1?'s':''} en attente</div><div class="stat-sub ${pending.length>0?'warn':'muted'}">${conf.length} validée${conf.length>1?'s':''} au total</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:28px;">
+      <div class="chart-wrap">
+        <div class="chart-title">
+          <span>📈 Évolution des cotisations (6 derniers mois)</span>
+          <div class="chart-legend"><div class="chart-legend-item"><div class="chart-dot" style="background:var(--green)"></div>Montant FCFA</div></div>
+        </div>
+        ${months.length>0?`
+        <svg class="chart" viewBox="0 0 500 160" preserveAspectRatio="xMidYMid meet">
+          <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--green)" stop-opacity=".25"/><stop offset="100%" stop-color="var(--green)" stop-opacity="0"/></linearGradient></defs>
+          ${months.map((m,i)=>{
+            const bw=60,gap=18,bh=Math.max(8,Math.round((parMois[m]/maxVal)*120)),x=i*(bw+gap),y=140-bh;
+            const lbl=m.substring(5)+'/'+m.substring(2,4);
+            return `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="6" fill="var(--green)" opacity=".85"/>
+            <rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="6" fill="url(#chartGrad)"/>
+            <text x="${x+bw/2}" y="${y-5}" text-anchor="middle" font-size="9" fill="var(--green)" font-weight="700">${fmtK(parMois[m])}</text>
+            <text x="${x+bw/2}" y="155" text-anchor="middle" font-size="9" fill="var(--text-faint)">${lbl}</text>`;
+          }).join('')}
+        </svg>`:`<div class="empty"><div class="ei">📊</div><p>Pas encore de données</p></div>`}
+      </div>
+      <div class="chart-wrap" style="padding:24px;">
+        <div class="chart-title" style="margin-bottom:16px;">🎯 Progression globale</div>
+        ${DB.cooperatives.map(c=>{
+          const p=pct(c.collecte,c.objectif);
+          return `<div style="margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-weight:600;color:var(--text)">${c.nom.split(' ').slice(0,2).join(' ')}</span><span style="color:var(--green);font-weight:700;">${p}%</span></div>
+            <div class="prog-wrap"><div class="prog-fill ${p>=100?'full':''}" style="width:${p}%"></div></div>
+            <div style="font-size:10px;color:var(--text-faint);margin-top:2px;">${fmtNum(c.collecte)} / ${fmtNum(c.objectif)} FCFA</div>
+          </div>`;
+        }).join('')}
+        ${DB.cooperatives.some(c=>pct(c.collecte,c.objectif)>=100)?`<div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:10px;font-size:12px;color:var(--sun-deep);font-weight:600;margin-top:8px;">🎉 Objectif atteint ! Procéder à l'achat.</div>`:''}
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:18px;margin-bottom:16px;">🌿 Coopératives</div>
+        <div class="coop-grid">
+          ${DB.cooperatives.map(c=>{
+            const p=pct(c.collecte,c.objectif);
+            const full=c.membres>=c.maxMembres;
+            return `<div class="coop-card" style="cursor:pointer;" onclick="showCoopDetail('${c.id}')">
+              ${full?'<div class="coop-full-badge">COMPLET</div>':''}
+              <div class="coop-card-top"><div class="coop-name">${c.nom}</div></div>
+              <div class="coop-lieu">📍 ${c.lieu}</div>
+              <div class="prog-wrap"><div class="prog-fill ${p>=100?'full':''}" style="width:${p}%"></div></div>
+              <div class="coop-amounts"><span class="col">💰 ${fmtK(c.collecte)} FCFA</span><span class="tgt">${p}% sur ${fmtK(c.objectif)}</span></div>
+              <div class="coop-meta">
+                <span class="coop-meta-tag">👥 ${c.membres}/${c.maxMembres}</span>
+                <span class="coop-meta-tag">💵 Min ${fmtNum(c.cotMin)} F</span>
+              </div>
+              <div class="coop-actions">
+                <button class="btn btn-p btn-sm" onclick="event.stopPropagation();preselectCotiser('${c.id}')">💰 Cotiser</button>
+                <button class="btn btn-s btn-sm" onclick="event.stopPropagation();showCoopDetail('${c.id}')">📋 Détails</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:18px;margin-bottom:16px;">🕐 Activité récente</div>
+        <div class="activity-feed">
+          ${recentes.map(a=>`<div class="activity-item">
+            <div class="act-icon ${a.t==='cot'?'g':a.t==='vote'?'b':'s'}">${a.t==='cot'?'💰':a.t==='vote'?'🗳️':'🌿'}</div>
+            <div class="act-info">
+              <div class="act-txt"><strong>${escHtml(a.nom)}</strong> ${a.txt}${a.coop?` <span style="color:var(--green)">· ${a.coop}</span>`:''}.</div>
+              <div class="act-time">${timeAgo(a.date)}</div>
+            </div>
+          </div>`).join('')}
+          ${recentes.length===0?'<div class="empty"><div class="ei">🌿</div><p>Aucune activité récente</p></div>':''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ══ COOP DETAIL ══
+function showCoopDetail(id) {
+  const c=DB.cooperatives.find(cp=>cp.id===id);
+  if(!c) return;
+  const p=pct(c.collecte,c.objectif);
+  const coopCots=DB.cotisations.filter(ct=>ct.coopId===id&&ct.statut==='confirme');
+  const coopMems=DB.membres.filter(m=>m.coopId===id);
+  const coopVotes=DB.votes.filter(v=>v.coopId===id);
+  const coopBC=DB.blockchain.filter(b=>b.desc&&b.desc.includes(c.nom));
+  document.getElementById('md-title').textContent=c.nom;
+  document.getElementById('md-content').innerHTML=`
+    <div class="coop-detail-header">
+      <div class="cdh-title">${c.nom}</div>
+      <div class="cdh-lieu">📍 ${c.lieu}</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;">${c.description||''}</div>
+      <div class="cdh-prog-wrap"><div class="cdh-prog-fill" style="width:${p}%"></div></div>
+      <div class="cdh-amounts"><span class="cdh-col">${fmtNum(c.collecte)} FCFA</span><span class="cdh-tgt">/ ${fmtNum(c.objectif)} FCFA (${p}%)</span></div>
+    </div>
+    <div class="detail-tabs">
+      <button class="dtab active" onclick="switchDtab('dc-mems',this)">👥 Membres (${coopMems.length})</button>
+      <button class="dtab" onclick="switchDtab('dc-cots',this)">💰 Cotisations (${coopCots.length})</button>
+      <button class="dtab" onclick="switchDtab('dc-votes',this)">🗳️ Votes (${coopVotes.length})</button>
+    </div>
+    <div id="dc-mems" class="dtab-content active">
+      ${coopMems.length===0?'<div class="empty"><p>Aucun membre</p></div>':coopMems.map(m=>`<div class="cot-item"><div class="cot-av">${getInitials(m.nom)}</div><div class="cot-info"><div class="cot-name">${m.nom}</div><div class="cot-detail">📱 ${m.tel} · Inscrit le ${m.createdAt}</div></div></div>`).join('')}
+    </div>
+    <div id="dc-cots" class="dtab-content">
+      ${coopCots.length===0?'<div class="empty"><p>Aucune cotisation validée</p></div>':coopCots.map(c=>`<div class="cot-item"><div class="cot-av">${getInitials(c.nom)}</div><div class="cot-info"><div class="cot-name">${c.nom}</div><div class="cot-detail">${c.date} · Txn: ${c.txn}</div></div><div class="cot-right"><div class="cot-amt">+${fmtNum(c.montant)} F</div></div></div>`).join('')}
+    </div>
+    <div id="dc-votes" class="dtab-content">
+      ${coopVotes.length===0?'<div class="empty"><p>Aucun vote</p></div>':coopVotes.map(v=>{
+        const tot=v.votes.reduce((s,x)=>s+x,0)||1;
+        return `<div style="background:var(--sand);border-radius:14px;padding:16px;margin-bottom:10px;"><div style="font-weight:700;margin-bottom:8px;">${v.question}</div>${v.options.map((o,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:5px;font-size:13px;"><div style="flex:1">${o}</div><strong style="color:var(--green)">${Math.round(v.votes[i]/tot*100)}%</strong></div>`).join('')}<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Fin : ${v.fin} · ${v.statut==='actif'?'🟢 Actif':'⚫ Terminé'}</div></div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-p" onclick="closeModal('modal-coop-detail');preselectCotiser('${c.id}')">💰 Cotiser</button>
+      ${isAdmin()?`<a href="${API.replace('/api','')}/api/export/rapport/${c.id}" target="_blank" class="btn btn-s">📄 Rapport PDF</a>`:''}
+    </div>`;
+  openModal('modal-coop-detail');
+}
+function switchDtab(id, btn) {
+  document.querySelectorAll('.dtab-content').forEach(d=>d.classList.remove('active'));
+  document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ COOPS PAGE ══
+function renderCoops() {
+  document.getElementById('page-coops').innerHTML=`
+    <div class="ph ph-row">
+      <div><h2>🌿 Coopératives solaires</h2><p>Toutes les coopératives actives sur CoopÉnergie.</p></div>
+      <div class="ph-actions">${isAdmin()?`<button class="btn btn-p" onclick="openModal('modal-coop')">+ Créer</button>`:''}</div>
+    </div>
+    <div class="search-bar">
+      <div class="search-wrap" style="flex:2"><input class="search-input" id="coops-search" placeholder="Rechercher une coopérative…" oninput="filterCoops()"></div>
+      <select class="filter-select" id="coops-sort" onchange="filterCoops()">
+        <option value="nom">Trier par nom</option>
+        <option value="prog">Trier par progression</option>
+        <option value="membres">Trier par membres</option>
+        <option value="objectif">Trier par objectif</option>
+      </select>
+      <select class="filter-select" id="coops-filter" onchange="filterCoops()">
+        <option value="all">Tous</option>
+        <option value="actif">Actifs</option>
+        <option value="full">Complets</option>
+        <option value="presque">≥ 75%</option>
+      </select>
+    </div>
+    <div id="coops-list" class="coop-grid"></div>`;
+  filterCoops();
+}
+function filterCoops() {
+  const q=(document.getElementById('coops-search')?.value||'').toLowerCase();
+  const sort=document.getElementById('coops-sort')?.value||'nom';
+  const filter=document.getElementById('coops-filter')?.value||'all';
+  let coops=[...DB.cooperatives];
+  if(q) coops=coops.filter(c=>c.nom.toLowerCase().includes(q)||c.lieu.toLowerCase().includes(q)||(c.description||'').toLowerCase().includes(q));
+  if(filter==='full') coops=coops.filter(c=>c.membres>=c.maxMembres);
+  else if(filter==='presque') coops=coops.filter(c=>pct(c.collecte,c.objectif)>=75);
+  if(sort==='prog') coops.sort((a,b)=>pct(b.collecte,b.objectif)-pct(a.collecte,a.objectif));
+  else if(sort==='membres') coops.sort((a,b)=>b.membres-a.membres);
+  else if(sort==='objectif') coops.sort((a,b)=>b.objectif-a.objectif);
+  else coops.sort((a,b)=>a.nom.localeCompare(b.nom));
+  const container=document.getElementById('coops-list');
+  if(!container) return;
+  if(coops.length===0) { container.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>Aucune coopérative trouvée</h3><p>Modifiez vos filtres.</p></div>'; return; }
+  container.innerHTML=coops.map(c=>{
+    const p=pct(c.collecte,c.objectif);
+    const full=c.membres>=c.maxMembres;
+    const coopCots=DB.cotisations.filter(ct=>ct.coopId===c.id&&ct.statut==='confirme').length;
+    return `<div class="coop-card" style="cursor:pointer;" onclick="showCoopDetail('${c.id}')">
+      ${full?'<div class="coop-full-badge">COMPLET</div>':''}
+      <div class="coop-card-top"><div class="coop-name">${c.nom}</div><span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-pale);padding:3px 9px;border-radius:100px;">● Actif</span></div>
+      <div class="coop-lieu">📍 ${c.lieu}</div>
+      ${c.description?`<div class="coop-desc-text">${c.description}</div>`:''}
+      <div class="prog-wrap"><div class="prog-fill ${p>=100?'full':''}" style="width:${p}%"></div></div>
+      <div class="coop-amounts"><span class="col">💰 ${fmtNum(c.collecte)} FCFA</span><span class="tgt">${p}% / ${fmtNum(c.objectif)} FCFA</span></div>
+      <div class="coop-meta">
+        <span class="coop-meta-tag">👥 ${c.membres}/${c.maxMembres}</span>
+        <span class="coop-meta-tag">💵 Min ${fmtNum(c.cotMin)} F</span>
+        <span class="coop-meta-tag">✅ ${coopCots} cotisation${coopCots>1?'s':''}</span>
+      </div>
+      <div class="coop-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-p btn-sm" onclick="preselectCotiser('${c.id}')">💰 Cotiser</button>
+        <button class="btn btn-s btn-sm" onclick="showCoopDetail('${c.id}')">📋 Détails</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function preselectCotiser(id) {
+  gotoPage('cotiser',document.querySelectorAll('.nbtn')[2]);
+  setTimeout(()=>{const s=document.getElementById('cot-coop');if(s)s.value=id;},100);
+}
+
+// ══ COTISER ══
+function renderCotiser() {
+  const myTel=user?.tel||''; const myName=user?.nom||''; const myEmail=user?.email||'';
+  const myCots=DB.cotisations.filter(c=>c.userId===user?.id||c.tel===myTel);
+  const coopOptions=DB.cooperatives.map(c=>`<option value="${c.id}">${c.nom}</option>`).join('');
+  document.getElementById('page-cotiser').innerHTML=`
+    <div class="ph"><h2>💰 Soumettre une cotisation</h2><p>Effectuez votre virement via Orange Money puis remplissez ce formulaire avec le numéro de transaction reçu par SMS.</p></div>
+    <div class="cotiser-grid">
+      <div>
+        <div class="form-sec" style="margin-bottom:22px;">
+          <h3>📝 Formulaire de cotisation</h3>
+          <div class="irow">
+            <div class="ig"><label>Nom complet *</label><input type="text" id="cot-nom" value="${myName}" placeholder="Jean Dupont"><div class="ig-err" id="err-cot-nom">Champ requis</div></div>
+            <div class="ig"><label>Téléphone *</label><input type="tel" id="cot-tel" value="${myTel}" placeholder="699 000 000"><div class="ig-err" id="err-cot-tel">Numéro invalide (6XXXXXXXX)</div></div>
+          </div>
+          <div class="ig"><label>Email</label><input type="email" id="cot-email" value="${myEmail}" placeholder="email@exemple.com"></div>
+          <div class="ig"><label>Coopérative *</label><select id="cot-coop">${coopOptions}</select></div>
+          <div class="irow">
+            <div class="ig">
+              <label>Montant (FCFA) *</label>
+              <input type="number" id="cot-montant" placeholder="10 000" min="500" oninput="updateCoopMin()">
+              <div class="ig-hint" id="cot-min-hint">Minimum selon la coopérative sélectionnée</div>
+              <div class="ig-err" id="err-cot-montant">Montant insuffisant</div>
+            </div>
+            <div class="ig"><label>N° Transaction Orange Money *</label><input type="text" id="cot-txn" placeholder="OM26XXXXXX"><div class="ig-err" id="err-cot-txn">Numéro de transaction requis</div></div>
+          </div>
+          <div class="ig"><label>Message (optionnel)</label><textarea id="cot-msg" rows="2" placeholder="Cotisation du mois d'avril…"></textarea></div>
+          <button class="btn btn-sun btn-lg" onclick="submitCotisation()" style="width:100%;">📤 Soumettre ma cotisation</button>
+          <div id="cot-result" class="form-result"></div>
+        </div>
+        ${myCots.length>0?`
+        <div class="card card-p">
+          <div class="cot-hist"><h3>📋 Mes cotisations (${myCots.length})</h3>
+          ${myCots.slice(0,10).map(c=>{
+            const coop=DB.cooperatives.find(cp=>cp.id===c.coopId);
+            return `<div class="cot-item"><div class="cot-av">${getInitials(c.nom)}</div><div class="cot-info"><div class="cot-name">${coop?.nom||c.coopId}</div><div class="cot-detail">${c.date} · ${c.txn}${c.message?` · "${c.message}"`:''}</div></div><div class="cot-right"><div class="cot-amt">+${fmtNum(c.montant)} F</div><span class="pill pill-${c.statut==='confirme'?'ok':c.statut==='pending'?'wait':'rej'}">${c.statut==='confirme'?'✅ Validé':c.statut==='pending'?'⏳ En attente':'❌ Rejeté'}</span></div></div>`;
+          }).join('')}
+          </div>
+        </div>`:''}
+      </div>
+      <div>
+        <div class="om-card">
+          <h3>📱 Payer via Orange Money</h3>
+          <div class="om-num" onclick="copyToClipboard('698123456','Numéro OM')" title="Cliquer pour copier">698 123 456</div>
+          <div class="om-copy-hint">👆 Cliquer pour copier le numéro</div>
+          <div class="om-name">CoopÉnergie Admin</div>
+          <div class="om-steps">
+            <div class="om-step"><div class="om-step-n">1</div><p>Composez <strong style="color:var(--sun)">#150*1*1*698123456*MONTANT#</strong> ou utilisez l'appli Orange Money</p></div>
+            <div class="om-step"><div class="om-step-n">2</div><p>Notez le <strong style="color:var(--sun)">numéro de transaction</strong> reçu par SMS (ex: OM26XXXXXX)</p></div>
+            <div class="om-step"><div class="om-step-n">3</div><p>Remplissez le formulaire et soumettez — un admin validera sous 24h maximum</p></div>
+          </div>
+        </div>
+        <div class="card card-p" style="margin-top:20px;">
+          <h3 style="font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:14px;">📊 Cotisations de la coopérative sélectionnée</h3>
+          <div id="coop-cots-preview">Sélectionnez une coopérative</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('cot-coop')?.addEventListener('change',()=>{updateCoopMin();updateCoopCotsPreview();});
+  updateCoopMin(); updateCoopCotsPreview();
+}
+
+function updateCoopMin() {
+  const sel=document.getElementById('cot-coop');
+  if(!sel) return;
+  const coop=DB.cooperatives.find(c=>c.id===sel.value);
+  const hint=document.getElementById('cot-min-hint');
+  if(hint&&coop) hint.textContent=`Minimum : ${fmtNum(coop.cotMin)} FCFA pour "${coop.nom}"`;
+}
+function updateCoopCotsPreview() {
+  const sel=document.getElementById('cot-coop');
+  const el=document.getElementById('coop-cots-preview');
+  if(!sel||!el) return;
+  const coop=DB.cooperatives.find(c=>c.id===sel.value);
+  if(!coop) { el.innerHTML='Sélectionnez une coopérative'; return; }
+  const cots=DB.cotisations.filter(c=>c.coopId===coop.id&&c.statut==='confirme').slice(0,5);
+  el.innerHTML=cots.length===0?'<div style="color:var(--text-muted);font-size:13px;">Aucune cotisation validée pour l\'instant</div>':cots.map(c=>`<div class="cot-item"><div class="cot-av">${getInitials(c.nom)}</div><div class="cot-info"><div class="cot-name">${c.nom}</div><div class="cot-detail">${c.date}</div></div><div class="cot-amt">+${fmtNum(c.montant)} F</div></div>`).join('');
+}
+
+async function submitCotisation() {
+  const nom=document.getElementById('cot-nom').value.trim();
+  const tel=document.getElementById('cot-tel').value.trim().replace(/\s/g,'');
+  const email=document.getElementById('cot-email').value.trim();
+  const coopId=document.getElementById('cot-coop').value;
+  const montant=parseInt(document.getElementById('cot-montant').value);
+  const txn=document.getElementById('cot-txn').value.trim();
+  const msg=document.getElementById('cot-msg').value.trim();
+  const result=document.getElementById('cot-result');
+  // Validation
+  let valid=true;
+  if(!nom) { document.getElementById('err-cot-nom').classList.add('show'); valid=false; } else document.getElementById('err-cot-nom').classList.remove('show');
+  if(!tel) { document.getElementById('err-cot-tel').classList.add('show'); valid=false; } else document.getElementById('err-cot-tel').classList.remove('show');
+  if(!txn) { document.getElementById('err-cot-txn').classList.add('show'); valid=false; } else document.getElementById('err-cot-txn').classList.remove('show');
+  const coop=DB.cooperatives.find(c=>c.id===coopId);
+  if(!montant||isNaN(montant)||(coop&&montant<coop.cotMin)) { document.getElementById('err-cot-montant').classList.add('show'); valid=false; } else document.getElementById('err-cot-montant').classList.remove('show');
+  if(!valid) { result.className='form-result err'; result.textContent='❌ Veuillez corriger les erreurs ci-dessus.'; return; }
+  try {
+    const r=await fetch(API+'/cotisations',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({nom,tel,email,coopId,montant,txn,message:msg})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error||'Erreur');
+    result.className='form-result ok'; result.textContent='✅ Cotisation soumise ! Un admin la validera sous 24h.';
+    document.getElementById('cot-txn').value=''; document.getElementById('cot-montant').value=''; document.getElementById('cot-msg').value='';
+    toast('Cotisation soumise avec succès !','ok');
+    loadData();
+  } catch(e) { result.className='form-result err'; result.textContent='❌ '+e.message; }
+}
+
+// ══ VOTES ══
+function renderVotes() {
+  const actifs=DB.votes.filter(v=>v.statut==='actif');
+  const clos=DB.votes.filter(v=>v.statut!=='actif');
+  document.getElementById('page-vote').innerHTML=`
+    <div class="ph ph-row">
+      <div><h2>🗳️ Votes en cours</h2><p>Chaque vote est enregistré de façon immuable sur la blockchain. 1 membre = 1 vote par scrutin.</p></div>
+    </div>
+    ${actifs.length===0?`<div class="empty"><div class="ei">🗳️</div><h3>Aucun vote actif</h3><p>Les admins peuvent créer des votes depuis le panneau d'administration.</p></div>`
+    :actifs.map(v=>{
+      const coop=DB.cooperatives.find(c=>c.id===v.coopId);
+      const tot=v.votes.reduce((s,x)=>s+x,0)||1;
+      const hasVoted=v.voters?.includes(user?.id);
+      const fin=new Date(v.fin);
+      const msLeft=fin-Date.now();
+      const daysLeft=Math.max(0,Math.ceil(msLeft/86400000));
+      const timerTxt=daysLeft>0?`${daysLeft}j restant${daysLeft>1?'s':''}`:msLeft>0?'Dernières heures !':'Expiré';
+      return `<div class="vote-card">
+        <div class="vote-header">
+          <div class="vote-q">🗳️ ${v.question}</div>
+          <span class="pill pill-ok">● Actif</span>
+        </div>
+        <div class="vote-meta-row">
+          <span class="vote-meta-item">📍 ${coop?.nom||v.coopId}</span>
+          <span class="vote-meta-item">📅 Clôture le ${v.fin}</span>
+          <span class="vote-meta-item">🗳️ ${v.votes.reduce((s,x)=>s+x,0)} vote${v.votes.reduce((s,x)=>s+x,0)>1?'s':''}</span>
+          <span class="vote-timer">⏱️ ${timerTxt}</span>
+          ${hasVoted?`<span class="voted-badge">✅ Vous avez voté</span>`:''}
+        </div>
+        <div class="vote-opts">
+          ${v.options.map((opt,i)=>{
+            const p2=Math.round(v.votes[i]/tot*100);
+            return `<div class="vopt" onclick="${hasVoted?'':(`doVote('${v.id}',${i})`)}">
+              <div class="vfill" style="width:${p2}%"></div>
+              <div class="vopt-content">
+                <div class="vradio"></div>
+                <div class="vopt-text">${opt}</div>
+              </div>
+              <div class="vopt-pct">${p2}%</div>
+              <div class="vopt-count">${v.votes[i]}v</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="vote-actions">
+          ${!hasVoted?v.options.map((opt,i)=>`<button class="btn btn-p btn-sm" onclick="doVote('${v.id}',${i})">→ ${opt.substring(0,25)}${opt.length>25?'…':''}</button>`).join(''):'<span style="font-size:13px;color:var(--text-muted);">✅ Vote enregistré sur blockchain</span>'}
+          <button class="vote-share-btn" onclick="copyToClipboard(window.location.href+'#vote-${v.id}','Lien du vote')">🔗 Partager</button>
+        </div>
+        <div style="margin-top:12px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-faint);"><span class="bc-dot"></span>Résultats enregistrés sur blockchain · immuables</div>
+      </div>`;
+    }).join('')}
+    ${clos.length>0?`<h3 style="font-family:var(--font-head);font-weight:700;font-size:18px;margin:28px 0 14px;">📁 Votes terminés</h3>
+    ${clos.map(v=>{
+      const tot=v.votes.reduce((s,x)=>s+x,0)||1;
+      const wi=v.votes.indexOf(Math.max(...v.votes));
+      return `<div class="vote-card" style="opacity:.65;"><div class="vote-header"><div class="vote-q">${v.question}</div><span class="pill pill-rej">Terminé</span></div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">🏆 Résultat : <strong>${v.options[wi]}</strong> (${Math.round(v.votes[wi]/tot*100)}% des votes)</div>
+      ${v.options.map((o,i)=>{const p2=Math.round(v.votes[i]/tot*100);return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:13px;"><div style="flex:1">${o}</div><div style="width:120px;height:6px;background:rgba(13,31,22,.08);border-radius:3px;overflow:hidden;"><div style="width:${p2}%;height:100%;background:${i===wi?'var(--green)':'rgba(13,31,22,.2)'};border-radius:3px;"></div></div><strong style="width:28px;text-align:right;color:${i===wi?'var(--green)':'var(--text-muted)'}">${p2}%</strong></div>`}).join('')}
+      </div>`;
+    }).join('')}`:''}`;
+}
+
+async function doVote(vid, idx) {
+  try {
+    const r=await fetch(API+'/votes/'+vid+'/voter',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({optionIndex:idx})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error||'Erreur');
+    toast('✅ Vote enregistré sur blockchain !','ok');
+    loadData();
+  } catch(e) { toast('❌ '+e.message,'err'); }
+}
+
+// ══ RAPPORT ══
+function renderRapport() {
+  const conf=DB.cotisations.filter(c=>c.statut==='confirme');
+  const total=DB.cooperatives.reduce((s,c)=>s+c.collecte,0);
+  const totalObj=DB.cooperatives.reduce((s,c)=>s+c.objectif,0);
+  const parMois={};
+  conf.forEach(c=>{const m=(c.date||'').substring(0,7);if(m)parMois[m]=(parMois[m]||0)+c.montant;});
+  const months=Object.keys(parMois).sort();
+  const moisRecentsMontants=months.slice(-3).map(m=>parMois[m]);
+  const moyMensuelle=moisRecentsMontants.length>0?moisRecentsMontants.reduce((s,x)=>s+x,0)/moisRecentsMontants.length:0;
+  const restant=totalObj-total;
+  const delaiSemaines=moyMensuelle>0?Math.ceil((restant/moyMensuelle)*4.3):null;
+
+  document.getElementById('page-rapport').innerHTML=`
+    <div class="ph ph-row">
+      <div><h2>📊 Rapport automatique</h2><p>Analyse complète de l'état des coopératives, du plan d'achat recommandé et du délai estimé.</p></div>
+      <div class="ph-actions">
+        <a href="${API.replace('/api','')}/api/export/rapport" target="_blank" class="btn btn-p">📄 Télécharger PDF global</a>
+      </div>
+    </div>
+    <div class="rapport-card">
+      <h3>📈 Vue d'ensemble de la collecte</h3>
+      <p>Résumé consolidé de toutes les coopératives CoopÉnergie au ${new Date().toLocaleDateString('fr-FR')}.</p>
+      <div class="rapport-stats">
+        <div class="rs-item"><div class="rs-n">${fmtK(total)}</div><div class="rs-l">FCFA collectés</div></div>
+        <div class="rs-item"><div class="rs-n">${pct(total,totalObj)}%</div><div class="rs-l">De l'objectif global</div></div>
+        <div class="rs-item"><div class="rs-n">${conf.length}</div><div class="rs-l">Cotisations validées</div></div>
+        <div class="rs-item"><div class="rs-n">${DB.membres.length}</div><div class="rs-l">Membres actifs</div></div>
+        <div class="rs-item"><div class="rs-n">${fmtK(moyMensuelle)}</div><div class="rs-l">FCFA/mois en moyenne</div></div>
+      </div>
+      ${delaiSemaines!==null?`<div class="delai-card">
+        <div class="delai-n">${delaiSemaines}sem</div>
+        <div class="delai-info"><p><strong style="color:var(--sun)">Délai estimé</strong> pour atteindre l'objectif global.<br>Basé sur la moyenne de collecte des 3 derniers mois : <strong style="color:white">${fmtK(moyMensuelle)} FCFA/mois</strong>.</p></div>
+      </div>`:''}
+    </div>
+
+    ${DB.cooperatives.map(c=>{
+      const p=pct(c.collecte,c.objectif);
+      const coopConf=conf.filter(ct=>ct.coopId===c.id);
+      const coopParMois={};
+      coopConf.forEach(ct=>{const m=(ct.date||'').substring(0,7);if(m)coopParMois[m]=(coopParMois[m]||0)+ct.montant;});
+      const moisC=Object.keys(coopParMois).sort().slice(-3);
+      const moyC=moisC.length>0?moisC.reduce((s,m)=>s+coopParMois[m],0)/moisC.length:0;
+      const restC=c.objectif-c.collecte;
+      const delC=moyC>0?Math.ceil((restC/moyC)*4.3):null;
+      return `<div class="card card-p" style="margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div><div style="font-family:var(--font-head);font-weight:700;font-size:20px;">${c.nom}</div><div style="font-size:13px;color:var(--text-muted);">📍 ${c.lieu} · ${c.membres}/${c.maxMembres} membres</div></div>
+          <a href="${API.replace('/api','')}/api/export/rapport/${c.id}" target="_blank" class="btn btn-s btn-sm">📄 PDF</a>
+        </div>
+        <div class="prog-wrap" style="height:10px;margin-bottom:8px;"><div class="prog-fill ${p>=100?'full':''}" style="width:${p}%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:20px;"><span style="color:var(--green);font-weight:700;">${fmtNum(c.collecte)} FCFA collectés</span><span style="color:var(--text-muted);">${p}% de ${fmtNum(c.objectif)} FCFA</span></div>
+        <div class="plan-achat">
+          <div class="pa-title">📋 Plan d'achat recommandé</div>
+          ${p>=100?'<div class="pa-item">🎉 Objectif atteint ! Procéder immédiatement à l\'achat de l\'équipement voté.</div>':`
+          <div class="pa-item">Il reste <strong>${fmtNum(restC)} FCFA</strong> à collecter avant achat.</div>
+          ${c.membres<c.maxMembres?`<div class="pa-item">${c.maxMembres-c.membres} place(s) disponible(s) — chaque nouveau membre peut apporter min. ${fmtNum(c.cotMin)} FCFA.</div>`:''}
+          ${delC?`<div class="pa-item">Au rythme actuel (${fmtK(moyC)}/mois), l'objectif sera atteint dans environ <strong>${delC} semaine${delC>1?'s':''}</strong>.</div>`:'<div class="pa-item">Démarrer la collecte pour estimer le délai.</div>'}
+          ${p>=60?`<div class="pa-item">💡 Envisagez d'ouvrir un vote pour choisir l'équipement à acheter avec ${fmtK(c.collecte)} FCFA déjà disponibles.</div>`:''}`}
+        </div>
+        ${coopConf.length>0?`<div style="margin-top:14px;"><div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Dernières cotisations validées</div>${coopConf.slice(-3).map(ct=>`<div class="cot-item"><div class="cot-av">${getInitials(ct.nom)}</div><div class="cot-info"><div class="cot-name">${ct.nom}</div><div class="cot-detail">${ct.date}</div></div><div class="cot-amt">+${fmtNum(ct.montant)} F</div></div>`).join('')}</div>`:''}
+      </div>`;
+    }).join('')}`;
+}
+
+// ══ ADMIN ══
+function renderAdmin() {
+  const pending=DB.cotisations.filter(c=>c.statut==='pending');
+  const conf=DB.cotisations.filter(c=>c.statut==='confirme');
+  const rej=DB.cotisations.filter(c=>c.statut==='rejected');
+  const tauxConf=DB.cotisations.length>0?Math.round(conf.length/DB.cotisations.length*100):0;
+  const tauxRej=DB.cotisations.length>0?Math.round(rej.length/DB.cotisations.length*100):0;
+  const montantMoyen=conf.length>0?Math.round(conf.reduce((s,c)=>s+c.montant,0)/conf.length):0;
+  document.getElementById('page-admin').innerHTML=`
+    <div class="ph ph-row">
+      <div><h2>⚙️ Administration</h2><p>Gérez paiements, membres, votes et coopératives.</p></div>
+      <div class="ph-actions">
+        <a href="${API.replace('/api','')}/api/export/rapport" target="_blank" class="btn btn-s">📄 Rapport global PDF</a>
+      </div>
+    </div>
+    <div class="stats-grid" style="margin-bottom:20px;">
+      <div class="stat-card s"><div class="stat-icon">⏳</div><div class="stat-num s">${pending.length}</div><div class="stat-lbl">En attente</div></div>
+      <div class="stat-card g"><div class="stat-icon">✅</div><div class="stat-num g">${conf.length}</div><div class="stat-lbl">Confirmées</div></div>
+      <div class="stat-card g"><div class="stat-icon">💰</div><div class="stat-num g">${fmtK(conf.reduce((s,c)=>s+c.montant,0))}</div><div class="stat-lbl">FCFA validés</div></div>
+      <div class="stat-card b"><div class="stat-icon">👥</div><div class="stat-num b">${DB.membres.length}</div><div class="stat-lbl">Membres</div></div>
+    </div>
+    <div class="admin-kpi">
+      <div class="kpi-card"><div class="kpi-n" style="color:var(--green)">${tauxConf}%</div><div class="kpi-l">Taux de validation</div></div>
+      <div class="kpi-card"><div class="kpi-n" style="color:#e74c3c">${tauxRej}%</div><div class="kpi-l">Taux de rejet</div></div>
+      <div class="kpi-card"><div class="kpi-n">${fmtK(montantMoyen)}</div><div class="kpi-l">Montant moyen / cotisation</div></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="atab active" onclick="switchAtab('a-pay',this)">💰 Paiements (${pending.length})</button>
+      <button class="atab" onclick="switchAtab('a-mems',this)">👥 Membres</button>
+      <button class="atab" onclick="switchAtab('a-vote',this)">🗳️ Créer un vote</button>
+      <button class="atab" onclick="switchAtab('a-coop',this)">🌿 Créer une coop.</button>
+      <button class="atab" onclick="switchAtab('a-export',this)">📤 Exports</button>
+    </div>
+
+    <div id="a-pay" class="asec active">
+      <div class="admin-search">
+        <div class="search-wrap" style="flex:1"><input class="search-input" id="pay-search" placeholder="Rechercher un paiement…" oninput="filterPayments()"></div>
+        <select class="filter-select" id="pay-sort" onchange="filterPayments()"><option value="date">Plus récent</option><option value="montant">Montant</option></select>
+      </div>
+      <div id="pay-list"></div>
+    </div>
+
+    <div id="a-mems" class="asec">
+      <div class="admin-search"><div class="search-wrap" style="flex:1"><input class="search-input" id="mem-search" placeholder="Rechercher un membre…" oninput="filterMembers()"></div></div>
+      <div class="tbl-wrap">
+        <div class="tbl-head tbl-5"><div>Membre</div><div>Téléphone</div><div class="hide-m">Coopérative</div><div class="hide-m">Inscrit</div><div>Cotisations</div></div>
+        <div id="mem-list"></div>
+      </div>
+    </div>
+
+    <div id="a-vote" class="asec">
+      <div class="form-sec" style="max-width:600px;">
+        <h3>🗳️ Créer un vote</h3>
+        <div class="ig"><label>Question *</label><input type="text" id="vq" placeholder="Quel équipement acheter en premier ?"></div>
+        <div class="irow">
+          <div class="ig"><label>Coopérative *</label><select id="vcoop">${DB.cooperatives.map(c=>`<option value="${c.id}">${c.nom}</option>`).join('')}</select></div>
+          <div class="ig"><label>Date de clôture *</label><input type="date" id="vfin" min="${new Date().toISOString().split('T')[0]}"></div>
+        </div>
+        <div class="ig">
+          <label>Options *</label>
+          <div style="border:1.5px solid var(--border);border-radius:13px;overflow:hidden;">
+            ${[1,2,3,4].map(i=>`<div style="display:flex;align-items:center;border-bottom:${i<4?'1px solid var(--border)':'none'};"><div style="width:40px;height:44px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text-muted);border-right:1px solid var(--border);flex-shrink:0;">${i}</div><input type="text" id="vopt${i}" placeholder="Option ${i}${i>2?' (optionnel)':' *'}" style="border:none;padding:11px 14px;font-family:var(--font-body);font-size:14px;flex:1;outline:none;background:transparent;"></div>`).join('')}
+          </div>
+        </div>
+        <div class="irow">
+          <div class="ig"><label>Seuil de majorité (%)</label><input type="number" id="vseuil" value="50" min="1" max="100"></div>
+        </div>
+        <button class="btn btn-p" onclick="createVote()">🗳️ Publier le vote</button>
+        <div id="vote-create-result" class="form-result"></div>
+      </div>
+    </div>
+
+    <div id="a-coop" class="asec">
+      <div class="form-sec" style="max-width:600px;">
+        <h3>🌿 Créer une coopérative</h3>
+        <div class="ig"><label>Nom *</label><input type="text" id="ac-nom" placeholder="Coopérative Solaire…"></div>
+        <div class="irow">
+          <div class="ig"><label>Objectif (FCFA) *</label><input type="number" id="ac-obj" placeholder="500 000"></div>
+          <div class="ig"><label>Localité *</label><input type="text" id="ac-lieu" placeholder="Douala, Yaoundé…"></div>
+        </div>
+        <div class="irow">
+          <div class="ig"><label>Cotisation min. (FCFA)</label><input type="number" id="ac-cotmin" placeholder="5 000"></div>
+          <div class="ig"><label>Max membres</label><input type="number" id="ac-max" placeholder="20"></div>
+        </div>
+        <div class="ig"><label>Description</label><textarea id="ac-desc" rows="3" placeholder="Objectif…"></textarea></div>
+        <button class="btn btn-p" onclick="createCoopAdmin()">✅ Créer</button>
+        <div id="coop-admin-result" class="form-result"></div>
+      </div>
+    </div>
+
+    <div id="a-export" class="asec">
+      <div class="form-sec">
+        <h3>📤 Exports</h3>
+        <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">Téléchargez les rapports PDF ou exportez les données en CSV pour une analyse externe.</p>
+        <div class="export-row">
+          <a href="${API.replace('/api','')}/api/export/rapport" target="_blank" class="btn btn-p">📄 Rapport global PDF</a>
+          ${DB.cooperatives.map(c=>`<a href="${API.replace('/api','')}/api/export/rapport/${c.id}" target="_blank" class="btn btn-s">📄 ${c.nom.split(' ').slice(0,2).join(' ')} PDF</a>`).join('')}
+        </div>
+        <div style="margin-top:20px;">
+          <button class="btn btn-s" onclick="exportCSV('cotisations')">📊 Export CSV — Cotisations</button>
+          <button class="btn btn-s" style="margin-left:10px;" onclick="exportCSV('membres')">📊 Export CSV — Membres</button>
+        </div>
+        <div style="margin-top:16px;"><button class="btn btn-s" onclick="verifyBlockchain()">⛓️ Vérifier l'intégrité blockchain</button><span id="bc-verify-result" style="margin-left:12px;font-size:13px;"></span></div>
+      </div>
+    </div>`;
+  filterPayments(); filterMembers();
+}
+
+function switchAtab(id, btn) {
+  document.querySelectorAll('.asec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); btn.classList.add('active');
+}
+
+function filterPayments() {
+  const q=(document.getElementById('pay-search')?.value||'').toLowerCase();
+  const sort=document.getElementById('pay-sort')?.value||'date';
+  let pays=DB.cotisations.filter(c=>c.statut==='pending');
+  if(q) pays=pays.filter(c=>c.nom.toLowerCase().includes(q)||c.txn.toLowerCase().includes(q)||c.tel.includes(q));
+  if(sort==='montant') pays.sort((a,b)=>b.montant-a.montant);
+  else pays.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const el=document.getElementById('pay-list');
+  if(!el) return;
+  el.innerHTML=pays.length===0?'<div class="empty"><div class="ei">✅</div><h3>Aucun paiement en attente</h3><p>Tous les paiements ont été traités.</p></div>':
+    pays.map(c=>{
+      const coop=DB.cooperatives.find(cp=>cp.id===c.coopId);
+      return `<div class="pay-card">
+        <div class="cot-av" style="width:42px;height:42px;font-size:15px;">${getInitials(c.nom)}</div>
+        <div class="pay-info">
+          <div class="pay-name">${c.nom}</div>
+          <div class="pay-det">
+            <span>📱 ${c.tel}</span>
+            <span>🌿 ${coop?.nom||c.coopId}</span>
+            <span>🔢 Txn: <strong>${c.txn}</strong></span>
+            <span>📅 ${c.date}</span>
+            ${c.message?`<span>💬 "${c.message}"</span>`:''}
+          </div>
+        </div>
+        <div class="pay-amt">${fmtNum(c.montant)} FCFA</div>
+        <div class="pay-acts">
+          ${c.screenshot?`<button class="screenshot-btn" onclick="viewScreenshot('${c.id}')">📸 Preuve</button>`:''}
+          <button class="btn btn-p btn-sm" onclick="validatePay('${c.id}','confirm')">✅ Valider</button>
+          <button class="btn btn-danger btn-sm" onclick="validatePay('${c.id}','reject')">❌</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function filterMembers() {
+  const q=(document.getElementById('mem-search')?.value||'').toLowerCase();
+  let mems=[...DB.membres];
+  if(q) mems=mems.filter(m=>m.nom.toLowerCase().includes(q)||m.tel.includes(q)||(m.email||'').toLowerCase().includes(q));
+  const el=document.getElementById('mem-list');
+  if(!el) return;
+  el.innerHTML=mems.map(m=>{
+    const coop=DB.cooperatives.find(c=>c.id===m.coopId);
+    const nbCots=DB.cotisations.filter(c=>(c.userId===m.userId||c.tel===m.tel)&&c.statut==='confirme').length;
+    return `<div class="tbl-row tbl-5">
+      <div style="display:flex;align-items:center;gap:10px;"><div class="cot-av" style="width:32px;height:32px;font-size:11px;">${getInitials(m.nom)}</div><div><div style="font-weight:600;font-size:13px;">${m.nom}</div><div style="font-size:11px;color:var(--text-muted)">${m.email||''}</div></div></div>
+      <div style="font-size:13px;">${m.tel}</div>
+      <div class="hide-m" style="font-size:13px;">${coop?.nom||'-'}</div>
+      <div class="hide-m" style="font-size:12px;color:var(--text-muted)">${m.createdAt}</div>
+      <div><span class="pill pill-ok">${nbCots} validée${nbCots>1?'s':''}</span></div>
+    </div>`;
+  }).join('');
+}
+
+async function validatePay(id, action) {
+  try {
+    const r=await fetch(API+'/cotisations/'+id+'/valider',{method:'PATCH',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({action})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    toast(action==='confirm'?'✅ Paiement validé !':'❌ Paiement rejeté.',action==='confirm'?'ok':'warn');
+    loadData();
+  } catch(e) { toast('Erreur: '+e.message,'err'); }
+}
+
+function viewScreenshot(cotId) {
+  document.getElementById('screenshot-content').innerHTML='<div class="spin"></div>';
+  openModal('modal-screenshot');
+  const url=API.replace('/api','')+'/api/cotisations/'+cotId+'/screenshot';
+  document.getElementById('screenshot-content').innerHTML=`<img src="${url}" style="max-width:100%;border-radius:12px;" onerror="this.parentNode.innerHTML='<p style=\\'color:var(--text-muted);\\'>Aucune image disponible.</p>'">`;
+}
+
+function exportCSV(type) {
+  let rows, headers, filename;
+  if(type==='cotisations') {
+    headers=['ID','Nom','Tel','Email','Coopérative','Montant','Txn','Date','Statut'];
+    rows=DB.cotisations.map(c=>{const coop=DB.cooperatives.find(cp=>cp.id===c.coopId);return [c.id,c.nom,c.tel,c.email,coop?.nom||c.coopId,c.montant,c.txn,c.date,c.statut];});
+    filename='cotisations.csv';
+  } else {
+    headers=['ID','Nom','Tel','Email','Coopérative','Inscrit'];
+    rows=DB.membres.map(m=>{const coop=DB.cooperatives.find(c=>c.id===m.coopId);return [m.id,m.nom,m.tel,m.email,coop?.nom||m.coopId,m.createdAt];});
+    filename='membres.csv';
+  }
+  const csv=[headers.join(';'),...rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';'))].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+  toast(`📊 Export CSV ${type} téléchargé !`,'ok');
+}
+
+function verifyBlockchain() {
+  let valid=true;
+  for(let i=1;i<DB.blockchain.length;i++) {
+    if(DB.blockchain[i].prev!==DB.blockchain[i-1].hash) { valid=false; break; }
+  }
+  const el=document.getElementById('bc-verify-result');
+  el.textContent=valid?'✅ Chaîne intègre — aucune altération détectée.':'⚠️ Anomalie détectée dans la chaîne !';
+  el.style.color=valid?'var(--green)':'#e74c3c';
+}
+
+async function createVote() {
+  const q=document.getElementById('vq').value.trim();
+  const coopId=document.getElementById('vcoop').value;
+  const fin=document.getElementById('vfin').value;
+  const seuil=parseInt(document.getElementById('vseuil').value)||50;
+  const opts=[1,2,3,4].map(i=>document.getElementById('vopt'+i).value.trim()).filter(Boolean);
+  const res=document.getElementById('vote-create-result');
+  if(!q||!coopId||opts.length<2||!fin) { res.className='form-result err'; res.textContent='❌ Question, au moins 2 options et une date sont requis.'; return; }
+  try {
+    const r=await fetch(API+'/votes',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({question:q,coopId,options:opts,fin,seuil})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    res.className='form-result ok'; res.textContent='✅ Vote créé et publié sur la blockchain !';
+    document.getElementById('vq').value=''; [1,2,3,4].forEach(i=>document.getElementById('vopt'+i).value='');
+    toast('Vote créé !','ok'); loadData();
+  } catch(e) { res.className='form-result err'; res.textContent='❌ '+e.message; }
+}
+
+async function createCoop() {
+  const nom=document.getElementById('mc-nom').value.trim();
+  const obj=parseInt(document.getElementById('mc-obj').value);
+  const lieu=document.getElementById('mc-lieu').value.trim();
+  const cotMin=parseInt(document.getElementById('mc-cotmin').value)||5000;
+  const max=parseInt(document.getElementById('mc-max').value)||20;
+  const desc=document.getElementById('mc-desc').value.trim();
+  if(!nom||!obj||!lieu) { toast('Nom, objectif et localité requis.','err'); return; }
+  try {
+    const r=await fetch(API+'/cooperatives',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({nom,objectif:obj,lieu,description:desc,maxMembres:max,cotMin})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    closeModal('modal-coop'); toast('🌿 Coopérative créée !','ok'); loadData();
+  } catch(e) { toast('❌ '+e.message,'err'); }
+}
+
+async function createCoopAdmin() {
+  const nom=document.getElementById('ac-nom').value.trim();
+  const obj=parseInt(document.getElementById('ac-obj').value);
+  const lieu=document.getElementById('ac-lieu').value.trim();
+  const cotMin=parseInt(document.getElementById('ac-cotmin').value)||5000;
+  const max=parseInt(document.getElementById('ac-max').value)||20;
+  const desc=document.getElementById('ac-desc').value.trim();
+  const res=document.getElementById('coop-admin-result');
+  if(!nom||!obj||!lieu) { res.className='form-result err'; res.textContent='❌ Nom, objectif et localité requis.'; return; }
+  try {
+    const r=await fetch(API+'/cooperatives',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({nom,objectif:obj,lieu,description:desc,maxMembres:max,cotMin})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    res.className='form-result ok'; res.textContent='✅ Coopérative créée et enregistrée sur blockchain !';
+    toast('Coopérative créée !','ok'); loadData();
+  } catch(e) { res.className='form-result err'; res.textContent='❌ '+e.message; }
+}
+
+// ══ BLOCKCHAIN ══
+function renderBlockchain() {
+  const sorted=[...DB.blockchain].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const icons={'COOP_CRÉÉE':'🌿','COTISATION_OK':'💰','VOTE_CRÉÉ':'🗳️','VOTE':'🗳️','VOTE_CLOS':'✅'};
+  const icoClass={'COOP_CRÉÉE':'coop','COTISATION_OK':'cot','VOTE_CRÉÉ':'vote','VOTE':'vote','VOTE_CLOS':'coop'};
+  const filtered=bcFilter==='all'?sorted:sorted.filter(b=>bcFilter==='cot'?b.type.includes('COTIS'):bcFilter==='vote'?b.type.includes('VOTE'):b.type.includes('COOP'));
+  document.getElementById('page-blockchain').innerHTML=`
+    <div class="ph ph-row">
+      <div><h2>⛓️ Registre Blockchain</h2><p>Chaque entrée est immuable, liée à la précédente par son hash. Impossible à falsifier.</p></div>
+      <div class="ph-actions"><button class="btn btn-s" onclick="verifyBcInline()">🔍 Vérifier l'intégrité</button></div>
+    </div>
+    <div class="bc-header">
+      <div class="bc-stat"><div class="bc-stat-n">${DB.blockchain.length}</div><div class="bc-stat-l">Blocs enregistrés</div></div>
+      <div class="bc-stat"><div class="bc-stat-n">${DB.cotisations.filter(c=>c.statut==='confirme').length}</div><div class="bc-stat-l">Cotisations validées</div></div>
+      <div class="bc-stat"><div class="bc-stat-n">${DB.votes.length}</div><div class="bc-stat-l">Votes on-chain</div></div>
+      <div class="bc-stat"><div class="bc-stat-n">${DB.cooperatives.length}</div><div class="bc-stat-l">Coopératives créées</div></div>
+    </div>
+    <div id="bc-integrity-banner" class="bc-integrity" style="display:none;">
+      <div class="bc-integrity-txt" id="bc-integrity-txt">Vérification…</div>
+    </div>
+    <div class="bc-filters">
+      <button class="bc-filter active" onclick="setBcFilter('all',this)">Tous (${DB.blockchain.length})</button>
+      <button class="bc-filter" onclick="setBcFilter('cot',this)">💰 Cotisations</button>
+      <button class="bc-filter" onclick="setBcFilter('vote',this)">🗳️ Votes</button>
+      <button class="bc-filter" onclick="setBcFilter('coop',this)">🌿 Coopératives</button>
+    </div>
+    <div class="bc-blocks">
+      ${filtered.map((b,i)=>`<div class="bc-block">
+        <div class="bc-num">#${sorted.length-sorted.indexOf(b)}</div>
+        <div class="bc-ico ${icoClass[b.type]||'coop'}">${icons[b.type]||'📦'}</div>
+        <div class="bc-body">
+          <div class="bc-type">${b.type}</div>
+          <div class="bc-desc">${b.desc}</div>
+          <div class="bc-hash-row">
+            <div class="bc-hash">Hash: ${b.hash}</div>
+            <button class="bc-copy-hash" onclick="copyToClipboard('${b.hash}','Hash')">📋</button>
+          </div>
+          <div class="bc-chain-visual">← Prev: ${b.prev?.substring(0,8)||'genesis'}…</div>
+        </div>
+        ${b.montant?`<div class="bc-amt">${fmtNum(b.montant)} FCFA</div>`:''}
+        <div class="bc-right">
+          <div class="bc-date">${b.date}</div>
+          <div class="bc-chain-ind"><div class="bc-dot"></div>On-chain</div>
+        </div>
+      </div>`).join('')}
+      ${filtered.length===0?'<div class="empty"><div class="ei">⛓️</div><p>Aucun bloc dans cette catégorie</p></div>':''}
+    </div>`;
+}
+
+function setBcFilter(f,btn) {
+  bcFilter=f;
+  document.querySelectorAll('.bc-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBlockchain();
+}
+
+function verifyBcInline() {
+  let valid=true;
+  for(let i=1;i<DB.blockchain.length;i++) {
+    if(DB.blockchain[i].prev!==DB.blockchain[i-1].hash) { valid=false; break; }
+  }
+  const banner=document.getElementById('bc-integrity-banner');
+  const txt=document.getElementById('bc-integrity-txt');
+  banner.style.display='flex';
+  txt.textContent=valid?`✅ Intégrité confirmée — ${DB.blockchain.length} blocs vérifiés, aucune altération.`:'⚠️ Anomalie détectée dans la chaîne blockchain !';
+  banner.style.background=valid?'var(--green-pale)':'rgba(231,76,60,.1)';
+  banner.style.borderColor=valid?'rgba(26,122,74,.2)':'rgba(231,76,60,.2)';
+  txt.style.color=valid?'var(--green)':'#e74c3c';
+}
+
+// ══ PROFIL ══
+function renderProfil() {
+  const myCots=DB.cotisations.filter(c=>c.userId===user?.id||c.tel===user?.tel);
+  const totalCot=myCots.filter(c=>c.statut==='confirme').reduce((s,c)=>s+c.montant,0);
+  const myMem=DB.membres.find(m=>m.userId===user?.id);
+  const maCoop=myMem?DB.cooperatives.find(c=>c.id===myMem.coopId):null;
+  const nbConf=myCots.filter(c=>c.statut==='confirme').length;
+  const badge=nbConf>=10?{icon:'🏆',label:'Contributeur Or'}:nbConf>=5?{icon:'🥈',label:'Contributeur Argent'}:nbConf>=1?{icon:'🌱',label:'Nouveau contributeur'}:null;
+  const progPersonnel=maCoop?pct(totalCot,maCoop.cotMin*6):0;
+  const ini=getInitials(user?.nom);
+  document.getElementById('page-profil').innerHTML=`
+    <div class="ph"><h2>👤 Mon profil</h2><p>Vos informations personnelles, votre progression et votre historique de cotisations.</p></div>
+    <div class="profil-grid">
+      <div>
+        <div class="profil-card">
+          <div class="pav">${ini}</div>
+          <div class="pname">${user?.nom||'Membre'}</div>
+          <div class="prole">📱 ${user?.tel||''}</div>
+          ${user?.email?`<div class="prole">✉️ ${user.email}</div>`:''}
+          <div class="prole" style="margin-top:8px;"><span class="pill ${isAdmin()?'pill-ok':'pill-wait'}">${role==='super_admin'?'Super Admin':role==='admin'?'Administrateur':'Membre'}</span></div>
+          ${maCoop?`<div style="margin-top:14px;padding:14px;background:var(--green-pale);border-radius:13px;text-align:left;"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;font-weight:700;">MA COOPÉRATIVE</div><div style="font-weight:700;color:var(--green);">🌿 ${maCoop.nom}</div><div style="font-size:12px;color:var(--text-muted);">📍 ${maCoop.lieu}</div></div>`:''}
+          ${badge?`<div class="badge-participation"><div class="bp-icon">${badge.icon}</div><div class="bp-txt">${badge.label}</div></div>`:''}
+          <div class="pstats">
+            <div class="ps-item"><div class="ps-n">${nbConf}</div><div class="ps-l">Cotisations validées</div></div>
+            <div class="ps-item"><div class="ps-n">${fmtK(totalCot)}</div><div class="ps-l">FCFA cotisés</div></div>
+          </div>
+          ${maCoop?`<div class="progress-perso">
+            <div class="pp-title">🎯 Progression personnelle</div>
+            <div class="pp-bar-wrap"><div class="pp-bar-fill" style="width:${progPersonnel}%"></div></div>
+            <div class="pp-label">${fmtNum(totalCot)} FCFA cotisés · Objectif estimé : ${fmtNum(maCoop.cotMin*6)} FCFA</div>
+          </div>`:''}
+          <button class="btn btn-s" style="width:100%;margin-top:14px;" onclick="toggleEditProfil()">✏️ Modifier mes informations</button>
+          <div class="edit-profil-form" id="edit-profil-form" style="margin-top:16px;">
+            <div class="ig"><label>Nouveau mot de passe</label><input type="password" id="new-pwd" placeholder="••••••••"></div>
+            <div class="ig"><label>Confirmer</label><input type="password" id="new-pwd2" placeholder="••••••••"></div>
+            <button class="btn btn-p btn-sm" onclick="updateProfil()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-p">
+          <div class="cot-hist">
+            <h3>📋 Historique complet (${myCots.length})</h3>
+            ${myCots.length===0?'<div class="empty"><div class="ei">💰</div><p>Aucune cotisation pour l\'instant.</p><button class="btn btn-p btn-sm" onclick="gotoPage(\'cotiser\',document.querySelectorAll(\'.nbtn\')[2])" style="margin-top:12px;">Cotiser maintenant</button></div>':
+            myCots.map(c=>{
+              const coop=DB.cooperatives.find(cp=>cp.id===c.coopId);
+              return `<div class="cot-item"><div class="cot-av">${getInitials(c.nom)}</div><div class="cot-info"><div class="cot-name">${coop?.nom||c.coopId}</div><div class="cot-detail">${c.date} · ${c.txn}${c.message?` · "${c.message}"`:''}</div></div><div class="cot-right"><div class="cot-amt">+${fmtNum(c.montant)} F</div><span class="pill pill-${c.statut==='confirme'?'ok':c.statut==='pending'?'wait':'rej'}">${c.statut==='confirme'?'✅ Validé':c.statut==='pending'?'⏳ En attente':'❌ Rejeté'}</span></div></div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleEditProfil() { document.getElementById('edit-profil-form').classList.toggle('show'); }
+function updateProfil() {
+  const p1=document.getElementById('new-pwd').value;
+  const p2=document.getElementById('new-pwd2').value;
+  if(!p1) { toast('Entrez un nouveau mot de passe.','warn'); return; }
+  if(p1!==p2) { toast('Les mots de passe ne correspondent pas.','err'); return; }
+  toast('Fonctionnalité disponible en Phase 3.','info');
+}
+
+// ══ SOCKET.IO CHAT ══
+function initSocket() {
+  if(!token) return;
+  try {
+    socket=io('http://localhost:3000',{auth:{token},transports:['websocket','polling']});
+    socket.on('connect',()=>{ loadRooms(); joinRoom('general'); });
+    socket.on('new_message',msg=>{ if(msg.room===currentRoom)addMsgToChat(msg); else incUnread(msg.room); });
+    socket.on('typing',(data)=>{ if(data.userId!==user?.id&&data.room===currentRoom) showTyping(data.nom); });
+    socket.on('cotisation_validated',d=>{ toast(`💰 Cotisation de ${d.nom} validée ! (+${fmtK(d.montant)} FCFA)`, 'ok'); loadData(); });
+    socket.on('vote_created',d=>{ toast(`🗳️ Nouveau vote : "${d.question}"`, 'info'); loadData(); });
+    socket.on('connect_error',e=>console.warn('Socket indisponible:',e.message));
+  } catch(e){ console.warn('Socket.io non disponible'); }
+}
+
+async function loadRooms() {
+  try {
+    const r=await fetch(API+'/chat/rooms',{headers:{'Authorization':`Bearer ${token}`}});
+    const rooms=await r.json();
+    document.getElementById('chat-rooms').innerHTML=rooms.map(rm=>{
+      const u=unreadByRoom[rm.id]||0;
+      return `<button class="croom ${currentRoom===rm.id?'active':''}" onclick="joinRoom('${rm.id}')">${rm.nom}<span class="croom-unread ${u>0?'show':''}">${u}</span></button>`;
+    }).join('');
+  } catch(e){}
+}
+
+async function joinRoom(id) {
+  if(socket) { socket.emit('leave_room',currentRoom); socket.emit('join_room',id); }
+  currentRoom=id; unreadByRoom[id]=0; updateUnreadTotal();
+  loadRooms();
+  try {
+    const r=await fetch(API+'/chat/messages/'+id,{headers:{'Authorization':`Bearer ${token}`}});
+    const msgs=await r.json();
+    const c=document.getElementById('chat-msgs');
+    c.innerHTML=msgs.map(buildMsg).join('');
+    c.scrollTop=c.scrollHeight;
+  } catch(e){}
+}
+
+function buildMsg(m) {
+  const mine=m.userId===user?.id;
+  const t=new Date(m.createdAt).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  return `<div class="chat-msg ${mine?'mine':'other'}">${!mine?`<div class="msg-sender">${m.nom}</div>`:''}<div class="msg-bubble">${escHtml(m.message)}</div><div class="msg-time">${t}</div></div>`;
+}
+
+function addMsgToChat(m) {
+  const c=document.getElementById('chat-msgs');
+  const d=document.createElement('div');
+  d.innerHTML=buildMsg(m);
+  c.appendChild(d.firstChild);
+  c.scrollTop=c.scrollHeight;
+}
+
+function incUnread(room) {
+  unreadByRoom[room]=(unreadByRoom[room]||0)+1;
+  updateUnreadTotal(); loadRooms();
+}
+
+function updateUnreadTotal() {
+  const tot=Object.values(unreadByRoom).reduce((s,x)=>s+x,0);
+  const el=document.getElementById('chat-unread-total');
+  el.textContent=tot; el.classList.toggle('show',tot>0);
+}
+
+let typingTimeout=null;
+function handleTyping() {
+  if(!socket) return;
+  socket.emit('typing',{roomId:currentRoom,nom:user?.nom});
+  clearTimeout(typingTimeout);
+  typingTimeout=setTimeout(()=>socket.emit('stop_typing',{roomId:currentRoom}),2000);
+}
+
+function showTyping(nom) {
+  const el=document.getElementById('typing-ind');
+  if(!el) return; el.classList.add('show');
+  clearTimeout(window._typingHideTimer);
+  window._typingHideTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+function sendMsg() {
+  const inp=document.getElementById('chat-inp');
+  const msg=inp.value.trim();
+  if(!msg||!socket) return;
+  socket.emit('chat_message',{roomId:currentRoom,message:msg});
+  inp.value='';
+}
+
+function handleChatKey(e) { if(e.key==='Enter') sendMsg(); }
+
+function toggleChat() {
+  const panel=document.getElementById('chat-panel');
+  const body=document.getElementById('chat-body');
+  const btn=document.getElementById('chat-toggle-btn');
+  chatOpen=!chatOpen;
+  panel.classList.toggle('minimized',!chatOpen);
+  body.style.display=chatOpen?'flex':'none';
+  btn.textContent=chatOpen?'−':'+';
+  if(chatOpen) { loadRooms(); joinRoom(currentRoom); }
+}
+
+// ══ INIT ══
+window.addEventListener('DOMContentLoaded',async()=>{
+  // Masquer le loader
+  setTimeout(()=>document.getElementById('global-loader').classList.add('hide'),800);
+  if(token) {
+    try {
+      const r=await fetch(API+'/auth/me',{headers:{'Authorization':`Bearer ${token}`}});
+      const d=await r.json();
+      if(d.id) { user=d; role=d.role; await showApp(); }
+      else { localStorage.removeItem('ce_token'); token=null; document.getElementById('login-container').style.display='flex'; }
+    } catch { document.getElementById('login-container').style.display='flex'; }
+  } else {
+    document.getElementById('login-container').style.display='flex';
+  }
+});
+</script>
+</body>
+</html>
