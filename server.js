@@ -52,6 +52,39 @@ try {
   console.log('⚠️  web-push non installé — push désactivé');
 }
 
+// ─── Twilio SMS ───────────────────────────────────────────
+let twilioClient = null;
+try {
+  const twilio = require('twilio');
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  if (sid && token && sid.startsWith('AC')) {
+    twilioClient = twilio(sid, token);
+    console.log('✅ Twilio SMS activé');
+  } else {
+    console.log('ℹ️  Twilio non configuré — SMS désactivé (ajoutez TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM dans .env)');
+  }
+} catch (e) {
+  console.log('⚠️  twilio non installé — SMS désactivé');
+}
+
+async function sendSMS(to, message) {
+  if (!twilioClient) return;
+  const from = process.env.TWILIO_FROM;
+  if (!from || !to) return;
+  // Formater le numéro camerounais : 6XXXXXXXX → +2376XXXXXXXX
+  let phone = String(to).replace(/\s/g, '');
+  if (phone.startsWith('6') && phone.length === 9) phone = '+237' + phone;
+  else if (phone.startsWith('237') && phone.length === 12) phone = '+' + phone;
+  else if (!phone.startsWith('+')) phone = '+237' + phone;
+  try {
+    await twilioClient.messages.create({ body: message, from, to: phone });
+    console.log(`📱 SMS envoyé à ${phone}`);
+  } catch (err) {
+    console.error('❌ Erreur SMS:', err.message);
+  }
+}
+
 // ─── Middleware ───────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(compression());
@@ -62,8 +95,50 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // ─── Rate limiting ────────────────────────────────────────
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200, message: { error: 'Trop de requêtes.' } });
 app.use('/api/', limiter);
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: { error: 'Trop de tentatives de connexion.' } });
-app.use('/api/auth/', authLimiter);
+
+// Limiteur strict par IP sur /auth (5 tentatives/5min par IP)
+const authLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 5,
+  skipSuccessfulRequests: true, // Ne compte que les échecs
+  message: { success: false, error: 'Trop de tentatives depuis cette adresse. Réessayez dans 5 minutes.', locked: true }
+});
+app.use('/api/auth/login', authLimiter);
+
+// ─── Verrouillage de compte (par identifiant) ─────────────
+const loginAttempts = new Map(); // identifiant → { count, lockedUntil }
+const MAX_ATTEMPTS = 5;          // tentatives avant verrouillage
+const LOCK_DURATION = 15 * 60 * 1000; // 15 minutes
+
+function checkAccountLock(identifiant) {
+  const entry = loginAttempts.get(identifiant);
+  if (!entry) return { locked: false, remaining: MAX_ATTEMPTS };
+  if (entry.lockedUntil && Date.now() < entry.lockedUntil) {
+    const minutesLeft = Math.ceil((entry.lockedUntil - Date.now()) / 60000);
+    return { locked: true, minutesLeft };
+  }
+  // Verrou expiré — réinitialiser
+  if (entry.lockedUntil && Date.now() >= entry.lockedUntil) {
+    loginAttempts.delete(identifiant);
+    return { locked: false, remaining: MAX_ATTEMPTS };
+  }
+  return { locked: false, remaining: MAX_ATTEMPTS - entry.count };
+}
+
+function recordFailedAttempt(identifiant) {
+  const entry = loginAttempts.get(identifiant) || { count: 0, lockedUntil: null };
+  entry.count += 1;
+  if (entry.count >= MAX_ATTEMPTS) {
+    entry.lockedUntil = Date.now() + LOCK_DURATION;
+    console.log(`🔒 Compte verrouillé : ${identifiant} pour 15 min`);
+  }
+  loginAttempts.set(identifiant, entry);
+  return MAX_ATTEMPTS - entry.count;
+}
+
+function clearAttempts(identifiant) {
+  loginAttempts.delete(identifiant);
+}
 
 // ─── Fichiers statiques ───────────────────────────────────
 app.use('/uploads', express.static(UPLOADS_DIR));
@@ -305,11 +380,39 @@ app.post('/api/auth/login', async (req, res) => {
   if (!identifiant || !password) {
     return res.status(400).json({ success: false, error: 'Identifiant et mot de passe requis.' });
   }
+
+  // 1. Vérifier le verrouillage de compte AVANT de chercher le mot de passe
+  const lockStatus = checkAccountLock(identifiant);
+  if (lockStatus.locked) {
+    return res.status(429).json({
+      success: false,
+      locked: true,
+      error: `Compte temporairement verrouillé suite à plusieurs tentatives échouées. Réessayez dans ${lockStatus.minutesLeft} minute${lockStatus.minutesLeft > 1 ? 's' : ''}.`
+    });
+  }
+
   const db = readDB();
   const user = db.users.find(u => u.tel === identifiant || u.email === identifiant);
-  if (!user) return res.status(401).json({ success: false, error: 'Identifiants incorrects.' });
+
+  // 2. Utilisateur inexistant — on enregistre la tentative mais on ne révèle pas si le compte existe
+  if (!user) {
+    recordFailedAttempt(identifiant);
+    return res.status(401).json({ success: false, error: 'Identifiants incorrects.' });
+  }
+
   const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(401).json({ success: false, error: 'Identifiants incorrects.' });
+
+  // 3. Mauvais mot de passe — enregistrer la tentative et avertir sur les essais restants
+  if (!valid) {
+    const remaining = recordFailedAttempt(identifiant);
+    const msg = remaining <= 0
+      ? `Compte verrouillé pour 15 minutes après trop de tentatives échouées.`
+      : `Identifiants incorrects. ${remaining} tentative${remaining > 1 ? 's' : ''} restante${remaining > 1 ? 's' : ''} avant verrouillage.`;
+    return res.status(401).json({ success: false, error: msg, remaining: Math.max(0, remaining) });
+  }
+
+  // 4. Succès — effacer les tentatives et retourner le token
+  clearAttempts(identifiant);
   const token = jwt.sign({ id: user.id, nom: user.nom, tel: user.tel, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
   res.json({ success: true, token, user: { id: user.id, nom: user.nom, email: user.email, tel: user.tel, role: user.role } });
 });
@@ -532,10 +635,15 @@ app.patch('/api/cotisations/:id/valider', authenticateToken, requireRole('admin'
     const coop = db.cooperatives.find(c => c.id === ct.coopId);
     if (coop) coop.collecte = (coop.collecte || 0) + ct.montant;
     addToBlockchain('COTISATION_OK', `${ct.nom} → ${coop?.nom || ct.coopId}`, ct.montant, req.user.id, ct.id);
+    const msgConfirm = `CoopEnergie ✅ Bonjour ${ct.nom}, votre cotisation de ${ct.montant.toLocaleString()} FCFA a ete CONFIRMEE pour la cooperative "${coop?.nom || 'CoopEnergie'}". Merci pour votre engagement ! 🌿`;
     await sendPush(ct.userId, '✅ Cotisation validée !', `${ct.montant.toLocaleString()} FCFA confirmé pour ${coop?.nom || ''}.`);
+    await sendSMS(ct.tel, msgConfirm);
     io.emit('cotisation_validated', { nom: ct.nom, montant: ct.montant, coop: coop?.nom });
   } else {
+    const note = adminNote?.trim() ? ` Motif : ${adminNote.trim()}` : '';
+    const msgRejet = `CoopEnergie ❌ Bonjour ${ct.nom}, votre cotisation de ${ct.montant.toLocaleString()} FCFA a ete REJETEE.${note} Veuillez verifier votre numero de transaction ou contacter l'administrateur.`;
     await sendPush(ct.userId, '❌ Cotisation rejetée', `${ct.montant.toLocaleString()} FCFA rejeté. Vérifiez votre numéro de transaction.`);
+    await sendSMS(ct.tel, msgRejet);
   }
   writeDB(db);
   broadcastSSE('update', { type: 'cotisations', action: ct.statut, nom: ct.nom });
@@ -592,6 +700,9 @@ app.post('/api/votes/:id/voter', authenticateToken, (req, res) => {
   if (new Date() > new Date(vote.fin)) {
     vote.statut = 'cloture';
     writeDB(db);
+    // Notifier tous les clients en temps réel que ce vote vient d'expirer
+    broadcastSSE('update', { type: 'votes', action: 'expire', voteId: vote.id });
+    io.emit('vote_expired', { voteId: vote.id, question: vote.question });
     return res.status(400).json({ success: false, error: 'Ce vote a expiré.' });
   }
   const idx = parseInt(optionIndex);

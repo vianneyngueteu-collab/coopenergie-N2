@@ -4,624 +4,450 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CoopÉnergie — Coopératives Solaires Transparentes au Cameroun</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --sun: #F5A623; --sun-deep: #E07B00; --sun-glow: rgba(245,166,35,.32);
-      --green: #1A7A4A; --green-light: #2DB36B; --green-pale: #E6F7EE;
-      --night: #0D1F16; --night-mid: #132A1E;
-      --sand: #FDF6EC; --text: #0D1F16; --text-muted: #4A6655; --text-faint: #8A9A8F;
-      --border: rgba(13,31,22,.09);
-      --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --amber:#F5A623;--amber-deep:#C97D00;--amber-glow:rgba(245,166,35,.3);
+      --forest:#0F5C2E;--forest-mid:#1A7A4A;--forest-bright:#2DB36B;
+      --ink:#060E09;--ink-mid:#0D1F16;--paper:#FAF6EF;--cream:#F5EFE2;
+      --muted:#5A6E62;--faint:#92A098;
+      --bd:rgba(255,255,255,.08);--bdl:rgba(13,31,22,.09);
+      --fd:'Playfair Display',Georgia,serif;
+      --fb:'Outfit',sans-serif;
+      --fm:'Space Mono',monospace;
     }
-    html { scroll-behavior: smooth; }
-    body { font-family: var(--font-body); background: var(--sand); color: var(--text); overflow-x: hidden; }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--fb);background:var(--paper);color:var(--ink);overflow-x:hidden}
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 15px 60px;
-      background: rgba(13,31,22,.97);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(245,166,35,.12);
-      transition: all .3s;
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:20px 64px;transition:all .4s}
+    nav.solid{background:rgba(6,14,9,.95);backdrop-filter:blur(20px);padding:14px 64px;border-bottom:1px solid var(--bd)}
+    .nav-logo{font-family:var(--fd);font-weight:900;font-size:22px;color:white;text-decoration:none;display:flex;align-items:center;gap:12px}
+    .logo-sun{width:36px;height:36px;background:conic-gradient(var(--amber) 0deg,var(--amber-deep) 180deg,var(--amber) 360deg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;animation:spin 20s linear infinite;box-shadow:0 0 18px var(--amber-glow)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .nav-logo em{font-style:normal;color:var(--amber)}
+    .nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+    .nav-links a{font-size:13px;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s}
+    .nav-links a:hover{color:var(--amber)}
+    .nav-cta{background:var(--amber) !important;color:var(--ink) !important;padding:10px 22px !important;border-radius:4px !important;font-weight:700 !important;transition:all .2s !important;box-shadow:0 0 0 0 var(--amber-glow) !important}
+    .nav-cta:hover{box-shadow:0 0 0 8px var(--amber-glow) !important}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+    .hamburger span{width:24px;height:2px;background:white;display:block}
+    .mob-nav{display:none;position:fixed;inset:0;background:var(--ink);z-index:499;flex-direction:column;justify-content:center;align-items:center;gap:32px}
+    .mob-nav.open{display:flex}
+    .mob-nav a{font-family:var(--fd);font-weight:700;font-size:28px;color:white;text-decoration:none;transition:color .2s}
+    .mob-nav a:hover{color:var(--amber)}
+    .mob-close{position:absolute;top:24px;right:24px;color:rgba(255,255,255,.5);font-size:28px;cursor:pointer;background:none;border:none}
+
+    /* HERO */
+    .hero{min-height:100vh;background:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px;position:relative;overflow:hidden}
+    .hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:64px 64px;pointer-events:none}
+    .hero-glow1{position:absolute;top:-200px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 70%);pointer-events:none;animation:breathe 8s ease-in-out infinite}
+    .hero-glow2{position:absolute;bottom:-150px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(26,122,74,.1) 0%,transparent 70%);pointer-events:none;animation:breathe 10s ease-in-out infinite 3s}
+    @keyframes breathe{0%,100%{opacity:1}50%{opacity:.4}}
+    .hero-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:36px}
+    .hero-tag-line{width:32px;height:1px;background:var(--amber)}
+    .hero-tag-txt{font-family:var(--fm);font-size:11px;color:var(--amber);letter-spacing:2px;text-transform:uppercase}
+    .hero-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:center}
+    .hero h1{font-family:var(--fd);font-weight:900;font-size:clamp(52px,7vw,96px);line-height:.97;color:white;margin-bottom:28px;letter-spacing:-2px}
+    .h1-amber{color:var(--amber);display:block}
+    .h1-stroke{-webkit-text-stroke:1px rgba(255,255,255,.25);color:transparent;display:block}
+    .hero-sub{font-size:16px;color:rgba(255,255,255,.5);line-height:1.85;max-width:480px;margin-bottom:44px;font-weight:300}
+    .hero-btns{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+    .btn-solar{background:var(--amber);color:var(--ink);font-weight:700;font-size:15px;padding:15px 34px;border-radius:4px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s;box-shadow:0 0 0 0 var(--amber-glow)}
+    .btn-solar:hover{box-shadow:0 0 0 10px var(--amber-glow);transform:translateY(-2px)}
+    .btn-ghost{background:transparent;color:rgba(255,255,255,.5);font-size:14px;padding:15px 26px;border-radius:4px;text-decoration:none;border:1px solid rgba(255,255,255,.12);transition:all .2s;display:inline-flex;align-items:center;gap:8px;font-weight:500}
+    .btn-ghost:hover{color:white;border-color:rgba(255,255,255,.3)}
+    .hero-ticker{display:flex;gap:56px;margin-top:68px;padding-top:40px;border-top:1px solid var(--bd);flex-wrap:wrap}
+    .tk-n{font-family:var(--fd);font-weight:900;font-size:40px;color:var(--amber);line-height:1}
+    .tk-l{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;max-width:120px;line-height:1.5;margin-top:6px}
+    /* Hero card */
+    .hero-card{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:16px;padding:26px;animation:float 6s ease-in-out infinite;max-width:340px;width:100%}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    .hc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .hc-name{font-family:var(--fd);font-weight:700;font-size:14px;color:white}
+    .hc-pill{font-family:var(--fm);font-size:9px;color:var(--forest-bright);background:rgba(45,179,107,.1);border:1px solid rgba(45,179,107,.2);padding:3px 9px;border-radius:2px;letter-spacing:.5px}
+    .hc-pct{font-family:var(--fd);font-weight:900;font-size:40px;color:var(--amber);line-height:1;margin-bottom:8px}
+    .hc-bar{background:rgba(255,255,255,.07);border-radius:2px;height:4px;overflow:hidden;margin-bottom:8px}
+    .hc-fill{height:100%;background:linear-gradient(90deg,var(--forest-mid),var(--forest-bright),var(--amber));width:72%;animation:grow 1.5s ease-out forwards}
+    @keyframes grow{from{width:0}to{width:72%}}
+    .hc-hint{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.3);margin-bottom:16px}
+    .hc-mem{display:flex;align-items:center;gap:10px;padding:9px 11px;background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;margin-bottom:7px}
+    .hc-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:9px;font-weight:700;flex-shrink:0}
+    .av-a{background:rgba(245,166,35,.15);color:var(--amber)}
+    .av-b{background:rgba(45,179,107,.15);color:var(--forest-bright)}
+    .av-c{background:rgba(100,150,255,.15);color:#85B7FF}
+    .hc-mname{font-size:11px;font-weight:500;color:white;flex:1}
+    .hc-hash{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.25)}
+    .hc-st{font-family:var(--fm);font-size:9px;font-weight:700;padding:3px 8px;border-radius:2px}
+    .st-ok{background:rgba(45,179,107,.1);color:var(--forest-bright);border:1px solid rgba(45,179,107,.2)}
+    .st-wait{background:rgba(245,166,35,.1);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+    .hc-chain{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 12px;background:rgba(26,122,74,.06);border:1px solid rgba(45,179,107,.1);border-radius:8px}
+    .chain-dot{width:6px;height:6px;background:var(--forest-bright);border-radius:50%;animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+    .chain-txt{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.3px}
+    .notif-badge{position:absolute;top:-20px;right:-16px;background:var(--amber);color:var(--ink);border-radius:8px;padding:9px 14px;font-size:11px;font-weight:700;box-shadow:0 8px 28px var(--amber-glow);animation:pop .6s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes pop{from{opacity:0;transform:scale(.6) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+    /* SECTIONS */
+    section{padding:112px 64px}
+    .s-tag{display:inline-flex;align-items:center;gap:8px;margin-bottom:22px}
+    .s-tag-line{width:24px;height:2px;background:var(--amber)}
+    .s-tag-txt{font-family:var(--fm);font-size:10px;letter-spacing:2.5px;text-transform:uppercase}
+    .c-amber{color:var(--amber)}.c-green{color:var(--forest-mid)}.c-white{color:rgba(255,255,255,.4)}
+    h2.st{font-family:var(--fd);font-weight:900;font-size:clamp(36px,5.5vw,72px);line-height:1;letter-spacing:-1.5px;margin-bottom:18px}
+    h2.st.lgt{color:white}h2.st:not(.lgt){color:var(--ink)}
+    h2.st em{font-style:normal;color:var(--forest-mid)}
+    h2.st em.a{color:var(--amber)}
+    .ss{font-size:17px;color:var(--muted);max-width:540px;line-height:1.8;font-weight:300}
+    .ss.lgt{color:rgba(255,255,255,.5)}
+
+    /* PROBLÈME */
+    #probleme{background:var(--paper);border-top:4px solid var(--amber)}
+    .prob-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:80px;margin-top:68px;align-items:start}
+    .prob-card{background:white;border-radius:12px;padding:30px;border:1px solid var(--bdl);margin-bottom:18px;transition:all .35s;position:relative;overflow:hidden;cursor:default}
+    .prob-card::before{content:attr(data-n);position:absolute;top:-14px;right:14px;font-family:var(--fd);font-weight:900;font-size:80px;color:var(--ink);opacity:.03;line-height:1}
+    .prob-card:hover{transform:translateX(10px);border-color:var(--amber);box-shadow:0 0 0 1px var(--amber)}
+    .prob-card h3{font-family:var(--fd);font-weight:700;font-size:18px;color:var(--ink);margin-bottom:10px;margin-top:14px;letter-spacing:-.2px}
+    .prob-card p{font-size:14px;color:var(--muted);line-height:1.75}
+    .prob-vis{background:var(--ink);border-radius:16px;padding:38px;color:white;position:sticky;top:110px}
+    .pv-lbl{font-family:var(--fm);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:28px}
+    .cs{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+    .cs:last-child{border-bottom:none;padding-bottom:0}
+    .cs-n{width:32px;height:32px;border-radius:50%;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:12px;font-weight:700;color:var(--amber);flex-shrink:0;margin-top:2px}
+    .cs-t{font-size:14px;color:rgba(255,255,255,.5);line-height:1.7}
+    .cs-t strong{color:white}
+
+    /* SOLUTION */
+    #solution{background:var(--ink)}
+    .sol-hdr{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:68px}
+    .sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+    .sol-card{background:rgba(255,255,255,.04);border:1px solid var(--bd);padding:38px;transition:all .3s;position:relative;overflow:hidden}
+    .sol-card:nth-child(1){border-radius:16px 0 0 0}.sol-card:nth-child(2){border-radius:0 16px 0 0}
+    .sol-card:nth-child(3){border-radius:0 0 0 16px}.sol-card:nth-child(4){border-radius:0 0 16px 0}
+    .sol-card:hover{background:rgba(255,255,255,.07);border-color:rgba(245,166,35,.2)}
+    .sol-n{font-family:var(--fm);font-size:10px;color:rgba(245,166,35,.4);letter-spacing:2px;margin-bottom:18px}
+    .sol-ico{font-size:30px;margin-bottom:14px}
+    .sol-card h3{font-family:var(--fd);font-weight:700;font-size:21px;color:white;margin-bottom:11px;letter-spacing:-.2px}
+    .sol-card p{font-size:14px;color:rgba(255,255,255,.5);line-height:1.75}
+    .sol-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+    .sol-tag{font-family:var(--fm);font-size:10px;padding:4px 10px;border-radius:2px;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);letter-spacing:.5px}
+
+    /* BLOCKCHAIN */
+    #blockchain{background:var(--ink)}
+    .bc-hdr{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:72px}
+    .bc-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:64px;position:relative}
+    .bc-flow::before{content:'';position:absolute;top:39px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+    .bc-step{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;padding:0 6px}
+    .bc-ico{width:78px;height:78px;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px;transition:all .3s}
+    .bc-step:hover .bc-ico{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);transform:scale(1.1)}
+    .bc-step h3{font-family:var(--fd);font-weight:700;font-size:13px;color:white;margin-bottom:7px}
+    .bc-step p{font-size:11px;color:rgba(255,255,255,.35);line-height:1.6}
+    .bc-why{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+    .bc-why-c{background:rgba(255,255,255,.03);border:1px solid var(--bd);padding:38px;transition:all .3s}
+    .bc-why-c:first-child{border-radius:12px 0 0 12px}.bc-why-c:last-child{border-radius:0 12px 12px 0}
+    .bc-why-c:hover{background:rgba(255,255,255,.07);border-color:rgba(245,166,35,.15)}
+    .bc-n{font-family:var(--fd);font-weight:900;font-size:50px;color:rgba(245,166,35,.12);line-height:1;margin-bottom:14px}
+    .bc-why-c h4{font-family:var(--fd);font-weight:700;font-size:19px;color:var(--amber);margin-bottom:11px;letter-spacing:-.2px}
+    .bc-why-c p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.75}
+
+    /* UTILISATEURS */
+    #utilisateurs{background:var(--paper)}
+    .users-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:68px}
+    .user-card{background:white;border-radius:12px;padding:30px 22px;text-align:center;border:1px solid var(--bdl);transition:all .35s;position:relative;overflow:hidden}
+    .user-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+    .user-card:hover{transform:translateY(-8px);box-shadow:0 28px 70px rgba(13,31,22,.1)}
+    .user-card:hover::after{transform:scaleX(1)}
+    .user-em{font-size:36px;margin-bottom:16px;display:block}
+    .user-card h3{font-family:var(--fd);font-weight:700;font-size:16px;color:var(--ink);margin-bottom:9px;letter-spacing:-.2px}
+    .user-card p{font-size:13px;color:var(--muted);line-height:1.7}
+
+    /* IMPACT */
+    #impact{background:var(--forest);position:relative;overflow:hidden}
+    .impact-hdr{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:68px}
+    .impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+    .impact-c{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:38px 26px;transition:all .35s;position:relative;overflow:hidden}
+    .impact-c:first-child{border-radius:12px 0 0 12px}.impact-c:last-child{border-radius:0 12px 12px 0}
+    .impact-c:hover{background:rgba(255,255,255,.13);transform:translateY(-6px);border-radius:12px;margin:-1px;z-index:1}
+    .impact-big{font-family:var(--fd);font-weight:900;font-size:54px;color:var(--amber);line-height:1;margin-bottom:11px;letter-spacing:-2px}
+    .impact-c h3{font-family:var(--fd);font-weight:700;font-size:16px;color:white;margin-bottom:9px;letter-spacing:-.2px}
+    .impact-c p{font-size:13px;color:rgba(255,255,255,.55);line-height:1.7}
+    .odd-bar{margin-top:68px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:34px 52px;display:flex;gap:0;align-items:stretch}
+    .odd-item{flex:1;text-align:center;padding:0 36px;position:relative}
+    .odd-item+.odd-item::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:rgba(255,255,255,.1)}
+    .odd-n{font-family:var(--fd);font-weight:900;font-size:34px;color:var(--amber);margin-bottom:7px}
+    .odd-t{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6}
+
+    /* HACKATHON */
+    #hackathon{background:var(--ink)}
+    .phases{margin-top:68px;display:flex;flex-direction:column;gap:20px}
+    .phase-c{border:1px solid var(--bd);border-radius:12px;padding:38px 46px;display:grid;grid-template-columns:160px 1fr;gap:44px;align-items:start;transition:all .3s;position:relative;overflow:hidden}
+    .phase-c::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber);transform:scaleY(0);transform-origin:top;transition:transform .35s}
+    .phase-c:hover{background:rgba(255,255,255,.03);border-color:rgba(245,166,35,.15)}
+    .phase-c:hover::before{transform:scaleY(1)}
+    .phase-label{font-family:var(--fm);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px}
+    .phase-num{font-family:var(--fd);font-weight:900;font-size:54px;color:rgba(255,255,255,.05);line-height:1}
+    .phase-c h3{font-family:var(--fd);font-weight:700;font-size:20px;color:white;margin-bottom:18px;letter-spacing:-.3px}
+    .phase-ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+    .phase-ul li{font-size:14px;color:rgba(255,255,255,.5);display:flex;align-items:flex-start;gap:11px;line-height:1.6}
+    .phase-ul li::before{content:'→';color:var(--amber);font-family:var(--fm);font-size:12px;flex-shrink:0;margin-top:2px}
+
+    /* CTA */
+    #cta{background:var(--amber);text-align:center;padding:120px 64px;position:relative;overflow:hidden}
+    #cta::before{content:'';position:absolute;inset:0;background:repeating-conic-gradient(rgba(0,0,0,.03) 0deg,transparent 1deg,transparent 4deg,rgba(0,0,0,.03) 5deg);pointer-events:none}
+    #cta h2{font-family:var(--fd);font-weight:900;font-size:clamp(40px,6vw,80px);color:var(--ink);margin-bottom:18px;letter-spacing:-2px;line-height:.95;max-width:680px;margin-left:auto;margin-right:auto}
+    .cta-sub{font-size:17px;color:rgba(13,31,22,.6);max-width:500px;margin:0 auto 52px;line-height:1.75;font-weight:300}
+    .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+    .btn-dark{background:var(--ink);color:white;font-weight:700;font-size:15px;padding:17px 38px;border-radius:4px;text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:all .25s;letter-spacing:.2px}
+    .btn-dark:hover{background:var(--ink-mid);transform:translateY(-2px);box-shadow:0 14px 40px rgba(6,14,9,.3)}
+    .btn-outline2{background:transparent;color:var(--ink);font-weight:600;font-size:15px;padding:17px 38px;border-radius:4px;text-decoration:none;display:inline-flex;align-items:center;gap:9px;border:2px solid rgba(13,31,22,.22);transition:all .2s;letter-spacing:.2px}
+    .btn-outline2:hover{border-color:var(--ink);background:rgba(13,31,22,.05)}
+
+    /* FOOTER */
+    footer{background:var(--ink);padding:52px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;border-top:1px solid var(--bd)}
+    .footer-logo{font-family:var(--fd);font-weight:900;font-size:21px;color:white;letter-spacing:-.3px}
+    .footer-logo em{font-style:normal;color:var(--amber)}
+    .footer-info{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.22);letter-spacing:1px;margin-top:5px;text-transform:uppercase}
+    .footer-tags{display:flex;gap:7px;flex-wrap:wrap}
+    .footer-tag{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.09);padding:5px 12px;border-radius:2px;letter-spacing:.5px}
+    .footer-copy{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.2)}
+    .footer-copy a{color:rgba(255,255,255,.22);text-decoration:none}
+
+    /* REVEAL */
+    .rv{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+    .rv.in{opacity:1;transform:translateY(0)}
+    .d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}.d4{transition-delay:.48s}
+
+    /* RESPONSIVE */
+    @media(max-width:1100px){
+      .hero-layout,.prob-grid,.sol-hdr,.bc-hdr,.impact-hdr{grid-template-columns:1fr}
+      .hero-card-wrap{display:none}
+      .impact-grid{grid-template-columns:1fr 1fr}
+      .impact-c:first-child,.impact-c:last-child{border-radius:12px}
+      .bc-why{grid-template-columns:1fr}
+      .bc-why-c:first-child,.bc-why-c:last-child{border-radius:12px}
+      .users-grid{grid-template-columns:1fr 1fr}
+      .phase-c{grid-template-columns:1fr}
     }
-    nav.scrolled { padding: 11px 60px; }
-    .nav-logo { font-family: var(--font-head); font-weight: 800; font-size: 21px; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-    .nav-logo .ni { width:34px;height:34px;background:linear-gradient(135deg,var(--sun),var(--sun-deep));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 12px var(--sun-glow); }
-    .nav-logo span { color: var(--sun); }
-    .nav-links { display: flex; gap: 28px; list-style: none; align-items: center; }
-    .nav-links a { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.6); text-decoration: none; transition: color .2s; }
-    .nav-links a:hover { color: white; }
-    .nav-links a.active { color: var(--sun); }
-    .nav-cta { background: linear-gradient(135deg,var(--sun),var(--sun-deep)) !important; color: var(--night) !important; padding: 9px 22px !important; border-radius: 100px !important; font-weight: 700 !important; font-size: 13px !important; box-shadow: 0 4px 16px var(--sun-glow) !important; transition: all .2s !important; }
-    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px var(--sun-glow) !important; }
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-    .hamburger span { width: 24px; height: 2px; background: white; border-radius: 2px; transition: all .3s; }
-    .mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; background: var(--night); padding: 24px; z-index: 199; border-bottom: 1px solid rgba(255,255,255,.08); flex-direction: column; gap: 18px; }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a { color: rgba(255,255,255,.7); text-decoration: none; font-size: 15px; font-weight: 500; }
-
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh; background: var(--night);
-      display: flex; flex-direction: column; justify-content: center;
-      padding: 140px 60px 100px; position: relative; overflow: hidden;
-    }
-    .hero-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 72px; align-items: center; }
-    .orb { position: absolute; border-radius: 50%; filter: blur(85px); pointer-events: none; }
-    .o1 { width:680px;height:680px;background:radial-gradient(circle,rgba(245,166,35,.17),transparent 70%);top:-220px;right:-170px;animation:drift 9s ease-in-out infinite; }
-    .o2 { width:480px;height:480px;background:radial-gradient(circle,rgba(45,179,107,.12),transparent 70%);bottom:-120px;left:80px;animation:drift 11s ease-in-out infinite reverse; }
-    .o3 { width:280px;height:280px;background:radial-gradient(circle,rgba(245,166,35,.08),transparent 70%);top:50%;left:50%;animation:drift 7s ease-in-out infinite 3s; }
-    @keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(18px,-16px)} }
-
-    .hero-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:100px;padding:7px 17px;margin-bottom:32px;width:fit-content; }
-    .badge-dot { width:7px;height:7px;background:var(--sun);border-radius:50%;animation:pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.65)} }
-    .hero-badge span { color:var(--sun);font-size:12px;font-weight:600;letter-spacing:.4px; }
-
-    .hero h1 { font-family:var(--font-head);font-weight:800;font-size:clamp(44px,6vw,84px);line-height:1.02;color:white;margin-bottom:22px; }
-    .hero h1 em { font-style:normal;color:var(--sun);display:block; }
-    .hero-sub { font-size:17px;color:rgba(255,255,255,.6);max-width:500px;line-height:1.78;margin-bottom:44px;font-weight:300; }
-    .hero-actions { display:flex;gap:14px;flex-wrap:wrap;align-items:center; }
-
-    .btn-primary { background:linear-gradient(135deg,var(--sun),var(--sun-deep));color:var(--night);font-weight:700;font-size:15px;padding:15px 32px;border-radius:100px;text-decoration:none;border:none;cursor:pointer;box-shadow:0 6px 24px var(--sun-glow);transition:all .25s;display:inline-flex;align-items:center;gap:8px; }
-    .btn-primary:hover { transform:translateY(-3px);box-shadow:0 12px 36px var(--sun-glow); }
-    .btn-ghost { color:rgba(255,255,255,.65);font-size:14px;text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .2s;font-weight:500; }
-    .btn-ghost:hover { color:white; }
-    .btn-green { background:var(--green);color:white;font-weight:700;font-size:15px;padding:15px 32px;border-radius:100px;text-decoration:none;box-shadow:0 6px 24px rgba(26,122,74,.3);transition:all .25s;display:inline-flex;align-items:center;gap:8px; }
-    .btn-green:hover { background:var(--green-light);transform:translateY(-3px);box-shadow:0 12px 36px rgba(26,122,74,.4); }
-    .btn-outline-lgt { background:transparent;color:var(--text-muted);font-size:15px;padding:15px 32px;border-radius:100px;text-decoration:none;border:1.5px solid rgba(13,31,22,.18);transition:all .2s;display:inline-flex;align-items:center;gap:8px; }
-    .btn-outline-lgt:hover { border-color:var(--green);color:var(--green); }
-
-    /* Hero visual - floating phone */
-    .hero-visual { position:relative;display:flex;align-items:center;justify-content:center; }
-    .hero-phone { background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:24px;max-width:330px;width:100%;animation:float 5s ease-in-out infinite;backdrop-filter:blur(10px); }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-    .hp-bar { display:flex;justify-content:space-between;align-items:center;margin-bottom:18px; }
-    .hp-title { font-family:var(--font-head);font-weight:700;font-size:15px;color:white; }
-    .hp-pill { background:rgba(45,179,107,.2);color:var(--green-light);font-size:10px;font-weight:700;padding:4px 10px;border-radius:100px;border:1px solid rgba(45,179,107,.3); }
-    .hp-prog-wrap { background:rgba(255,255,255,.05);border-radius:15px;padding:16px;margin-bottom:13px; }
-    .hp-prog-lbl { display:flex;justify-content:space-between;font-size:11px;margin-bottom:7px; }
-    .hp-prog-lbl span:first-child { color:rgba(255,255,255,.45); }
-    .hp-prog-lbl span:last-child { color:var(--green-light);font-weight:700; }
-    .hp-prog-n { font-family:var(--font-head);font-weight:700;font-size:24px;color:white;margin-bottom:9px; }
-    .hp-prog-bar { background:rgba(255,255,255,.1);border-radius:100px;height:7px;overflow:hidden; }
-    .hp-prog-fill { height:100%;border-radius:100px;background:linear-gradient(90deg,var(--green),var(--green-light));width:72%; }
-    .hp-member { display:flex;align-items:center;gap:9px;padding:9px 11px;background:rgba(255,255,255,.04);border-radius:11px;border:1px solid rgba(255,255,255,.07);margin-bottom:7px; }
-    .hp-av { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0; }
-    .av-g { background:rgba(45,179,107,.2);color:var(--green-light); }
-    .av-s { background:rgba(245,166,35,.2);color:var(--sun); }
-    .av-b { background:rgba(100,150,255,.2);color:#85B7FF; }
-    .hp-mname { font-size:11px;font-weight:500;color:white;flex:1; }
-    .hp-mamt { font-size:10px;color:rgba(255,255,255,.4); }
-    .hp-status { font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px; }
-    .hs-ok { background:rgba(45,179,107,.15);color:var(--green-light); }
-    .hs-wait { background:rgba(245,166,35,.15);color:var(--sun); }
-
-    .hero-stats { display:flex;gap:48px;margin-top:68px;padding-top:40px;border-top:1px solid rgba(255,255,255,.07);flex-wrap:wrap;position:relative;z-index:1; }
-    .stat-n { font-family:var(--font-head);font-weight:800;font-size:38px;color:var(--sun);line-height:1; }
-    .stat-l { font-size:12px;color:rgba(255,255,255,.42);margin-top:5px;max-width:130px;line-height:1.45; }
-
-    /* ── SECTION ── */
-    section { padding: 96px 60px; }
-    .stag { display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 15px;border-radius:100px;margin-bottom:20px; }
-    .stag-g { color:var(--green);background:var(--green-pale); }
-    .stag-w { color:rgba(255,255,255,.8);background:rgba(255,255,255,.1); }
-    .stag-s { color:var(--sun);background:rgba(245,166,35,.12); }
-    h2 { font-family:var(--font-head);font-weight:800;font-size:clamp(30px,4.5vw,54px);line-height:1.1;color:var(--night);margin-bottom:16px; }
-    h2.light { color:white; }
-    h2 em { font-style:normal;color:var(--green); }
-    h2 em.sun { color:var(--sun); }
-    .sec-sub { font-size:17px;color:var(--text-muted);max-width:550px;line-height:1.75;font-weight:300; }
-    .sec-sub.light { color:rgba(255,255,255,.6); }
-
-    /* ── PROBLÈME ── */
-    #probleme { background: var(--sand); }
-    .prob-grid { display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:60px;align-items:start; }
-    .prob-cards { display:flex;flex-direction:column;gap:18px; }
-    .prob-card { background:white;border-radius:20px;padding:26px 30px;border:1px solid rgba(26,122,74,.1);transition:all .3s;cursor:default; }
-    .prob-card:hover { transform:translateY(-4px);box-shadow:0 16px 48px rgba(13,31,22,.1);border-color:rgba(26,122,74,.25); }
-    .prob-icon { width:50px;height:50px;background:var(--green-pale);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px; }
-    .prob-card h3 { font-family:var(--font-head);font-weight:700;font-size:17px;color:var(--night);margin-bottom:9px; }
-    .prob-card p { font-size:13px;color:var(--text-muted);line-height:1.7; }
-    .prob-visual { background:var(--night);border-radius:22px;padding:36px;color:white;position:sticky;top:110px; }
-    .pv-title { font-family:var(--font-head);font-weight:700;font-size:19px;color:white;margin-bottom:24px; }
-    .conf-step { display:flex;gap:14px;align-items:flex-start;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.07); }
-    .conf-step:last-child { border-bottom:none;padding-bottom:0; }
-    .cn { min-width:30px;height:30px;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--sun);flex-shrink:0; }
-    .conf-step p { font-size:13px;color:rgba(255,255,255,.65);line-height:1.65; }
-    .conf-step strong { color:white; }
-
-    /* ── SOLUTION ── */
-    #solution { background: var(--night); }
-    .sol-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:60px; }
-    .sol-card { background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:34px;transition:all .3s; }
-    .sol-card:hover { background:rgba(255,255,255,.08);transform:translateY(-4px);border-color:rgba(255,255,255,.2); }
-    .sol-card.feat { grid-column:span 2;background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.2);display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center; }
-    .sol-n { font-family:var(--font-head);font-weight:800;font-size:50px;color:rgba(245,166,35,.2);line-height:1;margin-bottom:14px; }
-    .sol-card h3 { font-family:var(--font-head);font-weight:700;font-size:21px;color:white;margin-bottom:11px; }
-    .sol-card p { font-size:14px;color:rgba(255,255,255,.6);line-height:1.7; }
-    .sol-list { list-style:none;margin-top:14px; }
-    .sol-list li { font-size:13px;color:rgba(255,255,255,.7);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:9px; }
-    .sol-list li::before { content:'';width:5px;height:5px;background:var(--green-light);border-radius:50%;flex-shrink:0; }
-
-    /* ── MAQUETTES ── */
-    #maquettes { background:linear-gradient(180deg,var(--night) 0%,#09180e 100%); }
-    .mq-wrap { display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;margin-top:60px; }
-    .mq-nav { display:flex;flex-direction:column;gap:10px;position:sticky;top:110px; }
-    .mq-tab { display:flex;align-items:center;gap:14px;padding:17px 20px;border-radius:15px;border:1px solid rgba(255,255,255,.08);cursor:pointer;background:rgba(255,255,255,.03);transition:all .25s; }
-    .mq-tab:hover { background:rgba(255,255,255,.07); }
-    .mq-tab.active { background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.28); }
-    .mq-tab-n { font-family:var(--font-head);font-weight:800;font-size:20px;color:rgba(255,255,255,.2);min-width:26px;transition:color .2s; }
-    .mq-tab.active .mq-tab-n { color:var(--sun); }
-    .mq-tab-info h4 { font-family:var(--font-head);font-weight:700;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:3px;transition:color .2s; }
-    .mq-tab.active .mq-tab-info h4 { color:white; }
-    .mq-tab-info p { font-size:11px;color:rgba(255,255,255,.35); }
-    .mq-desc { margin-top:22px;display:none; }
-    .mq-desc.active { display:block; }
-    .mq-desc p { font-size:14px;color:rgba(255,255,255,.65);line-height:1.75;margin-bottom:14px; }
-    .mq-tags { display:flex;flex-wrap:wrap;gap:7px; }
-    .mq-tag { font-size:11px;padding:4px 12px;border-radius:100px; }
-    .t-g { background:rgba(45,179,107,.15);color:var(--green-light); }
-    .t-s { background:rgba(245,166,35,.15);color:var(--sun); }
-    .t-w { background:rgba(255,255,255,.08);color:rgba(255,255,255,.55); }
-
-    /* Phone mockup */
-    .mq-phone { background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:26px;padding:22px;max-width:330px; }
-    .mq-screen { display:none;animation:fadeUp .35s ease; }
-    .mq-screen.active { display:block; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-    .mq-hdr { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px; }
-    .mq-title { font-family:var(--font-head);font-weight:700;font-size:15px;color:white; }
-    .mq-sub { font-size:10px;color:rgba(255,255,255,.4);margin-top:2px; }
-    .mq-badge { font-size:9px;font-weight:700;padding:3px 9px;border-radius:100px; }
-    .b-g { background:rgba(45,179,107,.2);color:var(--green-light);border:1px solid rgba(45,179,107,.3); }
-    .b-s { background:rgba(245,166,35,.2);color:var(--sun);border:1px solid rgba(245,166,35,.3); }
-    .b-b { background:rgba(100,150,255,.2);color:#85B7FF;border:1px solid rgba(100,150,255,.3); }
-    .mq-card-inner { background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:14px;margin-bottom:11px; }
-    .mq-label { font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:5px;display:block; }
-    .mq-input { width:100%;padding:8px 11px;border:1px solid rgba(255,255,255,.12);border-radius:9px;font-size:11px;background:rgba(255,255,255,.06);color:white;margin-bottom:9px;outline:none; }
-    .mq-row { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
-    .mq-mem { display:flex;align-items:center;gap:9px;padding:8px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:9px;margin-bottom:6px; }
-    .mq-av { width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0; }
-    .mq-mname { font-size:11px;font-weight:500;color:white;flex:1; }
-    .mq-mrole { font-size:9px;color:rgba(255,255,255,.4); }
-    .mq-add { width:100%;padding:8px;border:1px dashed rgba(255,255,255,.15);border-radius:9px;background:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;margin-bottom:7px; }
-    .mq-btn { width:100%;padding:11px;background:var(--green);color:white;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;margin-top:6px;transition:opacity .2s; }
-    .mq-btn:hover { opacity:.88; }
-    .mq-steps { display:flex;gap:4px;margin-bottom:16px; }
-    .mq-step { flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.1); }
-    .mq-step.done { background:var(--green); }
-    .mq-step.cur { background:var(--green-light); }
-    .mq-prog-lbl { display:flex;justify-content:space-between;margin-bottom:4px; }
-    .mq-prog-lbl span { font-size:10px; }
-    .mq-prog-lbl span:first-child { color:rgba(255,255,255,.45); }
-    .mq-prog-lbl span:last-child { color:var(--green-light);font-weight:700; }
-    .mq-prog-n { font-family:var(--font-head);font-weight:700;font-size:18px;color:white;margin-bottom:7px; }
-    .mq-prog-bar { background:rgba(255,255,255,.1);border-radius:100px;height:6px;overflow:hidden;margin-bottom:7px; }
-    .mq-prog-fill { height:100%;border-radius:100px;background:linear-gradient(90deg,var(--green),var(--green-light)); }
-    .mq-prog-hint { font-size:9px;color:rgba(255,255,255,.35); }
-    .mq-stats { display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:11px; }
-    .mq-stat { background:rgba(255,255,255,.05);border-radius:9px;padding:8px 5px;text-align:center; }
-    .mq-stat-n { font-family:var(--font-head);font-size:16px;font-weight:700;color:white; }
-    .mq-stat-l { font-size:9px;color:rgba(255,255,255,.4);margin-top:1px; }
-    .mq-tx { display:flex;align-items:center;gap:8px;padding:8px 11px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:9px;margin-bottom:6px; }
-    .mq-tx-dot { width:6px;height:6px;border-radius:50%;flex-shrink:0; }
-    .mq-tx-name { font-size:10px;font-weight:500;color:white; }
-    .mq-tx-hash { font-size:9px;color:rgba(255,255,255,.3);font-family:monospace; }
-    .mq-tx-amt { font-size:10px;font-weight:700;color:var(--green-light);margin-left:auto; }
-    .mq-notif { background:rgba(26,122,74,.18);border:1px solid rgba(45,179,107,.28);border-radius:9px;padding:8px 11px;font-size:10px;color:rgba(255,255,255,.7);margin-bottom:12px; }
-    .mq-vopt { display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid rgba(255,255,255,.1);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:all .2s; }
-    .mq-vopt:hover,.mq-vopt.sel { border-color:var(--green-light);background:rgba(45,179,107,.08); }
-    .mq-radio { width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);flex-shrink:0;margin-top:2px;position:relative; }
-    .mq-vopt.sel .mq-radio { border-color:var(--green-light); }
-    .mq-vopt.sel .mq-radio::after { content:'';position:absolute;top:2px;left:2px;width:7px;height:7px;border-radius:50%;background:var(--green-light); }
-    .mq-opt-txt { font-size:10px;color:rgba(255,255,255,.8);flex:1;line-height:1.4; }
-    .mq-opt-price { font-size:9px;font-weight:700;color:rgba(255,255,255,.4);flex-shrink:0; }
-    .mq-res-row { display:flex;align-items:center;gap:7px;margin-bottom:6px; }
-    .mq-res-lbl { font-size:9px;color:rgba(255,255,255,.45);width:65px; }
-    .mq-res-bar { flex:1;background:rgba(255,255,255,.08);border-radius:100px;height:5px;overflow:hidden; }
-    .mq-res-fill { height:100%;border-radius:100px; }
-    .mq-res-pct { font-size:9px;color:rgba(255,255,255,.4);width:24px;text-align:right; }
-    .mq-chain { display:flex;align-items:center;gap:7px;padding:8px 11px;background:rgba(255,255,255,.04);border-radius:9px;margin-top:9px; }
-    .mq-chain-dot { width:6px;height:6px;border-radius:50%;background:var(--green-light);flex-shrink:0;animation:pulse 2s infinite; }
-    .mq-chain-txt { font-size:9px;color:rgba(255,255,255,.4); }
-    .mq-chain-hash { font-family:monospace;font-size:8px;color:rgba(255,255,255,.28); }
-
-    /* ── BLOCKCHAIN ── */
-    #blockchain { background: white; }
-    .chain-flow { display:flex;align-items:stretch;gap:0;margin-top:60px;overflow-x:auto;padding-bottom:14px; }
-    .chain-step { flex:1;min-width:150px;background:var(--sand);border-radius:18px;padding:26px 20px;text-align:center;border:1px solid rgba(26,122,74,.1);transition:all .3s; }
-    .chain-step:hover { transform:translateY(-6px);box-shadow:0 20px 60px rgba(13,31,22,.12);border-color:rgba(26,122,74,.3); }
-    .chain-step .step-icon { width:52px;height:52px;background:var(--green);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px;box-shadow:0 8px 24px rgba(26,122,74,.28); }
-    .chain-step h3 { font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--night);margin-bottom:7px; }
-    .chain-step p { font-size:12px;color:var(--text-muted);line-height:1.6; }
-    .chain-arrow { flex-shrink:0;width:34px;display:flex;align-items:center;justify-content:center;color:var(--green-light);font-size:18px;opacity:.5; }
-    .bc-why { margin-top:60px;background:var(--night);border-radius:26px;padding:52px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:44px; }
-    .why-item h4 { font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--sun);margin-bottom:11px; }
-    .why-item p { font-size:13px;color:rgba(255,255,255,.6);line-height:1.7; }
-
-    /* ── UTILISATEURS ── */
-    #utilisateurs { background: var(--sand); }
-    .users-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:60px; }
-    .user-card { background:white;border-radius:20px;padding:30px 22px;text-align:center;border:1px solid rgba(26,122,74,.1);transition:all .3s; }
-    .user-card:hover { transform:translateY(-5px);box-shadow:0 16px 48px rgba(13,31,22,.1); }
-    .user-av { width:64px;height:64px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:26px; }
-    .av-green { background:var(--green-pale); }
-    .av-sun { background:rgba(245,166,35,.12); }
-    .user-card h3 { font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--night);margin-bottom:9px; }
-    .user-card p { font-size:12px;color:var(--text-muted);line-height:1.65; }
-
-    /* ── IMPACT ── */
-    #impact { background:linear-gradient(135deg,var(--green) 0%,#0B3A20 100%); }
-    .impact-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:60px; }
-    .impact-card { background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:34px;transition:all .3s; }
-    .impact-card:hover { background:rgba(255,255,255,.15);transform:translateY(-4px); }
-    .impact-big { font-family:var(--font-head);font-weight:800;font-size:52px;color:var(--sun);line-height:1;margin-bottom:11px; }
-    .impact-card h3 { font-family:var(--font-head);font-weight:600;font-size:18px;color:white;margin-bottom:9px; }
-    .impact-card p { font-size:13px;color:rgba(255,255,255,.7);line-height:1.7; }
-    .odds-bar { margin-top:44px;background:rgba(255,255,255,.08);border-radius:18px;padding:30px 44px;display:flex;gap:36px;align-items:center;flex-wrap:wrap; }
-    .odd-badge { display:flex;align-items:center;gap:12px;flex:1;min-width:170px; }
-    .odd-n { font-family:var(--font-head);font-weight:800;font-size:24px;color:var(--sun); }
-    .odd-t { font-size:12px;color:rgba(255,255,255,.7);line-height:1.5; }
-
-    /* ── HACKATHON ── */
-    #hackathon { background: var(--night); }
-    .phases { margin-top:60px;display:flex;flex-direction:column;gap:0; }
-    .phase-row { display:grid;grid-template-columns:110px 44px 1fr;align-items:start; }
-    .phase-lbl { font-family:var(--font-head);font-weight:700;font-size:11px;color:rgba(255,255,255,.38);padding-top:26px;text-align:right;padding-right:18px;text-transform:uppercase;letter-spacing:1px; }
-    .phase-line { display:flex;flex-direction:column;align-items:center; }
-    .phase-dot { width:14px;height:14px;border-radius:50%;background:var(--sun);margin-top:26px;flex-shrink:0;box-shadow:0 0 0 5px rgba(245,166,35,.18); }
-    .phase-conn { width:2px;flex:1;min-height:44px;background:rgba(255,255,255,.08); }
-    .phase-content { background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:26px 30px;margin:13px 0;transition:all .3s; }
-    .phase-content:hover { background:rgba(255,255,255,.08);border-color:rgba(245,166,35,.2); }
-    .phase-content h3 { font-family:var(--font-head);font-weight:700;font-size:18px;color:white;margin-bottom:13px; }
-    .phase-content ul { list-style:none; }
-    .phase-content ul li { font-size:13px;color:rgba(255,255,255,.65);padding:5px 0;display:flex;align-items:flex-start;gap:9px; }
-    .phase-content ul li::before { content:'→';color:var(--sun);flex-shrink:0;font-weight:700; }
-
-    /* ── CTA ── */
-    #cta { background:var(--sand);text-align:center;padding:112px 60px; }
-    #cta h2 { max-width:680px;margin:18px auto 16px; }
-    #cta .sec-sub { margin:0 auto 44px;text-align:center; }
-    .cta-actions { display:flex;gap:14px;justify-content:center;flex-wrap:wrap; }
-
-    /* ── FOOTER ── */
-    footer { background:var(--night);padding:44px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;border-top:1px solid rgba(255,255,255,.05); }
-    .footer-logo { font-family:var(--font-head);font-weight:700;font-size:19px;color:white; }
-    .footer-logo span { color:var(--sun); }
-    footer p { font-size:12px;color:rgba(255,255,255,.32); }
-    .footer-tags { display:flex;gap:7px;flex-wrap:wrap; }
-    .footer-tag { font-size:10px;color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.12);padding:4px 11px;border-radius:100px; }
-
-    /* ── REVEAL ── */
-    .reveal { opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease; }
-    .reveal.visible { opacity:1;transform:translateY(0); }
-    .reveal-d1 { transition-delay:.1s; } .reveal-d2 { transition-delay:.2s; } .reveal-d3 { transition-delay:.3s; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width:1024px) {
-      .hero-grid { grid-template-columns:1fr;gap:48px; }
-      .hero-visual { display:none; }
-      .prob-grid,.sol-grid,.impact-grid,.users-grid { grid-template-columns:1fr; }
-      .sol-card.feat { grid-column:span 1;grid-template-columns:1fr; }
-      .bc-why { grid-template-columns:1fr; }
-      .mq-wrap { grid-template-columns:1fr; }
-      .mq-nav { flex-direction:row;overflow-x:auto;padding-bottom:8px;position:static; }
-      .mq-tab { min-width:155px; }
-    }
-    @media (max-width:768px) {
-      nav { padding:13px 22px; }
-      .nav-links { display:none; }
-      .hamburger { display:flex; }
-      section { padding:68px 22px; }
-      .hero { padding:115px 22px 75px; }
-      .hero-stats { gap:26px; }
-      .chain-flow { flex-direction:column; }
-      .chain-arrow { transform:rotate(90deg); }
-      .phase-row { grid-template-columns:70px 32px 1fr; }
-      .odds-bar { padding:22px;flex-direction:column; }
-      footer { flex-direction:column;align-items:flex-start;padding:36px 22px; }
+    @media(max-width:768px){
+      nav{padding:16px 22px}nav.solid{padding:12px 22px}
+      .nav-links{display:none}.hamburger{display:flex}
+      section{padding:80px 22px}.hero{padding:108px 22px 68px}
+      .hero h1{font-size:52px;letter-spacing:-1.5px}
+      .hero-ticker{gap:28px}
+      .sol-grid{grid-template-columns:1fr}
+      .sol-card{border-radius:12px !important}
+      .bc-flow{grid-template-columns:1fr 1fr}
+      .bc-flow::before{display:none}
+      .bc-why,.users-grid,.impact-grid{grid-template-columns:1fr}
+      .impact-c{border-radius:12px !important;margin:0 !important}
+      .odd-bar{flex-direction:column;padding:24px;gap:24px}
+      .odd-item::before{display:none}
+      .phase-c{padding:26px 22px}
+      footer{flex-direction:column;align-items:flex-start;padding:40px 22px}
+      #cta{padding:80px 22px}
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav id="navbar">
-    <a href="#" class="nav-logo">
-      <div class="ni">☀️</div>
-      Coop<span>Énergie</span>
-    </a>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="#probleme">Problème</a></li>
-      <li><a href="#solution">Solution</a></li>
-      <li><a href="#maquettes">Aperçu</a></li>
-      <li><a href="#blockchain">Blockchain</a></li>
-      <li><a href="#impact">Impact</a></li>
-      <li><a href="plateforme.html" class="nav-cta">Accéder à la plateforme →</a></li>
-    </ul>
-    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo"><div class="logo-sun">☀</div>Coop<em>Énergie</em></a>
+  <ul class="nav-links">
+    <li><a href="#probleme">Problème</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#blockchain">Blockchain</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="plateforme.html" class="nav-cta">Accéder →</a></li>
+  </ul>
+  <div class="hamburger" id="hbg" onclick="openMob()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mob-nav" id="mob">
+  <button class="mob-close" onclick="closeMob()">✕</button>
+  <a href="#probleme" onclick="closeMob()">Problème</a>
+  <a href="#solution" onclick="closeMob()">Solution</a>
+  <a href="#blockchain" onclick="closeMob()">Blockchain</a>
+  <a href="#impact" onclick="closeMob()">Impact</a>
+  <a href="plateforme.html" style="color:var(--amber)">→ Plateforme</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow1"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-tag"><div class="hero-tag-line"></div><span class="hero-tag-txt">🇨🇲 Cameroun · Miabe Hackathon 2026 · CM-02</span></div>
+  <div class="hero-layout">
+    <div style="position:relative;z-index:1;" id="hero-left">
+      <h1>L'énergie<span class="h1-amber">solaire,</span><span class="h1-stroke">ensemble.</span></h1>
+      <p class="hero-sub">CoopÉnergie permet à des Camerounais de former des coopératives d'achat solaire, gérer leurs fonds collectifs de façon transparente sur blockchain, et accéder à l'énergie qu'aucun membre ne pourrait financer seul.</p>
+      <div class="hero-btns">
+        <a href="plateforme.html" class="btn-solar">🚀 Accéder à la plateforme</a>
+        <a href="#blockchain" class="btn-ghost">Comment ça marche →</a>
+      </div>
+      <div class="hero-ticker">
+        <div><div class="tk-n">45%</div><div class="tk-l">Camerounais sans électricité</div></div>
+        <div><div class="tk-n">−40%</div><div class="tk-l">Réduction coût groupé</div></div>
+        <div><div class="tk-n">80K</div><div class="tk-l">Foyers équipés en solaire</div></div>
+        <div><div class="tk-n">35%</div><div class="tk-l">Croissance marché/an</div></div>
+      </div>
     </div>
-  </nav>
-  <div class="mobile-menu" id="mobile-menu">
-    <a href="#probleme" onclick="toggleMenu()">Problème</a>
-    <a href="#solution" onclick="toggleMenu()">Solution</a>
-    <a href="#maquettes" onclick="toggleMenu()">Aperçu</a>
-    <a href="#blockchain" onclick="toggleMenu()">Blockchain</a>
-    <a href="#impact" onclick="toggleMenu()">Impact</a>
-    <a href="plateforme.html" style="color:var(--sun);font-weight:700;">→ Accéder à la plateforme</a>
+    <div class="hero-card-wrap" style="display:flex;align-items:center;justify-content:center;">
+      <div style="position:relative;">
+        <div class="notif-badge">✅ Cotisation confirmée — +75 000 FCFA</div>
+        <div class="hero-card">
+          <div class="hc-top"><div class="hc-name">SolarYaoundé Bastos</div><div class="hc-pill">ACTIVE</div></div>
+          <div class="hc-pct">72%</div>
+          <div class="hc-bar"><div class="hc-fill"></div></div>
+          <div class="hc-hint">864 000 / 1 200 000 FCFA · 7 semaines</div>
+          <div class="hc-mem"><div class="hc-av av-a">AM</div><div><div class="hc-mname">Amina Mbarga</div><div class="hc-hash">0x3f4a…c82e</div></div><div class="hc-st st-ok">OK</div></div>
+          <div class="hc-mem"><div class="hc-av av-b">JF</div><div><div class="hc-mname">Jean-Paul Fotso</div><div class="hc-hash">0x8b1c…f34d</div></div><div class="hc-st st-ok">OK</div></div>
+          <div class="hc-mem"><div class="hc-av av-c">EK</div><div><div class="hc-mname">Esther Kamga</div><div class="hc-hash">0x2d9e…a17f</div></div><div class="hc-st st-wait">ATTENTE</div></div>
+          <div class="hc-chain"><div class="chain-dot"></div><div class="chain-txt">Blockchain · 12 transactions enregistrées</div></div>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
-    <div class="hero-grid">
-      <div style="position:relative;z-index:1;">
-        <div class="hero-badge"><div class="badge-dot"></div><span>🇨🇲 Cameroun · Miabe Hackathon 2026 · Projet CM-02</span></div>
-        <h1>L'énergie solaire,<br><em>ensemble.</em></h1>
-        <p class="hero-sub">CoopÉnergie permet à des Camerounais de former des coopératives d'achat solaire, gérer leurs fonds collectifs de façon transparente sur blockchain, et accéder à l'énergie qu'aucun membre ne pourrait financer seul.</p>
-        <div class="hero-actions">
-          <a href="plateforme.html" class="btn-primary">🚀 Accéder à la plateforme</a>
-          <a href="#blockchain" class="btn-ghost">Comment ça marche →</a>
-        </div>
-        <div class="hero-stats">
-          <div><div class="stat-n">45%</div><div class="stat-l">des Camerounais sans accès à l'électricité</div></div>
-          <div><div class="stat-n">−40%</div><div class="stat-l">de réduction du coût avec l'achat groupé</div></div>
-          <div><div class="stat-n">80K</div><div class="stat-l">foyers déjà équipés de solaire individuel</div></div>
-          <div><div class="stat-n">35%</div><div class="stat-l">croissance annuelle du marché solaire</div></div>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <div class="hero-phone">
-          <div class="hp-bar"><div class="hp-title">SolarYaoundé Bastos</div><div class="hp-pill">● Active</div></div>
-          <div class="hp-prog-wrap">
-            <div class="hp-prog-lbl"><span>Fonds collectés</span><span>72%</span></div>
-            <div class="hp-prog-n">864 000 <span style="font-size:12px;color:rgba(255,255,255,.4);font-weight:300;">FCFA</span></div>
-            <div class="hp-prog-bar"><div class="hp-prog-fill"></div></div>
-            <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:5px;">Objectif : 1 200 000 FCFA · 7 semaines</div>
-          </div>
-          <div class="hp-member"><div class="hp-av av-g">AM</div><div style="flex:1"><div class="hp-mname">Amina Mbarga</div><div class="hp-mamt">+75 000 F · 0x3f4a…c82e</div></div><span class="hp-status hs-ok">✓</span></div>
-          <div class="hp-member"><div class="hp-av av-s">JF</div><div style="flex:1"><div class="hp-mname">Jean-Paul Fotso</div><div class="hp-mamt">+50 000 F · 0x8b1c…f34d</div></div><span class="hp-status hs-ok">✓</span></div>
-          <div class="hp-member"><div class="hp-av av-b">EK</div><div style="flex:1"><div class="hp-mname">Esther Kamga</div><div class="hp-mamt">En attente · 0x2d9e…a17f</div></div><span class="hp-status hs-wait">⏳</span></div>
-        </div>
-      </div>
+<!-- PROBLÈME -->
+<section id="probleme">
+  <div class="s-tag"><div class="s-tag-line"></div><span class="s-tag-txt c-amber">Le problème</span></div>
+  <h2 class="st">Des coopératives qui échouent<br>avant de <em>démarrer</em></h2>
+  <p class="ss">Un système solaire coûte entre 60 000 et 250 000 FCFA — inaccessible seul, mais accessible collectivement. Sans outil transparent, les fonds communs génèrent des conflits.</p>
+  <div class="prob-grid">
+    <div>
+      <div class="prob-card rv" data-n="1"><div style="font-size:28px;">💸</div><h3>Un coût inaccessible individuellement</h3><p>60 000 à 250 000 FCFA par installation — plusieurs mois de revenus pour la majorité des ménages ruraux et périurbains camerounais.</p></div>
+      <div class="prob-card rv d1" data-n="2"><div style="font-size:28px;">🤝</div><h3>La volonté de s'organiser existe</h3><p>Des groupes de quartier, associations de femmes et communautés tentent déjà de se cotiser — mais sans outil, la confiance repose sur une seule personne.</p></div>
+      <div class="prob-card rv d2" data-n="3"><div style="font-size:28px;">⚡</div><h3>Les délestages s'aggravent</h3><p>Face aux coupures d'ENEO, l'énergie solaire n'est plus un luxe mais une nécessité économique pour ménages, artisans et commerçants.</p></div>
     </div>
-  </section>
-
-  <!-- PROBLÈME -->
-  <section id="probleme">
-    <div class="stag stag-g">Le problème</div>
-    <h2>Des coopératives qui échouent<br>avant de <em>démarrer</em></h2>
-    <p class="sec-sub">Un système solaire coûte entre 60 000 et 250 000 FCFA — inaccessible seul, mais accessible collectivement. Le problème : gérer des fonds communs sans transparence crée des conflits.</p>
-    <div class="prob-grid">
-      <div class="prob-cards">
-        <div class="prob-card reveal"><div class="prob-icon">💸</div><h3>Un coût inaccessible individuellement</h3><p>60 000 à 250 000 FCFA par installation — plusieurs mois de revenus pour la majorité des ménages ruraux et périurbains camerounais.</p></div>
-        <div class="prob-card reveal reveal-d1"><div class="prob-icon">🤝</div><h3>La volonté de s'organiser existe</h3><p>Des groupes de quartier, associations de femmes et communautés tentent déjà de se cotiser ensemble — mais aucun outil ne les accompagne.</p></div>
-        <div class="prob-card reveal reveal-d2"><div class="prob-icon">⚡</div><h3>Les délestages s'aggravent</h3><p>Face aux coupures d'ENEO, l'énergie solaire n'est plus un luxe mais une nécessité économique pour ménages, artisans et commerçants.</p></div>
-      </div>
-      <div class="prob-visual reveal">
-        <div class="pv-title">Pourquoi les coopératives échouent</div>
-        <div class="conf-step"><div class="cn">1</div><p>Un groupe de 10 voisins cotise ensemble. <strong>Personne ne sait exactement qui a payé combien.</strong></p></div>
-        <div class="conf-step"><div class="cn">2</div><p>Le trésorier gère seul. <strong>La suspicion monte.</strong> Des accusations de détournement apparaissent.</p></div>
-        <div class="conf-step"><div class="cn">3</div><p>Un désaccord éclate sur l'équipement. <strong>Sans mécanisme de vote, les tensions deviennent des conflits.</strong></p></div>
-        <div class="conf-step"><div class="cn">4</div><p>La coopérative se dissout. <strong>Personne n'a de panneau solaire.</strong> Les délestages continuent.</p></div>
-      </div>
+    <div class="prob-vis rv">
+      <div class="pv-lbl">// Pourquoi les coopératives échouent</div>
+      <div class="cs"><div class="cs-n">01</div><div class="cs-t">Un groupe cotise ensemble. <strong>Personne ne sait exactement qui a payé combien.</strong></div></div>
+      <div class="cs"><div class="cs-n">02</div><div class="cs-t">Le trésorier gère seul. <strong>La suspicion monte.</strong> Des accusations de détournement apparaissent.</div></div>
+      <div class="cs"><div class="cs-n">03</div><div class="cs-t">Un désaccord éclate sur l'équipement. <strong>Sans mécanisme de vote, les tensions deviennent des conflits.</strong></div></div>
+      <div class="cs"><div class="cs-n">04</div><div class="cs-t">La coopérative se dissout. <strong>Personne n'a de panneau solaire.</strong> Les délestages continuent.</div></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- SOLUTION -->
-  <section id="solution">
-    <div class="stag stag-w">La solution</div>
-    <h2 class="light">Une coopérative solaire<br><em class="sun">entièrement transparente</em></h2>
-    <p class="sec-sub light">CoopÉnergie enregistre chaque cotisation, chaque vote et chaque décision sur la blockchain. Toute fraude devient immédiatement visible. La confiance est structurelle, pas personnelle.</p>
-    <div class="sol-grid reveal">
-      <div class="sol-card feat">
-        <div><div class="sol-n">01</div><h3>Créer une coopérative en 3 minutes</h3><p>N'importe quel groupe peut créer une coopérative solaire avec son objectif, ses membres et ses règles. Tout est enregistré sur blockchain dès la création.</p></div>
-        <ul class="sol-list">
-          <li>Définir l'objectif : équipement et coût cible</li>
-          <li>Inviter les membres par numéro de téléphone</li>
-          <li>Configurer les règles de vote (majorité, ⅔…)</li>
-          <li>Partager le tableau de bord commun</li>
-        </ul>
-      </div>
-      <div class="sol-card"><div class="sol-n">02</div><h3>Cotiser de façon traçable</h3><p>Chaque versement est enregistré on-chain avec horodatage. Tout membre consulte en temps réel : qui a cotisé, combien, quand.</p></div>
-      <div class="sol-card"><div class="sol-n">03</div><h3>Voter sur les achats</h3><p>Les décisions d'achat sont soumises au vote des membres. Résultats enregistrés blockchain — ni falsifiables, ni ignorables.</p></div>
-      <div class="sol-card"><div class="sol-n">04</div><h3>Rapport automatique</h3><p>À tout moment, CoopÉnergie génère un rapport complet : fonds, délai estimé, décisions prises, plan d'achat recommandé.</p></div>
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="sol-hdr">
+    <div>
+      <div class="s-tag"><div class="s-tag-line"></div><span class="s-tag-txt c-white">La solution</span></div>
+      <h2 class="st lgt">Une coopérative<br>entièrement<br><em class="a">transparente</em></h2>
     </div>
-  </section>
+    <p class="ss lgt">CoopÉnergie enregistre chaque cotisation, chaque vote et chaque décision sur la blockchain. Toute fraude devient immédiatement visible. La confiance est structurelle, pas personnelle.</p>
+  </div>
+  <div class="sol-grid rv">
+    <div class="sol-card"><div class="sol-n">// 01</div><div class="sol-ico">🏘️</div><h3>Créer une coopérative en 3 minutes</h3><p>N'importe quel groupe peut créer une coopérative avec son objectif, ses membres et ses règles. Tout est enregistré blockchain dès la création.</p><div class="sol-tags"><span class="sol-tag">CRÉATION RAPIDE</span><span class="sol-tag">BLOCKCHAIN</span></div></div>
+    <div class="sol-card"><div class="sol-n">// 02</div><div class="sol-ico">💰</div><h3>Cotiser de façon totalement traçable</h3><p>Chaque versement est enregistré on-chain avec horodatage. Tout membre consulte en temps réel qui a cotisé, combien, et quand.</p><div class="sol-tags"><span class="sol-tag">TRAÇABILITÉ</span><span class="sol-tag">TEMPS RÉEL</span></div></div>
+    <div class="sol-card"><div class="sol-n">// 03</div><div class="sol-ico">🗳️</div><h3>Voter sur les décisions d'achat</h3><p>Les décisions d'achat sont soumises au vote des membres. Résultats enregistrés blockchain — ni falsifiables, ni ignorables.</p><div class="sol-tags"><span class="sol-tag">VOTE SÉCURISÉ</span><span class="sol-tag">IMMUABLE</span></div></div>
+    <div class="sol-card"><div class="sol-n">// 04</div><div class="sol-ico">📊</div><h3>Rapport automatique et plan d'achat</h3><p>À tout moment, CoopÉnergie génère un rapport PDF complet : fonds collectés, délai estimé, décisions prises et plan d'achat recommandé.</p><div class="sol-tags"><span class="sol-tag">RAPPORT PDF</span><span class="sol-tag">AUTOMATIQUE</span></div></div>
+  </div>
+</section>
 
-  <!-- MAQUETTES -->
-  <section id="maquettes">
-    <div class="stag stag-w">Aperçu de l'application</div>
-    <h2 class="light">L'interface en<br><em class="sun">3 écrans clés</em></h2>
-    <p class="sec-sub light">Créer une coopérative, suivre les cotisations et voter sur les achats — le tout ancré sur blockchain.</p>
-    <div class="mq-wrap reveal">
-      <div>
-        <div class="mq-nav">
-          <div class="mq-tab active" onclick="switchMq(0,this)"><div class="mq-tab-n">01</div><div class="mq-tab-info"><h4>Créer une coopérative</h4><p>Formulaire 3 étapes · Smart contract</p></div></div>
-          <div class="mq-tab" onclick="switchMq(1,this)"><div class="mq-tab-n">02</div><div class="mq-tab-info"><h4>Tableau de bord</h4><p>Progression · cotisations on-chain</p></div></div>
-          <div class="mq-tab" onclick="switchMq(2,this)"><div class="mq-tab-n">03</div><div class="mq-tab-info"><h4>Voter on-chain</h4><p>Décisions · résultats immuables</p></div></div>
-        </div>
-        <div id="mq-d-0" class="mq-desc active"><p>Le fondateur saisit le nom, l'objectif en FCFA, la durée et invite les membres. Un smart contract est déployé — la coopérative existe on-chain de façon permanente.</p><div class="mq-tags"><span class="mq-tag t-g">Smart contract Soroban</span><span class="mq-tag t-s">Wallet Freighter</span><span class="mq-tag t-w">Stellar Testnet</span></div></div>
-        <div id="mq-d-1" class="mq-desc"><p>Chaque membre voit la progression en temps réel, le solde et l'historique des cotisations avec leur hash de transaction Stellar — vérifiable par n'importe qui.</p><div class="mq-tags"><span class="mq-tag t-g">Lecture on-chain</span><span class="mq-tag t-s">Stellar Expert</span><span class="mq-tag t-w">Hash transactions</span></div></div>
-        <div id="mq-d-2" class="mq-desc"><p>Le membre signe son vote avec son wallet Stellar. 1 vote / adresse, résultat calculé on-chain — personne ne peut le modifier, même les fondateurs de CoopÉnergie.</p><div class="mq-tags"><span class="mq-tag t-g">1 vote / adresse</span><span class="mq-tag t-s">Résultat immuable</span><span class="mq-tag t-w">Signature crypto</span></div></div>
-      </div>
-      <div class="mq-phone">
-        <div class="mq-screen active" id="mqs-0">
-          <div class="mq-steps"><div class="mq-step done"></div><div class="mq-step cur"></div><div class="mq-step"></div></div>
-          <div class="mq-hdr"><div><div class="mq-title">Nouvelle coopérative</div><div class="mq-sub">Étape 2 / 3 — Membres</div></div><span class="mq-badge b-s">Brouillon</span></div>
-          <div class="mq-card-inner"><span class="mq-label">Nom de la coopérative</span><input class="mq-input" value="SolarYaoundé Bastos" readonly /><div class="mq-row"><div><span class="mq-label">Objectif (FCFA)</span><input class="mq-input" value="1 200 000" readonly /></div><div><span class="mq-label">Durée (mois)</span><input class="mq-input" value="6" readonly /></div></div></div>
-          <span class="mq-label">Membres — 4 / 10</span>
-          <div class="mq-mem"><div class="mq-av av-g">AM</div><div style="flex:1"><div class="mq-mname">Amina Mbarga</div><div class="mq-mrole">Fondatrice · Admin</div></div><span class="mq-badge b-g">Confirmé</span></div>
-          <div class="mq-mem"><div class="mq-av av-s">JF</div><div style="flex:1"><div class="mq-mname">Jean-Paul Fotso</div><div class="mq-mrole">Membre</div></div><span class="mq-badge b-g">Confirmé</span></div>
-          <div class="mq-mem"><div class="mq-av av-b">EK</div><div style="flex:1"><div class="mq-mname">Esther Kamga</div><div class="mq-mrole">Membre</div></div><span class="mq-badge b-s">En attente</span></div>
-          <button class="mq-add">+ Inviter un membre</button>
-          <button class="mq-btn">Déployer sur la blockchain →</button>
-        </div>
-        <div class="mq-screen" id="mqs-1">
-          <div class="mq-hdr"><div><div class="mq-title">SolarYaoundé Bastos</div><div class="mq-sub">4 membres · Smart contract actif</div></div><span class="mq-badge b-g">Active</span></div>
-          <div class="mq-card-inner">
-            <div class="mq-prog-lbl"><span>Fonds collectés</span><span>72%</span></div>
-            <div class="mq-prog-n">864 000 <span style="font-size:10px;color:rgba(255,255,255,.35);font-weight:300;">/ 1 200 000 FCFA</span></div>
-            <div class="mq-prog-bar"><div class="mq-prog-fill" style="width:72%"></div></div>
-            <div class="mq-prog-hint">Délai estimé : 7 semaines · Prochain vote dans 2 jours</div>
-          </div>
-          <div class="mq-stats"><div class="mq-stat"><div class="mq-stat-n">4</div><div class="mq-stat-l">Membres</div></div><div class="mq-stat"><div class="mq-stat-n">12</div><div class="mq-stat-l">Tx on-chain</div></div><div class="mq-stat"><div class="mq-stat-n">1</div><div class="mq-stat-l">Vote ouvert</div></div></div>
-          <span class="mq-label">Cotisations récentes</span>
-          <div class="mq-tx"><div class="mq-tx-dot" style="background:var(--green-light)"></div><div><div class="mq-tx-name">Amina Mbarga</div><div class="mq-tx-hash">0x3f4a…c82e</div></div><div class="mq-tx-amt">+75 000 F</div></div>
-          <div class="mq-tx"><div class="mq-tx-dot" style="background:var(--green-light)"></div><div><div class="mq-tx-name">Jean-Paul Fotso</div><div class="mq-tx-hash">0x8b1c…f34d</div></div><div class="mq-tx-amt">+50 000 F</div></div>
-          <button class="mq-btn">Enregistrer ma cotisation →</button>
-        </div>
-        <div class="mq-screen" id="mqs-2">
-          <div class="mq-hdr"><div><div class="mq-title">Vote en cours</div><div class="mq-sub">Clôture dans 2 jours · 2/4 votes</div></div><span class="mq-badge b-b">On-chain</span></div>
-          <div class="mq-notif">⛓️ Votre vote sera enregistré de façon permanente sur Stellar.</div>
-          <span class="mq-label">Quel équipement acheter ?</span>
-          <div class="mq-vopt sel" onclick="mqVote(this)"><div class="mq-radio"></div><div class="mq-opt-txt">Kit solaire 400W + batterie 200Ah<br><span style="color:rgba(255,255,255,.3);font-size:9px;">1 foyer complet</span></div><div class="mq-opt-price">820 000 F</div></div>
-          <div class="mq-vopt" onclick="mqVote(this)"><div class="mq-radio"></div><div class="mq-opt-txt">5× Kit 100W basique<br><span style="color:rgba(255,255,255,.3);font-size:9px;">1 kit par foyer</span></div><div class="mq-opt-price">750 000 F</div></div>
-          <div class="mq-vopt" onclick="mqVote(this)"><div class="mq-radio"></div><div class="mq-opt-txt">Reporter — attendre 100%</div><div class="mq-opt-price">—</div></div>
-          <span class="mq-label" style="margin-top:11px;">Résultats en temps réel</span>
-          <div class="mq-res-row"><div class="mq-res-lbl">Kit 400W</div><div class="mq-res-bar"><div class="mq-res-fill" style="width:50%;background:var(--green-light)"></div></div><div class="mq-res-pct">50%</div></div>
-          <div class="mq-res-row"><div class="mq-res-lbl">5× Kit 100W</div><div class="mq-res-bar"><div class="mq-res-fill" style="width:50%;background:var(--sun)"></div></div><div class="mq-res-pct">50%</div></div>
-          <div class="mq-chain"><div class="mq-chain-dot"></div><div><div class="mq-chain-txt">Stellar Testnet · GBZX…M4YK</div><div class="mq-chain-hash">Tx vote : AEFA3D…31DC</div></div></div>
-          <button class="mq-btn">Confirmer mon vote →</button>
-        </div>
-      </div>
+<!-- BLOCKCHAIN -->
+<section id="blockchain">
+  <div class="bc-hdr">
+    <div>
+      <div class="s-tag"><div class="s-tag-line"></div><span class="s-tag-txt c-amber">Technologie</span></div>
+      <h2 class="st lgt">Pourquoi la<br><em class="a">blockchain</em> ?</h2>
     </div>
-  </section>
+    <p class="ss lgt">Une base de données classique peut être modifiée par un administrateur. La blockchain est publique, immuable — personne ne peut falsifier une transaction.</p>
+  </div>
+  <div class="bc-flow rv">
+    <div class="bc-step"><div class="bc-ico">👤</div><h3>Membre inscrit</h3><p>Connexion par numéro et mot de passe</p></div>
+    <div class="bc-step"><div class="bc-ico">🏘️</div><h3>Coopérative créée</h3><p>Enregistrement permanent on-chain</p></div>
+    <div class="bc-step"><div class="bc-ico">💰</div><h3>Cotisation tracée</h3><p>Hash immuable avec timestamp</p></div>
+    <div class="bc-step"><div class="bc-ico">🗳️</div><h3>Vote sécurisé</h3><p>1 membre = 1 vote. Résultat non modifiable</p></div>
+    <div class="bc-step"><div class="bc-ico">✅</div><h3>Achat validé</h3><p>Décision transparente, traçabilité totale</p></div>
+  </div>
+  <div class="bc-why rv">
+    <div class="bc-why-c"><div class="bc-n">01</div><h4>Transparence totale</h4><p>Chaque transaction est publique. N'importe qui peut vérifier que les fonds sont intacts — sans faire confiance à une personne en particulier.</p></div>
+    <div class="bc-why-c"><div class="bc-n">02</div><h4>Immuabilité</h4><p>Une cotisation enregistrée ne peut pas être effacée. Impossible de falsifier l'historique des paiements ou les résultats d'un vote.</p></div>
+    <div class="bc-why-c"><div class="bc-n">03</div><h4>Autonomie des membres</h4><p>Pas de trésorier unique. Les règles votées par le groupe s'appliquent sans intermédiaire susceptible d'être corrompu.</p></div>
+  </div>
+</section>
 
-  <!-- BLOCKCHAIN -->
-  <section id="blockchain">
-    <div class="stag stag-g">Technologie</div>
-    <h2>Pourquoi la <em>blockchain</em> ?</h2>
-    <p class="sec-sub">Une base de données classique peut être modifiée par un administrateur. La blockchain est publique, immuable et distribuée — personne ne peut falsifier une transaction.</p>
-    <div class="chain-flow reveal">
-      <div class="chain-step"><div class="step-icon">👤</div><h3>Wallet membre</h3><p>Connexion via Freighter. L'identité blockchain est vérifiable et permanente.</p></div>
-      <div class="chain-arrow">→</div>
-      <div class="chain-step"><div class="step-icon">🏘️</div><h3>Création coopérative</h3><p>Smart contract déployé avec objectif et membres enregistrés on-chain.</p></div>
-      <div class="chain-arrow">→</div>
-      <div class="chain-step"><div class="step-icon">💰</div><h3>Cotisation on-chain</h3><p>Chaque versement génère une transaction immuable avec timestamp.</p></div>
-      <div class="chain-arrow">→</div>
-      <div class="chain-step"><div class="step-icon">🗳️</div><h3>Vote sécurisé</h3><p>1 adresse = 1 vote. Résultat enregistré, non modifiable.</p></div>
-      <div class="chain-arrow">→</div>
-      <div class="chain-step"><div class="step-icon">✅</div><h3>Achat validé</h3><p>Fonds libérés automatiquement vers le fournisseur après vote.</p></div>
+<!-- UTILISATEURS -->
+<section id="utilisateurs">
+  <div class="s-tag"><div class="s-tag-line"></div><span class="s-tag-txt c-green">Pour qui</span></div>
+  <h2 class="st">Des utilisateurs <em>concrets</em></h2>
+  <div class="users-grid">
+    <div class="user-card rv"><span class="user-em">🏘️</span><h3>Groupes de quartier</h3><p>Voisins souhaitant partager le coût d'une installation solaire collective ou individuelle groupée.</p></div>
+    <div class="user-card rv d1"><span class="user-em">👩‍👩‍👧</span><h3>Groupements de femmes</h3><p>Associations périurbaines pratiquant la tontine, souhaitant investir dans l'énergie solaire.</p></div>
+    <div class="user-card rv d2"><span class="user-em">🛒</span><h3>Fournisseurs solaires</h3><p>Revendeurs pouvant proposer des offres groupées attractives aux coopératives enregistrées.</p></div>
+    <div class="user-card rv d3"><span class="user-em">🌍</span><h3>ONG & Programmes</h3><p>Organisations finançant l'électrification rurale avec traçabilité parfaite des fonds versés.</p></div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="impact-hdr">
+    <div>
+      <div class="s-tag"><div class="s-tag-line"></div><span class="s-tag-txt c-white">Impact attendu</span></div>
+      <h2 class="st lgt">Électrifier le Cameroun,<br>coopérative<br><em class="a">par coopérative</em></h2>
     </div>
-    <div class="bc-why reveal">
-      <div class="why-item"><h4>Transparence totale</h4><p>Chaque transaction est publique et consultable sur Stellar Expert. N'importe qui peut vérifier que les fonds sont intacts — sans faire confiance à une personne.</p></div>
-      <div class="why-item"><h4>Immuabilité</h4><p>Une cotisation enregistrée ne peut pas être effacée. Impossible de falsifier l'historique des paiements ou les résultats d'un vote. La fraude devient immédiatement détectable.</p></div>
-      <div class="why-item"><h4>Autonomie des membres</h4><p>Pas de trésorier unique. Le smart contract exécute automatiquement les règles de gouvernance votées par le groupe — sans intermédiaire susceptible d'être corrompu.</p></div>
-    </div>
-  </section>
+    <p class="ss lgt">Des groupes qui s'électrifient sans dépendre d'ENEO — et sans risquer leurs économies dans des coopératives opaques.</p>
+  </div>
+  <div class="impact-grid rv">
+    <div class="impact-c"><div class="impact-big">−40%</div><h3>Réduction du coût d'achat</h3><p>L'achat groupé permet de négocier des prix jusqu'à 40% inférieurs — comme observé au Kenya et en Éthiopie.</p></div>
+    <div class="impact-c"><div class="impact-big">0 F</div><h3>De détournement possible</h3><p>La blockchain rend toute fraude immédiatement visible. Aucun trésorier ne peut modifier l'historique des cotisations.</p></div>
+    <div class="impact-c"><div class="impact-big">8M+</div><h3>Camerounais sans électricité</h3><p>Marché potentiel pour le solaire coopératif — des ménages non couverts par ENEO dans les 10 prochaines années.</p></div>
+    <div class="impact-c"><div class="impact-big">∞</div><h3>Modèle réplicable</h3><p>CoopÉnergie peut être déployé dans tout pays d'Afrique subsaharienne confronté aux mêmes défis énergétiques.</p></div>
+  </div>
+  <div class="odd-bar rv">
+    <div class="odd-item"><div class="odd-n">ODD 7</div><div class="odd-t">Énergie propre et<br>accessible pour tous</div></div>
+    <div class="odd-item"><div class="odd-n">ODD 1</div><div class="odd-t">Fin de la pauvreté<br>par l'accès à l'énergie</div></div>
+    <div class="odd-item"><div class="odd-n">ODD 11</div><div class="odd-t">Villes et communautés<br>durables et résilientes</div></div>
+  </div>
+</section>
 
-  <!-- UTILISATEURS -->
-  <section id="utilisateurs">
-    <div class="stag stag-g">Pour qui</div>
-    <h2>Des utilisateurs <em>concrets</em></h2>
-    <p class="sec-sub">CoopÉnergie s'adresse aux Camerounais qui veulent accéder à l'énergie solaire ensemble, et aux organisations qui les accompagnent.</p>
-    <div class="users-grid reveal">
-      <div class="user-card"><div class="user-av av-sun">🏘️</div><h3>Groupes de quartier</h3><p>Voisins souhaitant partager le coût d'une installation solaire collective ou individuelle groupée.</p></div>
-      <div class="user-card"><div class="user-av av-green">👩‍👩‍👧</div><h3>Groupements de femmes</h3><p>Associations périurbaines pratiquant la tontine, souhaitant investir dans l'énergie solaire.</p></div>
-      <div class="user-card"><div class="user-av av-sun">🛒</div><h3>Fournisseurs solaires</h3><p>Revendeurs pouvant proposer des offres groupées attractives aux coopératives enregistrées.</p></div>
-      <div class="user-card"><div class="user-av av-green">🌍</div><h3>ONG & Programmes</h3><p>Organisations finançant l'électrification rurale avec traçabilité parfaite des fonds.</p></div>
-    </div>
-  </section>
+<!-- HACKATHON -->
+<section id="hackathon">
+  <div class="s-tag"><div class="s-tag-line"></div><span class="s-tag-txt c-amber">Miabe Hackathon 2026</span></div>
+  <h2 class="st lgt">Construire en <em class="a">3 phases</em></h2>
+  <p class="ss lgt">CoopÉnergie participe au hackathon MBH 2026 organisé par DTC — Darollo Technologies Corporation, sous le thème « La blockchain, levier du développement durable africain ».</p>
+  <div class="phases rv">
+    <div class="phase-c"><div><div class="phase-label">// Phase 01</div><div class="phase-num">01</div></div><div><h3>📋 Présélection — Documentation & Conception</h3><ul class="phase-ul"><li>Analyse du problème d'accès au solaire au Cameroun</li><li>Maquettes visuelles : création coopérative, tableau de bord, vote</li><li>Site vitrine présentant CoopÉnergie et son modèle transparent</li><li>Architecture blockchain : traçage des cotisations, sécurité du vote</li></ul></div></div>
+    <div class="phase-c"><div><div class="phase-label">// Phase 02</div><div class="phase-num">02</div></div><div><h3>⚙️ Demi-finale — Application Fonctionnelle</h3><ul class="phase-ul"><li>Interface de création et gestion d'une coopérative solaire</li><li>Enregistrement des cotisations avec tableau de bord de progression</li><li>Système de vote blockchain pour les décisions d'achat</li><li>Démo live : créer → cotiser → voter → sécuriser les fonds</li></ul></div></div>
+    <div class="phase-c"><div><div class="phase-label">// Phase 03</div><div class="phase-num">03</div></div><div><h3>🏆 Finale — MVP Complet & Pitch</h3><ul class="phase-ul"><li>MVP intégrant gestion coopérative + vote en production</li><li>Rapport automatique : fonds, objectif, délai estimé, décisions prises</li><li>Pitch 10 minutes : impact pour l'électrification de quartiers entiers</li></ul></div></div>
+  </div>
+</section>
 
-  <!-- IMPACT -->
-  <section id="impact">
-    <div class="stag stag-w">Impact attendu</div>
-    <h2 class="light">Électrifier le Cameroun,<br>coopérative par coopérative</h2>
-    <p class="sec-sub light">Des groupes qui s'électrifient sans dépendre d'ENEO — et sans risquer leurs économies dans des coopératives opaques.</p>
-    <div class="impact-grid reveal">
-      <div class="impact-card"><div class="impact-big">−40%</div><h3>Réduction du coût d'achat</h3><p>L'achat groupé permet de négocier des prix jusqu'à 40% inférieurs — comme observé au Kenya et en Éthiopie.</p></div>
-      <div class="impact-card"><div class="impact-big">0 F</div><h3>De détournement possible</h3><p>La blockchain rend toute fraude immédiatement visible. Aucun trésorier ne peut modifier l'historique des cotisations.</p></div>
-      <div class="impact-card"><div class="impact-big">8M+</div><h3>Camerounais sans électricité</h3><p>Marché potentiel pour le solaire coopératif — des ménages qui ne seront pas couverts par ENEO dans les 10 prochaines années.</p></div>
-      <div class="impact-card"><div class="impact-big">∞</div><h3>Modèle réplicable</h3><p>CoopÉnergie peut être déployé dans tout pays d'Afrique subsaharienne confronté aux mêmes défis d'accès à l'énergie.</p></div>
-    </div>
-    <div class="odds-bar reveal">
-      <div class="odd-badge"><div class="odd-n">ODD 7</div><div class="odd-t">Énergie propre<br>et accessible pour tous</div></div>
-      <div style="width:1px;height:36px;background:rgba(255,255,255,.15);flex-shrink:0"></div>
-      <div class="odd-badge"><div class="odd-n">ODD 1</div><div class="odd-t">Fin de la pauvreté<br>par l'accès à l'énergie</div></div>
-      <div style="width:1px;height:36px;background:rgba(255,255,255,.15);flex-shrink:0"></div>
-      <div class="odd-badge"><div class="odd-n">ODD 11</div><div class="odd-t">Villes et communautés<br>durables et résilientes</div></div>
-    </div>
-  </section>
+<!-- CTA -->
+<section id="cta">
+  <h2>Prêt à rejoindre une coopérative solaire ?</h2>
+  <p class="cta-sub">CoopÉnergie est disponible maintenant. Créez votre coopérative et commencez à collecter vos fonds de façon totalement transparente.</p>
+  <div class="cta-btns">
+    <a href="plateforme.html" class="btn-dark">🚀 Accéder à la plateforme</a>
+    <a href="mailto:contact@coopenegie.cm" class="btn-outline2">📧 Nous contacter</a>
+  </div>
+</section>
 
-  <!-- HACKATHON -->
-  <section id="hackathon">
-    <div class="stag stag-w">Miabe Hackathon 2026</div>
-    <h2 class="light">Construire en <em class="sun">3 phases</em></h2>
-    <p class="sec-sub light">CoopÉnergie participe au hackathon MBH 2026 organisé par DTC — Darollo Technologies Corporation, sous le thème « La blockchain, levier du développement durable africain ».</p>
-    <div class="phases reveal">
-      <div class="phase-row">
-        <div class="phase-lbl">Phase 1<br>Présélection</div>
-        <div class="phase-line"><div class="phase-dot"></div><div class="phase-conn"></div></div>
-        <div class="phase-content"><h3>📋 Documentation & Conception</h3><ul><li>Analyse du problème d'accès au solaire au Cameroun</li><li>Maquettes visuelles : création coopérative, tableau de bord, vote</li><li>Site vitrine présentant CoopÉnergie et son modèle</li><li>Architecture blockchain : traçage des cotisations, sécurité du vote</li></ul></div>
-      </div>
-      <div class="phase-row">
-        <div class="phase-lbl">Phase 2<br>Demi-finale</div>
-        <div class="phase-line"><div class="phase-dot"></div><div class="phase-conn"></div></div>
-        <div class="phase-content"><h3>⚙️ Application Fonctionnelle</h3><ul><li>Interface de création et gestion d'une coopérative solaire</li><li>Enregistrement des cotisations avec tableau de bord de progression</li><li>Système de vote on-chain pour les décisions d'achat</li><li>Démo live : créer → cotiser → voter → sécuriser les fonds</li></ul></div>
-      </div>
-      <div class="phase-row">
-        <div class="phase-lbl">Phase 3<br>Finale</div>
-        <div class="phase-line"><div class="phase-dot"></div></div>
-        <div class="phase-content"><h3>🏆 MVP Complet & Pitch</h3><ul><li>MVP intégrant gestion coopérative + vote en production</li><li>Rapport automatique : fonds, objectif, délai estimé, décisions</li><li>Pitch 10 minutes : impact pour l'électrification de quartiers entiers</li></ul></div>
-      </div>
-    </div>
-  </section>
+<!-- FOOTER -->
+<footer>
+  <div><div class="footer-logo">Coop<em>Énergie</em></div><div class="footer-info">Projet CM-02 · Miabe Hackathon 2026 · DTC</div></div>
+  <div class="footer-tags"><span class="footer-tag">BLOCKCHAIN</span><span class="footer-tag">SOLAIRE</span><span class="footer-tag">CAMEROUN 🇨🇲</span><span class="footer-tag">ODD 7</span><span class="footer-tag">COOPÉRATIVE</span></div>
+  <div class="footer-copy">© 2026 CoopÉnergie · <a href="https://www.miabehackathon.com">miabehackathon.com</a></div>
+</footer>
 
-  <!-- CTA -->
-  <section id="cta">
-    <div class="stag stag-g">Rejoindre</div>
-    <h2>Prêt à rejoindre une coopérative solaire ?</h2>
-    <p class="sec-sub">CoopÉnergie est disponible dès maintenant. Créez votre coopérative et commencez à collecter vos fonds de façon transparente.</p>
-    <div class="cta-actions">
-      <a href="plateforme.html" class="btn-green">🚀 Accéder à la plateforme</a>
-      <a href="mailto:contact@coopenegie.cm" class="btn-outline-lgt">📧 Nous contacter</a>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div><div class="footer-logo">Coop<span>Énergie</span></div><p style="margin-top:7px;">Projet CM-02 · Miabe Hackathon 2026 · DTC</p></div>
-    <div class="footer-tags"><span class="footer-tag">Blockchain</span><span class="footer-tag">Énergie Solaire</span><span class="footer-tag">Cameroun 🇨🇲</span><span class="footer-tag">ODD 7</span><span class="footer-tag">Coopérative</span></div>
-    <p>© 2026 CoopÉnergie · <a href="https://www.miabehackathon.com" style="color:rgba(255,255,255,.35);">miabehackathon.com</a></p>
-  </footer>
-
-  <script>
-    // Nav scroll
-    window.addEventListener('scroll',()=>{
-      document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>40);
-      let cur='';
-      document.querySelectorAll('section[id]').forEach(s=>{if(window.scrollY>=s.offsetTop-100)cur=s.id;});
-      document.querySelectorAll('.nav-links a').forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur);});
-    });
-
-    // Mobile menu
-    function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('open'); }
-    document.querySelectorAll('.mobile-menu a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mobile-menu').classList.remove('open')));
-
-    // Reveal
-    const observer = new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
-    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-
-    // Maquettes
-    function switchMq(idx, tab) {
-      document.querySelectorAll('.mq-tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.mq-screen').forEach(s=>s.classList.remove('active'));
-      document.querySelectorAll('.mq-desc').forEach(d=>d.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('mqs-'+idx).classList.add('active');
-      document.getElementById('mq-d-'+idx).classList.add('active');
-    }
-    function mqVote(el) {
-      document.querySelectorAll('.mq-vopt').forEach(o=>o.classList.remove('sel'));
-      el.classList.add('sel');
-    }
-  </script>
+<script>
+  window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('solid',scrollY>40));
+  function openMob(){document.getElementById('mob').classList.add('open');document.body.style.overflow='hidden'}
+  function closeMob(){document.getElementById('mob').classList.remove('open');document.body.style.overflow=''}
+  const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+  document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+  // Hero stagger
+  ['hero-tag','hero h1','.hero-sub','.hero-btns','.hero-ticker','.hero-card-wrap'].forEach((s,i)=>{
+    const el=document.querySelector(s);if(!el)return;
+    el.style.cssText+=';opacity:0;transform:translateY(22px)';
+    setTimeout(()=>{el.style.transition='opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)';el.style.opacity='1';el.style.transform='translateY(0)'},i*130+100);
+  });
+</script>
 </body>
 </html>
