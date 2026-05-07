@@ -21,38 +21,9 @@
       --radius: 16px; --radius-lg: 24px; --radius-xl: 32px;
       --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
       --header-h: 64px;
-      /* DARK MODE vars */
-      --bg-page: var(--sand);
-      --bg-card: #ffffff;
-      --bg-card2: var(--sand);
-      --border-c: rgba(13,31,22,0.09);
-      --text-primary: #0D1F16;
-      --text-sec: #4A6655;
-      --text-faint2: #8A9A8F;
-    }
-    [data-theme="dark"] {
-      --bg-page: #0a0f0c;
-      --bg-card: #111a14;
-      --bg-card2: #161f18;
-      --border-c: rgba(255,255,255,0.07);
-      --text-primary: #e8f0ea;
-      --text-sec: #7a9a82;
-      --text-faint2: #4a6655;
-      --sand: #0a0f0c;
-      --white: #111a14;
-      --text: #e8f0ea;
-      --text-muted: #7a9a82;
-      --text-faint: #4a6655;
-      --border: rgba(255,255,255,0.07);
-      --border-hover: rgba(45,179,107,0.3);
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-      --shadow: 0 4px 24px rgba(0,0,0,0.35);
-      --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
-      --green-pale: rgba(26,122,74,0.15);
-      --green-dim: rgba(26,122,74,0.12);
     }
     html { scroll-behavior: smooth; }
-    body { font-family: var(--font-body); background: var(--bg-page,var(--sand)); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background .3s, color .3s; }
+    body { font-family: var(--font-body); background: var(--sand); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
     /* ══ GLOBAL LOADER ══ */
     #global-loader {
@@ -111,19 +82,8 @@
     .btn-login { width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#0d5a35);color:white;border:none;border-radius:14px;font-family:var(--font-head);font-weight:700;font-size:15px;cursor:pointer;transition:all .25s;box-shadow:0 6px 20px rgba(26,122,74,.35);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px; }
     .btn-login:hover { transform:translateY(-2px);box-shadow:0 10px 28px rgba(26,122,74,.45); }
     .btn-login:disabled { opacity:.6;cursor:not-allowed;transform:none; }
-    .lerr { font-size:13px;text-align:center;margin-top:12px;padding:12px 14px;border-radius:10px;display:none;line-height:1.5; }
+    .lerr { color:#e74c3c;font-size:13px;text-align:center;margin-top:12px;padding:10px;background:rgba(231,76,60,.08);border-radius:10px;display:none; }
     .lerr.show { display:block; }
-    .lerr.lerr-warn { color:#c0392b;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.18); }
-    .lerr.lerr-lock { color:#c0392b;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);font-weight:600; }
-    @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
-    .shake { animation:shake .45s ease; }
-    .attempt-bar-wrap { margin-top:10px; }
-    .attempt-bar-label { display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:5px; }
-    .attempt-bar { height:4px;background:rgba(231,76,60,.15);border-radius:2px;overflow:hidden; }
-    .attempt-bar-fill { height:100%;border-radius:2px;background:#e74c3c;transition:width .4s ease; }
-    .lock-countdown { display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:13px;color:#c0392b;font-weight:600; }
-    .lock-icon { font-size:18px; }
-    .btn-login.locked { background:rgba(13,31,22,.15) !important;box-shadow:none !important;color:var(--text-muted) !important; }
     .demo-box { margin-top:20px;padding:14px;background:rgba(26,122,74,.06);border-radius:14px;border:1px solid rgba(26,122,74,.12); }
     .demo-box p { font-size:11px;color:var(--text-muted);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
     .demo-btn { background:none;border:1px solid rgba(26,122,74,.2);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--green);cursor:pointer;text-align:left;transition:all .2s;font-family:var(--font-body);width:100%;margin-bottom:6px;display:block; }
@@ -520,72 +480,6 @@
       .admin-kpi { grid-template-columns:1fr 1fr; }
       .bc-header { flex-direction:column;gap:16px; }
     }
-
-    /* ══ DARK MODE TOGGLE ══ */
-    .dm-toggle { background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:6px 12px;color:rgba(255,255,255,.7);cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;transition:all .2s;font-family:var(--font-body); }
-    .dm-toggle:hover { background:rgba(255,255,255,.14);color:white; }
-
-    /* ══ NOTIFICATION BELL ══ */
-    .notif-bell { position:relative;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0; }
-    .notif-bell:hover { background:rgba(255,255,255,.15); }
-    .notif-bell-badge { position:absolute;top:-3px;right:-3px;width:17px;height:17px;background:#e74c3c;border-radius:50%;font-size:9px;font-weight:700;color:white;display:none;align-items:center;justify-content:center;border:2px solid var(--night);animation:badge-pop .3s cubic-bezier(.34,1.56,.64,1); }
-    .notif-bell-badge.show { display:flex; }
-    @keyframes badge-pop { from{transform:scale(0)} to{transform:scale(1)} }
-
-    /* ══ NOTIFICATION CENTER PANEL ══ */
-    .notif-panel { position:fixed;top:72px;right:20px;width:380px;max-height:520px;background:var(--bg-card,white);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.2),0 0 0 1px var(--border-c,rgba(13,31,22,.09));z-index:350;display:none;flex-direction:column;overflow:hidden;animation:slideDown .25s cubic-bezier(.16,1,.3,1); }
-    .notif-panel.open { display:flex; }
-    @keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
-    .notif-panel-hdr { padding:18px 20px 14px;border-bottom:1px solid var(--border-c,var(--border));display:flex;align-items:center;justify-content:space-between;flex-shrink:0; }
-    .notif-panel-hdr h3 { font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--text); }
-    .notif-mark-all { background:none;border:none;font-size:12px;color:var(--green);cursor:pointer;font-family:var(--font-body);font-weight:600;padding:4px 8px;border-radius:6px;transition:background .2s; }
-    .notif-mark-all:hover { background:var(--green-pale); }
-    .notif-list { flex:1;overflow-y:auto;padding:8px; }
-    .notif-list::-webkit-scrollbar { width:4px; }
-    .notif-list::-webkit-scrollbar-thumb { background:var(--border);border-radius:4px; }
-    .notif-item { display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:12px;transition:background .2s;cursor:pointer;margin-bottom:2px; }
-    .notif-item:hover { background:var(--bg-card2,var(--sand)); }
-    .notif-item.unread { background:rgba(26,122,74,.05); }
-    .notif-item.unread:hover { background:rgba(26,122,74,.09); }
-    .notif-ico { width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0; }
-    .ni-green { background:var(--green-pale); }
-    .ni-amber { background:rgba(245,166,35,.12); }
-    .ni-blue { background:rgba(59,130,246,.1); }
-    .ni-red { background:rgba(231,76,60,.1); }
-    .notif-body { flex:1; }
-    .notif-title { font-size:13px;font-weight:600;color:var(--text);line-height:1.4; }
-    .notif-time { font-size:11px;color:var(--text-faint);margin-top:3px; }
-    .notif-dot { width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px; }
-    .notif-empty { text-align:center;padding:40px 20px; }
-    .notif-empty p { font-size:14px;color:var(--text-muted); }
-    .notif-panel-footer { padding:12px 16px;border-top:1px solid var(--border-c,var(--border));text-align:center;flex-shrink:0; }
-    .notif-panel-footer button { background:none;border:none;font-size:13px;color:var(--green);cursor:pointer;font-family:var(--font-body);font-weight:600; }
-
-    /* ══ ADMIN CHARTS ══ */
-    .admin-charts-grid { display:grid;grid-template-columns:1.5fr 1fr;gap:20px;margin-bottom:24px; }
-    .chart-box { background:var(--bg-card,white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border-c,var(--border)); }
-    .chart-box-title { font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--text);margin-bottom:6px; }
-    .chart-box-sub { font-size:12px;color:var(--text-muted);margin-bottom:20px; }
-    .bar-chart { display:flex;align-items:flex-end;gap:10px;height:120px; }
-    .bar-col { display:flex;flex-direction:column;align-items:center;gap:5px;flex:1; }
-    .bar-rect { width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--green-light),var(--green));transition:height .6s ease;min-height:4px; }
-    .bar-rect.amber { background:linear-gradient(180deg,var(--sun),var(--sun-deep)); }
-    .bar-lbl { font-size:10px;color:var(--text-faint);white-space:nowrap; }
-    .bar-val { font-family:var(--font-head);font-weight:700;font-size:11px;color:var(--text-muted); }
-    .donut-wrap { display:flex;align-items:center;gap:24px; }
-    .donut-legend { display:flex;flex-direction:column;gap:10px; }
-    .donut-leg-item { display:flex;align-items:center;gap:8px;font-size:13px; }
-    .donut-leg-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
-
-    /* ══ BLOCKCHAIN HISTORY ENHANCED ══ */
-    .bc-timeline { position:relative;padding-left:28px; }
-    .bc-timeline::before { content:'';position:absolute;left:10px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--green),rgba(26,122,74,.1)); }
-    .bc-tl-item { position:relative;margin-bottom:16px; }
-    .bc-tl-dot { position:absolute;left:-22px;top:14px;width:12px;height:12px;border-radius:50%;border:2px solid var(--green);background:var(--bg-card,white); }
-    .bc-tl-dot.cot { background:var(--sun);border-color:var(--sun-deep); }
-    .bc-tl-dot.vote { background:#3B82F6;border-color:#2563EB; }
-    .bc-tl-dot.coop { background:var(--green);border-color:var(--green-light); }
-
   </style>
 </head>
 <body>
@@ -622,17 +516,6 @@
       <div class="fg"><label>Mot de passe</label><input type="password" id="li-pwd" placeholder="••••••••" onkeypress="if(event.key==='Enter')doLogin()"></div>
       <button class="btn-login" id="btn-login" onclick="doLogin()">Se connecter →</button>
       <div id="lerr-login" class="lerr"></div>
-      <div id="attempt-bar-wrap" class="attempt-bar-wrap" style="display:none;">
-        <div class="attempt-bar-label">
-          <span>Tentatives échouées</span>
-          <span id="attempt-count">0 / 5</span>
-        </div>
-        <div class="attempt-bar"><div class="attempt-bar-fill" id="attempt-fill" style="width:0%"></div></div>
-      </div>
-      <div id="lock-countdown" class="lock-countdown" style="display:none;">
-        <span class="lock-icon">🔒</span>
-        <span id="lock-timer">Compte verrouillé</span>
-      </div>
       <div class="demo-box">
         <p>Comptes de démo</p>
         <button class="demo-btn" onclick="fillDemo('698123456','admin123')">⚙️ Super Admin — 698123456 / admin123</button>
@@ -670,35 +553,12 @@
       <button class="nbtn" onclick="gotoPage('profil',this)">👤 Profil</button>
     </div>
     <div class="usr-sec">
-      <!-- Cloche notifications -->
-      <div class="notif-bell" id="notif-bell" onclick="toggleNotifPanel()">
-        🔔
-        <div class="notif-bell-badge" id="notif-badge"></div>
-      </div>
-      <!-- Dark mode toggle -->
-      <button class="dm-toggle" id="dm-toggle" onclick="toggleDarkMode()" title="Changer de thème">
-        <span id="dm-icon">🌙</span>
-      </button>
       <div class="usr-pill">
         <div class="usr-av" id="usr-av">U</div>
         <span class="usr-name" id="usr-name">Membre</span>
         <span class="role-pill" id="role-pill">Membre</span>
       </div>
-      <button class="logout-btn" onclick="doLogout()">Déco</button>
-    </div>
-  </div>
-
-  <!-- NOTIFICATION PANEL -->
-  <div class="notif-panel" id="notif-panel">
-    <div class="notif-panel-hdr">
-      <h3>🔔 Notifications</h3>
-      <button class="notif-mark-all" onclick="markAllRead()">Tout marquer lu</button>
-    </div>
-    <div class="notif-list" id="notif-list">
-      <div class="notif-empty"><p>Aucune notification</p></div>
-    </div>
-    <div class="notif-panel-footer">
-      <button onclick="clearAllNotifs()">Effacer toutes les notifications</button>
+      <button class="logout-btn" onclick="doLogout()">Déconnexion</button>
     </div>
   </div>
 
@@ -768,10 +628,11 @@
 </div>
 
 <script>
-const API = (window.location.hostname === 'localhost') 
-? 'http://localhost:3000/api' 
-: window.location.origin + '/api';
-    
+// Détection automatique : local ou Railway/production
+const BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:3000'
+  : window.location.origin;
+const API = BASE_URL + '/api';
 let token = localStorage.getItem('ce_token');
 let user = null, role = 'membre', socket = null;
 let currentRoom = 'general', chatOpen = false;
@@ -826,121 +687,22 @@ function switchTab(t) {
 }
 function fillDemo(t,p) { document.getElementById('li-id').value=t; document.getElementById('li-pwd').value=p; }
 
-// ── Compteur de tentatives de login ──
-let loginFailCount = 0;
-const MAX_LOGIN = 5;
-let lockCountdownInterval = null;
-
-function updateAttemptBar(failed) {
-  loginFailCount = failed;
-  const wrap = document.getElementById('attempt-bar-wrap');
-  const fill = document.getElementById('attempt-fill');
-  const count = document.getElementById('attempt-count');
-  if(failed > 0) {
-    wrap.style.display = 'block';
-    fill.style.width = (failed / MAX_LOGIN * 100) + '%';
-    count.textContent = failed + ' / ' + MAX_LOGIN;
-    // Couleur progressive : orange → rouge
-    fill.style.background = failed >= 4 ? '#e74c3c' : failed >= 3 ? '#e67e22' : '#f39c12';
-  } else {
-    wrap.style.display = 'none';
-  }
-}
-
-function startLockCountdown(minutes) {
-  const countdown = document.getElementById('lock-countdown');
-  const timer = document.getElementById('lock-timer');
-  const btn = document.getElementById('btn-login');
-  countdown.style.display = 'flex';
-  let secondsLeft = minutes * 60;
-  function tick() {
-    const m = Math.floor(secondsLeft / 60);
-    const s = secondsLeft % 60;
-    timer.textContent = `Verrouillé — ${m}:${s.toString().padStart(2,'0')} avant réessai`;
-    if(secondsLeft <= 0) {
-      clearInterval(lockCountdownInterval);
-      countdown.style.display = 'none';
-      btn.disabled = false; btn.textContent = 'Se connecter →';
-      btn.classList.remove('locked');
-      document.getElementById('li-pwd').disabled = false;
-      document.getElementById('lerr-login').classList.remove('show');
-      updateAttemptBar(0);
-    }
-    secondsLeft--;
-  }
-  tick();
-  lockCountdownInterval = setInterval(tick, 1000);
-}
-
 async function doLogin() {
   const id = document.getElementById('li-id').value.trim();
   const pwd = document.getElementById('li-pwd').value;
   const btn = document.getElementById('btn-login');
   const err = document.getElementById('lerr-login');
-  const pwdInput = document.getElementById('li-pwd');
-
-  if(!id||!pwd) {
-    err.textContent = 'Identifiant et mot de passe requis.';
-    err.className = 'lerr lerr-warn show';
-    return;
-  }
-
-  btn.disabled = true; btn.textContent = 'Connexion…';
-  err.classList.remove('show');
-
+  if(!id||!pwd) { err.textContent='Identifiant et mot de passe requis.'; err.classList.add('show'); return; }
+  btn.disabled=true; btn.textContent='Connexion…';
   try {
     const res = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifiant:id,password:pwd})});
     const data = await res.json();
-
-    if(!data.success) {
-      // Shake animation sur la carte
-      document.querySelector('.login-card').classList.remove('shake');
-      void document.querySelector('.login-card').offsetWidth;
-      document.querySelector('.login-card').classList.add('shake');
-
-      if(data.locked) {
-        // Compte verrouillé
-        err.innerHTML = '🔒 ' + (data.error || 'Compte verrouillé.');
-        err.className = 'lerr lerr-lock show';
-        btn.disabled = true; btn.textContent = '🔒 Verrouillé';
-        btn.classList.add('locked');
-        pwdInput.disabled = true;
-        pwdInput.style.borderColor = '#e74c3c';
-        updateAttemptBar(MAX_LOGIN);
-        // Extraire les minutes du message pour le compte à rebours
-        const match = data.error?.match(/(\d+) minute/);
-        const mins = match ? parseInt(match[1]) : 15;
-        startLockCountdown(mins);
-      } else {
-        // Tentatives restantes
-        err.textContent = data.error || 'Identifiants incorrects.';
-        err.className = 'lerr lerr-warn show';
-        pwdInput.style.borderColor = '#e74c3c';
-        pwdInput.value = '';
-        pwdInput.focus();
-        // Mettre à jour la barre (remaining = tentatives restantes, donc failed = MAX - remaining)
-        if(typeof data.remaining === 'number') {
-          updateAttemptBar(MAX_LOGIN - data.remaining);
-        }
-        btn.disabled = false; btn.textContent = 'Se connecter →';
-      }
-      return;
-    }
-
-    // Succès
-    localStorage.setItem('ce_token', data.token);
-    token = data.token; user = data.user; role = data.user.role;
-    pwdInput.style.borderColor = '';
-    updateAttemptBar(0);
-    if(lockCountdownInterval) clearInterval(lockCountdownInterval);
-    document.getElementById('lock-countdown').style.display = 'none';
+    if(!data.success) throw new Error(data.error||'Identifiants incorrects.');
+    localStorage.setItem('ce_token',data.token);
+    token=data.token; user=data.user; role=data.user.role;
     await showApp();
-
-  } catch(e) {
-    err.textContent = 'Erreur réseau : ' + e.message;
-    err.className = 'lerr lerr-warn show';
-    btn.disabled = false; btn.textContent = 'Se connecter →';
-  }
+  } catch(e) { err.textContent=e.message; err.classList.add('show'); }
+  finally { btn.disabled=false; btn.textContent='Se connecter →'; }
 }
 
 async function doRegister() {
@@ -1362,13 +1124,8 @@ async function submitCotisation() {
 
 // ══ VOTES ══
 function renderVotes() {
-  // BUG FIX 1 : vérifier expiration côté client aussi (pas seulement le statut en cache)
-  const now = Date.now();
-  const actifs = DB.votes.filter(v => v.statut === 'actif' && new Date(v.fin) > now);
-  // BUG FIX 2 : votes expirés localement (statut encore 'actif' en cache mais date dépassée)
-  const expiredLocally = DB.votes.filter(v => v.statut === 'actif' && new Date(v.fin) <= now);
-  const clos = [...DB.votes.filter(v => v.statut !== 'actif'), ...expiredLocally];
-
+  const actifs=DB.votes.filter(v=>v.statut==='actif');
+  const clos=DB.votes.filter(v=>v.statut!=='actif');
   document.getElementById('page-vote').innerHTML=`
     <div class="ph ph-row">
       <div><h2>🗳️ Votes en cours</h2><p>Chaque vote est enregistré de façon immuable sur la blockchain. 1 membre = 1 vote par scrutin.</p></div>
@@ -1377,14 +1134,11 @@ function renderVotes() {
     :actifs.map(v=>{
       const coop=DB.cooperatives.find(c=>c.id===v.coopId);
       const tot=v.votes.reduce((s,x)=>s+x,0)||1;
-      // BUG FIX 3 : hasVoted vérifié strictement sur l'id utilisateur depuis données fraîches serveur
-      const hasVoted = Array.isArray(v.voters) && user && v.voters.includes(user.id);
+      const hasVoted=v.voters?.includes(user?.id);
       const fin=new Date(v.fin);
-      const msLeft=fin-now;
+      const msLeft=fin-Date.now();
       const daysLeft=Math.max(0,Math.ceil(msLeft/86400000));
-      const hoursLeft=Math.max(0,Math.ceil(msLeft/3600000));
-      const timerTxt = daysLeft>1 ? `${daysLeft}j restants` : daysLeft===1 ? `${hoursLeft}h restantes` : msLeft>0 ? 'Dernières heures !' : 'Expiré';
-      const timerStyle = daysLeft<=1 ? 'color:var(--red,#ef4444);background:rgba(239,68,68,.1)' : '';
+      const timerTxt=daysLeft>0?`${daysLeft}j restant${daysLeft>1?'s':''}`:msLeft>0?'Dernières heures !':'Expiré';
       return `<div class="vote-card">
         <div class="vote-header">
           <div class="vote-q">🗳️ ${v.question}</div>
@@ -1394,18 +1148,16 @@ function renderVotes() {
           <span class="vote-meta-item">📍 ${coop?.nom||v.coopId}</span>
           <span class="vote-meta-item">📅 Clôture le ${v.fin}</span>
           <span class="vote-meta-item">🗳️ ${v.votes.reduce((s,x)=>s+x,0)} vote${v.votes.reduce((s,x)=>s+x,0)>1?'s':''}</span>
-          <span class="vote-timer" style="${timerStyle}">⏱️ ${timerTxt}</span>
+          <span class="vote-timer">⏱️ ${timerTxt}</span>
           ${hasVoted?`<span class="voted-badge">✅ Vous avez voté</span>`:''}
         </div>
         <div class="vote-opts">
           ${v.options.map((opt,i)=>{
             const p2=Math.round(v.votes[i]/tot*100);
-            // Si déjà voté, désactiver le clic
-            const clickHandler = hasVoted ? '' : `doVote('${v.id}',${i})`;
-            return `<div class="vopt" style="${hasVoted?'cursor:default;opacity:.85':''}" onclick="${clickHandler}">
+            return `<div class="vopt" onclick="${hasVoted?'':(`doVote('${v.id}',${i})`)}">
               <div class="vfill" style="width:${p2}%"></div>
               <div class="vopt-content">
-                <div class="vradio" style="${hasVoted?'opacity:.4':'}"></div>
+                <div class="vradio"></div>
                 <div class="vopt-text">${opt}</div>
               </div>
               <div class="vopt-pct">${p2}%</div>
@@ -1414,9 +1166,7 @@ function renderVotes() {
           }).join('')}
         </div>
         <div class="vote-actions">
-          ${!hasVoted
-            ? v.options.map((opt,i)=>`<button class="btn btn-p btn-sm" onclick="doVote('${v.id}',${i})">→ ${opt.substring(0,25)}${opt.length>25?'…':''}</button>`).join('')
-            : '<span style="font-size:13px;color:var(--text-muted);">✅ Vote enregistré sur blockchain</span>'}
+          ${!hasVoted?v.options.map((opt,i)=>`<button class="btn btn-p btn-sm" onclick="doVote('${v.id}',${i})">→ ${opt.substring(0,25)}${opt.length>25?'…':''}</button>`).join(''):'<span style="font-size:13px;color:var(--text-muted);">✅ Vote enregistré sur blockchain</span>'}
           <button class="vote-share-btn" onclick="copyToClipboard(window.location.href+'#vote-${v.id}','Lien du vote')">🔗 Partager</button>
         </div>
         <div style="margin-top:12px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-faint);"><span class="bc-dot"></span>Résultats enregistrés sur blockchain · immuables</div>
@@ -1430,8 +1180,19 @@ function renderVotes() {
       <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">🏆 Résultat : <strong>${v.options[wi]}</strong> (${Math.round(v.votes[wi]/tot*100)}% des votes)</div>
       ${v.options.map((o,i)=>{const p2=Math.round(v.votes[i]/tot*100);return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:13px;"><div style="flex:1">${o}</div><div style="width:120px;height:6px;background:rgba(13,31,22,.08);border-radius:3px;overflow:hidden;"><div style="width:${p2}%;height:100%;background:${i===wi?'var(--green)':'rgba(13,31,22,.2)'};border-radius:3px;"></div></div><strong style="width:28px;text-align:right;color:${i===wi?'var(--green)':'var(--text-muted)'}">${p2}%</strong></div>`}).join('')}
       </div>`;
-    }).join('')}`:''}`
+    }).join('')}`:''}`;
 }
+
+async function doVote(vid, idx) {
+  try {
+    const r=await fetch(API+'/votes/'+vid+'/voter',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({optionIndex:idx})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error||'Erreur');
+    toast('✅ Vote enregistré sur blockchain !','ok');
+    loadData();
+  } catch(e) { toast('❌ '+e.message,'err'); }
+}
+
 // ══ RAPPORT ══
 function renderRapport() {
   const conf=DB.cotisations.filter(c=>c.statut==='confirme');
@@ -1499,233 +1260,267 @@ function renderRapport() {
 
 // ══ ADMIN ══
 function renderAdmin() {
-  if(!['admin','super_admin'].includes(role)) return;
-  const db = DB;
-  const totalCot = db.cotisations.filter(c=>c.statut==='confirmé').reduce((s,c)=>s+c.montant,0);
-  const pending = db.cotisations.filter(c=>c.statut==='en_attente').length;
-  const totalMembers = db.users.filter(u=>u.role!=='super_admin').length;
-  const totalCoops = db.cooperatives.length;
-  const activeVotes = db.votes.filter(v=>v.statut==='actif').length;
-
-  // Données pour graphiques
-  const last6months = [];
-  const now = new Date();
-  for(let i=5;i>=0;i--){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    const label=d.toLocaleDateString('fr',{month:'short'});
-    const monthCot=db.cotisations.filter(c=>{
-      const cd=new Date(c.date||c.createdAt||Date.now());
-      return c.statut==='confirmé'&&cd.getMonth()===d.getMonth()&&cd.getFullYear()===d.getFullYear();
-    }).reduce((s,c)=>s+c.montant,0);
-    last6months.push({label,val:monthCot});
-  }
-  const maxBar = Math.max(...last6months.map(m=>m.val),1);
-
-  // Répartition statuts cotisations
-  const cotConf = db.cotisations.filter(c=>c.statut==='confirmé').length;
-  const cotWait = db.cotisations.filter(c=>c.statut==='en_attente').length;
-  const cotRej = db.cotisations.filter(c=>c.statut==='rejeté').length;
-  const cotTotal = Math.max(cotConf+cotWait+cotRej,1);
-  const pConf=Math.round(cotConf/cotTotal*100);
-  const pWait=Math.round(cotWait/cotTotal*100);
-  const pRej=Math.round(cotRej/cotTotal*100);
-
-  // SVG donut
-  const r=52,cx=60,cy=60,circ=2*Math.PI*r;
-  function donutSeg(pct,offset,color){
-    const len=circ*pct/100;
-    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="14" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-circ*offset/100}" stroke-linecap="round" transform="rotate(-90,${cx},${cy})"/>`;
-  }
-
-  const adminHTML = `
-  <div class="ph ph-row">
-    <div><h2>⚙️ Administration</h2><p>Gérez les coopératives, membres, cotisations et votes.</p></div>
-  </div>
-
-  <!-- KPI CARDS -->
-  <div class="stats-grid" style="margin-bottom:24px;">
-    <div class="stat-card g">
-      <div class="stat-icon">💰</div>
-      <div class="stat-num g">${fmtK(totalCot)}</div>
-      <div class="stat-lbl">FCFA collectés au total</div>
-      <div class="stat-sub up">↑ Confirmés seulement</div>
-    </div>
-    <div class="stat-card s">
-      <div class="stat-icon">⏳</div>
-      <div class="stat-num s">${pending}</div>
-      <div class="stat-lbl">Cotisations en attente</div>
-      <div class="stat-sub ${pending>0?'warn':'muted'}">${pending>0?'⚠️ Action requise':'✅ Aucune en attente'}</div>
-    </div>
-    <div class="stat-card b">
-      <div class="stat-icon">👥</div>
-      <div class="stat-num b">${totalMembers}</div>
-      <div class="stat-lbl">Membres inscrits</div>
-      <div class="stat-sub muted">${totalCoops} coopérative${totalCoops>1?'s':''}</div>
-    </div>
-    <div class="stat-card g">
-      <div class="stat-icon">🗳️</div>
-      <div class="stat-num g">${activeVotes}</div>
-      <div class="stat-lbl">Vote${activeVotes>1?'s':''} en cours</div>
-      <div class="stat-sub muted">${db.votes.filter(v=>v.statut==='cloture').length} clôturé${db.votes.filter(v=>v.statut==='cloture').length>1?'s':''}</div>
-    </div>
-  </div>
-
-  <!-- CHARTS -->
-  <div class="admin-charts-grid">
-    <div class="chart-box">
-      <div class="chart-box-title">📈 Collecte mensuelle</div>
-      <div class="chart-box-sub">6 derniers mois — cotisations confirmées (FCFA)</div>
-      <div class="bar-chart">
-        ${last6months.map(m=>{
-          const h=Math.max(Math.round(m.val/maxBar*100),4);
-          return `<div class="bar-col">
-            <div class="bar-val">${m.val>0?fmtK(m.val):''}</div>
-            <div class="bar-rect" style="height:${h}px"></div>
-            <div class="bar-lbl">${m.label}</div>
-          </div>`;
-        }).join('')}
+  const pending=DB.cotisations.filter(c=>c.statut==='pending');
+  const conf=DB.cotisations.filter(c=>c.statut==='confirme');
+  const rej=DB.cotisations.filter(c=>c.statut==='rejected');
+  const tauxConf=DB.cotisations.length>0?Math.round(conf.length/DB.cotisations.length*100):0;
+  const tauxRej=DB.cotisations.length>0?Math.round(rej.length/DB.cotisations.length*100):0;
+  const montantMoyen=conf.length>0?Math.round(conf.reduce((s,c)=>s+c.montant,0)/conf.length):0;
+  document.getElementById('page-admin').innerHTML=`
+    <div class="ph ph-row">
+      <div><h2>⚙️ Administration</h2><p>Gérez paiements, membres, votes et coopératives.</p></div>
+      <div class="ph-actions">
+        <a href="${API.replace('/api','')}/api/export/rapport" target="_blank" class="btn btn-s">📄 Rapport global PDF</a>
       </div>
     </div>
-    <div class="chart-box">
-      <div class="chart-box-title">🍩 Statuts cotisations</div>
-      <div class="chart-box-sub">Répartition de toutes les cotisations</div>
-      <div class="donut-wrap">
-        <svg width="120" height="120" viewBox="0 0 120 120">
-          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="14"/>
-          ${donutSeg(pConf,0,'#1A7A4A')}
-          ${donutSeg(pWait,pConf,'#F5A623')}
-          ${donutSeg(pRej,pConf+pWait,'#e74c3c')}
-          <text x="${cx}" y="${cy-6}" text-anchor="middle" font-family="var(--font-head)" font-size="18" font-weight="800" fill="var(--text)">${cotTotal}</text>
-          <text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="10" fill="var(--text-muted)">total</text>
-        </svg>
-        <div class="donut-legend">
-          <div class="donut-leg-item"><div class="donut-leg-dot" style="background:#1A7A4A"></div><span style="color:var(--text);font-size:13px;">Confirmées <strong>${cotConf}</strong> (${pConf}%)</span></div>
-          <div class="donut-leg-item"><div class="donut-leg-dot" style="background:#F5A623"></div><span style="color:var(--text);font-size:13px;">En attente <strong>${cotWait}</strong> (${pWait}%)</span></div>
-          <div class="donut-leg-item"><div class="donut-leg-dot" style="background:#e74c3c"></div><span style="color:var(--text);font-size:13px;">Rejetées <strong>${cotRej}</strong> (${pRej}%)</span></div>
+    <div class="stats-grid" style="margin-bottom:20px;">
+      <div class="stat-card s"><div class="stat-icon">⏳</div><div class="stat-num s">${pending.length}</div><div class="stat-lbl">En attente</div></div>
+      <div class="stat-card g"><div class="stat-icon">✅</div><div class="stat-num g">${conf.length}</div><div class="stat-lbl">Confirmées</div></div>
+      <div class="stat-card g"><div class="stat-icon">💰</div><div class="stat-num g">${fmtK(conf.reduce((s,c)=>s+c.montant,0))}</div><div class="stat-lbl">FCFA validés</div></div>
+      <div class="stat-card b"><div class="stat-icon">👥</div><div class="stat-num b">${DB.membres.length}</div><div class="stat-lbl">Membres</div></div>
+    </div>
+    <div class="admin-kpi">
+      <div class="kpi-card"><div class="kpi-n" style="color:var(--green)">${tauxConf}%</div><div class="kpi-l">Taux de validation</div></div>
+      <div class="kpi-card"><div class="kpi-n" style="color:#e74c3c">${tauxRej}%</div><div class="kpi-l">Taux de rejet</div></div>
+      <div class="kpi-card"><div class="kpi-n">${fmtK(montantMoyen)}</div><div class="kpi-l">Montant moyen / cotisation</div></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="atab active" onclick="switchAtab('a-pay',this)">💰 Paiements (${pending.length})</button>
+      <button class="atab" onclick="switchAtab('a-mems',this)">👥 Membres</button>
+      <button class="atab" onclick="switchAtab('a-vote',this)">🗳️ Créer un vote</button>
+      <button class="atab" onclick="switchAtab('a-coop',this)">🌿 Créer une coop.</button>
+      <button class="atab" onclick="switchAtab('a-export',this)">📤 Exports</button>
+    </div>
+
+    <div id="a-pay" class="asec active">
+      <div class="admin-search">
+        <div class="search-wrap" style="flex:1"><input class="search-input" id="pay-search" placeholder="Rechercher un paiement…" oninput="filterPayments()"></div>
+        <select class="filter-select" id="pay-sort" onchange="filterPayments()"><option value="date">Plus récent</option><option value="montant">Montant</option></select>
+      </div>
+      <div id="pay-list"></div>
+    </div>
+
+    <div id="a-mems" class="asec">
+      <div class="admin-search"><div class="search-wrap" style="flex:1"><input class="search-input" id="mem-search" placeholder="Rechercher un membre…" oninput="filterMembers()"></div></div>
+      <div class="tbl-wrap">
+        <div class="tbl-head tbl-5"><div>Membre</div><div>Téléphone</div><div class="hide-m">Coopérative</div><div class="hide-m">Inscrit</div><div>Cotisations</div></div>
+        <div id="mem-list"></div>
+      </div>
+    </div>
+
+    <div id="a-vote" class="asec">
+      <div class="form-sec" style="max-width:600px;">
+        <h3>🗳️ Créer un vote</h3>
+        <div class="ig"><label>Question *</label><input type="text" id="vq" placeholder="Quel équipement acheter en premier ?"></div>
+        <div class="irow">
+          <div class="ig"><label>Coopérative *</label><select id="vcoop">${DB.cooperatives.map(c=>`<option value="${c.id}">${c.nom}</option>`).join('')}</select></div>
+          <div class="ig"><label>Date de clôture *</label><input type="date" id="vfin" min="${new Date().toISOString().split('T')[0]}"></div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADMIN TABS -->
-  <div class="admin-tabs">
-    <button class="atab active" onclick="switchAdmin('cot',this)">💰 Cotisations (${pending} en attente)</button>
-    <button class="atab" onclick="switchAdmin('coops',this)">🌿 Coopératives</button>
-    <button class="atab" onclick="switchAdmin('members',this)">👥 Membres</button>
-    <button class="atab" onclick="switchAdmin('votes-admin',this)">🗳️ Votes</button>
-    <button class="atab" onclick="switchAdmin('config',this)">⚙️ Config</button>
-  </div>
-
-  <div id="asec-cot" class="asec active">
-    ${db.cotisations.filter(c=>c.statut==='en_attente').length===0
-      ? `<div class="empty"><div class="ei">✅</div><h3>Aucune cotisation en attente</h3><p>Toutes les cotisations ont été traitées.</p></div>`
-      : db.cotisations.filter(c=>c.statut==='en_attente').sort((a,b)=>new Date(b.date)-new Date(a.date)).map(ct=>`
-        <div class="pay-card" id="paycard-${ct.id}">
-          <div class="cot-av">${(ct.nom||'?')[0].toUpperCase()}</div>
-          <div class="pay-info">
-            <div class="pay-name">${ct.nom}</div>
-            <div class="pay-det">
-              <span>📱 ${ct.tel||'—'}</span>
-              <span>🏘️ ${(db.cooperatives.find(c=>c.id===ct.coopId)||{}).nom||ct.coopId}</span>
-              <span>🔢 ${ct.txRef||'—'}</span>
-              <span>📅 ${new Date(ct.date||Date.now()).toLocaleDateString('fr')}</span>
-            </div>
+        <div class="ig">
+          <label>Options *</label>
+          <div style="border:1.5px solid var(--border);border-radius:13px;overflow:hidden;">
+            ${[1,2,3,4].map(i=>`<div style="display:flex;align-items:center;border-bottom:${i<4?'1px solid var(--border)':'none'};"><div style="width:40px;height:44px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text-muted);border-right:1px solid var(--border);flex-shrink:0;">${i}</div><input type="text" id="vopt${i}" placeholder="Option ${i}${i>2?' (optionnel)':' *'}" style="border:none;padding:11px 14px;font-family:var(--font-body);font-size:14px;flex:1;outline:none;background:transparent;"></div>`).join('')}
           </div>
-          <div class="pay-amt">${(ct.montant||0).toLocaleString('fr')} F</div>
-          <div class="pay-acts">
-            ${ct.receipt?`<button class="screenshot-btn" onclick="window.open('/uploads/${ct.receipt}','_blank')">📸 Reçu</button>`:''}
-            <input id="note-${ct.id}" placeholder="Note de rejet..." style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:var(--font-body);width:140px;background:var(--bg-card,white);color:var(--text);" />
-            <button class="btn btn-p btn-sm" onclick="adminCot('${ct.id}','confirm')">✅ Confirmer</button>
-            <button class="btn btn-danger btn-sm" onclick="adminCot('${ct.id}','reject')">❌ Rejeter</button>
-          </div>
-        </div>`).join('')}
-    <div style="margin-top:24px;"><h3 style="font-family:var(--font-head);font-weight:700;font-size:17px;margin-bottom:16px;color:var(--text);">Historique</h3>
-    ${db.cotisations.filter(c=>c.statut!=='en_attente').sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,20).map(ct=>`
-      <div class="cot-item">
-        <div class="cot-av">${(ct.nom||'?')[0].toUpperCase()}</div>
-        <div class="cot-info"><div class="cot-name">${ct.nom}</div><div class="cot-detail">${ct.txRef} · ${(db.cooperatives.find(c=>c.id===ct.coopId)||{}).nom||''} · ${new Date(ct.date||Date.now()).toLocaleDateString('fr')}</div></div>
-        <div class="cot-right"><div class="cot-amt">${(ct.montant||0).toLocaleString('fr')} F</div><div class="pill ${ct.statut==='confirmé'?'pill-ok':ct.statut==='rejeté'?'pill-rej':'pill-wait'}" style="margin-top:4px;">${ct.statut}</div></div>
-      </div>`).join('')}
-    </div>
-  </div>
-
-  <div id="asec-coops" class="asec">
-    <div class="form-sec" style="margin-bottom:24px;">
-      <h3>➕ Créer une coopérative</h3>
-      <div class="irow">
-        <div class="ig"><label>Nom</label><input id="ac-nom" placeholder="SolarYaoundé Bastos"/></div>
-        <div class="ig"><label>Lieu</label><input id="ac-lieu" placeholder="Yaoundé, Cameroun"/></div>
-      </div>
-      <div class="ig"><label>Description</label><textarea id="ac-desc" rows="2" placeholder="Description..."></textarea></div>
-      <div class="irow">
-        <div class="ig"><label>Objectif (FCFA)</label><input id="ac-obj" type="number" placeholder="1200000"/></div>
-        <div class="ig"><label>Nb membres max</label><input id="ac-max" type="number" placeholder="20"/></div>
-      </div>
-      <button class="btn btn-p" onclick="createCoop()">Créer la coopérative</button>
-      <div id="coop-result" class="form-result"></div>
-    </div>
-    <div class="tbl-wrap">
-      <div class="tbl-head tbl-4"><span>Nom</span><span>Collecte</span><span>Objectif</span><span>Membres</span></div>
-      ${db.cooperatives.map(c=>`<div class="tbl-row tbl-4">
-        <span style="font-weight:600;color:var(--text);">${c.nom}</span>
-        <span style="color:var(--green);font-weight:700;">${(c.collecte||0).toLocaleString('fr')} F</span>
-        <span style="color:var(--text-muted);">${(c.objectif||0).toLocaleString('fr')} F</span>
-        <span><span class="pill pill-ok">${(c.membres||[]).length} membres</span></span>
-      </div>`).join('')}
-    </div>
-  </div>
-
-  <div id="asec-members" class="asec">
-    <div class="tbl-wrap">
-      <div class="tbl-head tbl-5"><span>Nom</span><span>Téléphone</span><span>Rôle</span><span>Cotisations</span><span>Action</span></div>
-      ${db.users.map(u=>`<div class="tbl-row tbl-5">
-        <span style="font-weight:600;color:var(--text);">${u.nom}</span>
-        <span style="color:var(--text-muted);">${u.tel}</span>
-        <span><span class="pill ${u.role==='super_admin'?'pill-rej':u.role==='admin'?'pill-wait':'pill-ok'}">${u.role}</span></span>
-        <span style="color:var(--green);font-weight:700;">${db.cotisations.filter(c=>c.userId===u.id&&c.statut==='confirmé').reduce((s,c)=>s+c.montant,0).toLocaleString('fr')} F</span>
-        <span><select class="role-select" onchange="changeRole('${u.id}',this.value)">
-          <option value="membre" ${u.role==='membre'?'selected':''}>Membre</option>
-          <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
-          <option value="super_admin" ${u.role==='super_admin'?'selected':''}>Super Admin</option>
-        </select></span>
-      </div>`).join('')}
-    </div>
-  </div>
-
-  <div id="asec-votes-admin" class="asec">
-    <div class="form-sec" style="margin-bottom:24px;">
-      <h3>➕ Créer un vote</h3>
-      <div class="ig"><label>Question</label><input id="av-q" placeholder="Quel équipement acheter ?"/></div>
-      <div class="irow">
-        <div class="ig"><label>Coopérative</label>
-          <select id="av-coop">${db.cooperatives.map(c=>`<option value="${c.id}">${c.nom}</option>`).join('')}</select>
         </div>
-        <div class="ig"><label>Date de fin</label><input type="datetime-local" id="av-fin"/></div>
+        <div class="irow">
+          <div class="ig"><label>Seuil de majorité (%)</label><input type="number" id="vseuil" value="50" min="1" max="100"></div>
+        </div>
+        <button class="btn btn-p" onclick="createVote()">🗳️ Publier le vote</button>
+        <div id="vote-create-result" class="form-result"></div>
       </div>
-      <div class="ig"><label>Options (une par ligne)</label><textarea id="av-opts" rows="3" placeholder="Kit 400W&#10;5x Kit 100W&#10;Reporter"></textarea></div>
-      <div class="ig"><label>Seuil (%)</label><input id="av-seuil" type="number" value="50" min="1" max="100"/></div>
-      <button class="btn btn-p" onclick="createVote()">Créer le vote</button>
     </div>
-    ${db.votes.map(v=>`<div class="pay-card">
-      <div style="flex:1;"><div style="font-weight:700;color:var(--text);">${v.question}</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">${(db.cooperatives.find(c=>c.id===v.coopId)||{}).nom||v.coopId} · ${v.votes.reduce((s,x)=>s+x,0)} vote(s) · <span class="pill ${v.statut==='actif'?'pill-ok':'pill-rej'}">${v.statut}</span></div></div>
-      ${v.statut==='actif'?`<button class="btn btn-danger btn-sm" onclick="cloturerVote('${v.id}')">Clôturer</button>`:''}
-    </div>`).join('')}
-  </div>
 
-  <div id="asec-config" class="asec">
-    <div class="form-sec">
-      <h3>⚙️ Configuration du site</h3>
-      <div class="ig"><label>Numéro Orange Money</label><input id="cfg-om" value="${db.config?.om_numero||''}"/></div>
-      <div class="ig"><label>Nom du compte OM</label><input id="cfg-nom" value="${db.config?.om_nom||''}"/></div>
-      <button class="btn btn-p" onclick="saveConfig()">Sauvegarder</button>
-      <div id="cfg-result" class="form-result"></div>
+    <div id="a-coop" class="asec">
+      <div class="form-sec" style="max-width:600px;">
+        <h3>🌿 Créer une coopérative</h3>
+        <div class="ig"><label>Nom *</label><input type="text" id="ac-nom" placeholder="Coopérative Solaire…"></div>
+        <div class="irow">
+          <div class="ig"><label>Objectif (FCFA) *</label><input type="number" id="ac-obj" placeholder="500 000"></div>
+          <div class="ig"><label>Localité *</label><input type="text" id="ac-lieu" placeholder="Douala, Yaoundé…"></div>
+        </div>
+        <div class="irow">
+          <div class="ig"><label>Cotisation min. (FCFA)</label><input type="number" id="ac-cotmin" placeholder="5 000"></div>
+          <div class="ig"><label>Max membres</label><input type="number" id="ac-max" placeholder="20"></div>
+        </div>
+        <div class="ig"><label>Description</label><textarea id="ac-desc" rows="3" placeholder="Objectif…"></textarea></div>
+        <button class="btn btn-p" onclick="createCoopAdmin()">✅ Créer</button>
+        <div id="coop-admin-result" class="form-result"></div>
+      </div>
     </div>
-  </div>
-  `;
-  document.getElementById('page-admin').innerHTML = adminHTML;
+
+    <div id="a-export" class="asec">
+      <div class="form-sec">
+        <h3>📤 Exports</h3>
+        <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">Téléchargez les rapports PDF ou exportez les données en CSV pour une analyse externe.</p>
+        <div class="export-row">
+          <a href="${API.replace('/api','')}/api/export/rapport" target="_blank" class="btn btn-p">📄 Rapport global PDF</a>
+          ${DB.cooperatives.map(c=>`<a href="${API.replace('/api','')}/api/export/rapport/${c.id}" target="_blank" class="btn btn-s">📄 ${c.nom.split(' ').slice(0,2).join(' ')} PDF</a>`).join('')}
+        </div>
+        <div style="margin-top:20px;">
+          <button class="btn btn-s" onclick="exportCSV('cotisations')">📊 Export CSV — Cotisations</button>
+          <button class="btn btn-s" style="margin-left:10px;" onclick="exportCSV('membres')">📊 Export CSV — Membres</button>
+        </div>
+        <div style="margin-top:16px;"><button class="btn btn-s" onclick="verifyBlockchain()">⛓️ Vérifier l'intégrité blockchain</button><span id="bc-verify-result" style="margin-left:12px;font-size:13px;"></span></div>
+      </div>
+    </div>`;
+  filterPayments(); filterMembers();
 }
 
+function switchAtab(id, btn) {
+  document.querySelectorAll('.asec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); btn.classList.add('active');
+}
+
+function filterPayments() {
+  const q=(document.getElementById('pay-search')?.value||'').toLowerCase();
+  const sort=document.getElementById('pay-sort')?.value||'date';
+  let pays=DB.cotisations.filter(c=>c.statut==='pending');
+  if(q) pays=pays.filter(c=>c.nom.toLowerCase().includes(q)||c.txn.toLowerCase().includes(q)||c.tel.includes(q));
+  if(sort==='montant') pays.sort((a,b)=>b.montant-a.montant);
+  else pays.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const el=document.getElementById('pay-list');
+  if(!el) return;
+  el.innerHTML=pays.length===0?'<div class="empty"><div class="ei">✅</div><h3>Aucun paiement en attente</h3><p>Tous les paiements ont été traités.</p></div>':
+    pays.map(c=>{
+      const coop=DB.cooperatives.find(cp=>cp.id===c.coopId);
+      return `<div class="pay-card">
+        <div class="cot-av" style="width:42px;height:42px;font-size:15px;">${getInitials(c.nom)}</div>
+        <div class="pay-info">
+          <div class="pay-name">${c.nom}</div>
+          <div class="pay-det">
+            <span>📱 ${c.tel}</span>
+            <span>🌿 ${coop?.nom||c.coopId}</span>
+            <span>🔢 Txn: <strong>${c.txn}</strong></span>
+            <span>📅 ${c.date}</span>
+            ${c.message?`<span>💬 "${c.message}"</span>`:''}
+          </div>
+        </div>
+        <div class="pay-amt">${fmtNum(c.montant)} FCFA</div>
+        <div class="pay-acts">
+          ${c.screenshot?`<button class="screenshot-btn" onclick="viewScreenshot('${c.id}')">📸 Preuve</button>`:''}
+          <button class="btn btn-p btn-sm" onclick="validatePay('${c.id}','confirm')">✅ Valider</button>
+          <button class="btn btn-danger btn-sm" onclick="validatePay('${c.id}','reject')">❌</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function filterMembers() {
+  const q=(document.getElementById('mem-search')?.value||'').toLowerCase();
+  let mems=[...DB.membres];
+  if(q) mems=mems.filter(m=>m.nom.toLowerCase().includes(q)||m.tel.includes(q)||(m.email||'').toLowerCase().includes(q));
+  const el=document.getElementById('mem-list');
+  if(!el) return;
+  el.innerHTML=mems.map(m=>{
+    const coop=DB.cooperatives.find(c=>c.id===m.coopId);
+    const nbCots=DB.cotisations.filter(c=>(c.userId===m.userId||c.tel===m.tel)&&c.statut==='confirme').length;
+    return `<div class="tbl-row tbl-5">
+      <div style="display:flex;align-items:center;gap:10px;"><div class="cot-av" style="width:32px;height:32px;font-size:11px;">${getInitials(m.nom)}</div><div><div style="font-weight:600;font-size:13px;">${m.nom}</div><div style="font-size:11px;color:var(--text-muted)">${m.email||''}</div></div></div>
+      <div style="font-size:13px;">${m.tel}</div>
+      <div class="hide-m" style="font-size:13px;">${coop?.nom||'-'}</div>
+      <div class="hide-m" style="font-size:12px;color:var(--text-muted)">${m.createdAt}</div>
+      <div><span class="pill pill-ok">${nbCots} validée${nbCots>1?'s':''}</span></div>
+    </div>`;
+  }).join('');
+}
+
+async function validatePay(id, action) {
+  try {
+    const r=await fetch(API+'/cotisations/'+id+'/valider',{method:'PATCH',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({action})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    toast(action==='confirm'?'✅ Paiement validé !':'❌ Paiement rejeté.',action==='confirm'?'ok':'warn');
+    loadData();
+  } catch(e) { toast('Erreur: '+e.message,'err'); }
+}
+
+function viewScreenshot(cotId) {
+  document.getElementById('screenshot-content').innerHTML='<div class="spin"></div>';
+  openModal('modal-screenshot');
+  const url=API.replace('/api','')+'/api/cotisations/'+cotId+'/screenshot';
+  document.getElementById('screenshot-content').innerHTML=`<img src="${url}" style="max-width:100%;border-radius:12px;" onerror="this.parentNode.innerHTML='<p style=\\'color:var(--text-muted);\\'>Aucune image disponible.</p>'">`;
+}
+
+function exportCSV(type) {
+  let rows, headers, filename;
+  if(type==='cotisations') {
+    headers=['ID','Nom','Tel','Email','Coopérative','Montant','Txn','Date','Statut'];
+    rows=DB.cotisations.map(c=>{const coop=DB.cooperatives.find(cp=>cp.id===c.coopId);return [c.id,c.nom,c.tel,c.email,coop?.nom||c.coopId,c.montant,c.txn,c.date,c.statut];});
+    filename='cotisations.csv';
+  } else {
+    headers=['ID','Nom','Tel','Email','Coopérative','Inscrit'];
+    rows=DB.membres.map(m=>{const coop=DB.cooperatives.find(c=>c.id===m.coopId);return [m.id,m.nom,m.tel,m.email,coop?.nom||m.coopId,m.createdAt];});
+    filename='membres.csv';
+  }
+  const csv=[headers.join(';'),...rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';'))].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+  toast(`📊 Export CSV ${type} téléchargé !`,'ok');
+}
+
+function verifyBlockchain() {
+  let valid=true;
+  for(let i=1;i<DB.blockchain.length;i++) {
+    if(DB.blockchain[i].prev!==DB.blockchain[i-1].hash) { valid=false; break; }
+  }
+  const el=document.getElementById('bc-verify-result');
+  el.textContent=valid?'✅ Chaîne intègre — aucune altération détectée.':'⚠️ Anomalie détectée dans la chaîne !';
+  el.style.color=valid?'var(--green)':'#e74c3c';
+}
+
+async function createVote() {
+  const q=document.getElementById('vq').value.trim();
+  const coopId=document.getElementById('vcoop').value;
+  const fin=document.getElementById('vfin').value;
+  const seuil=parseInt(document.getElementById('vseuil').value)||50;
+  const opts=[1,2,3,4].map(i=>document.getElementById('vopt'+i).value.trim()).filter(Boolean);
+  const res=document.getElementById('vote-create-result');
+  if(!q||!coopId||opts.length<2||!fin) { res.className='form-result err'; res.textContent='❌ Question, au moins 2 options et une date sont requis.'; return; }
+  try {
+    const r=await fetch(API+'/votes',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({question:q,coopId,options:opts,fin,seuil})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    res.className='form-result ok'; res.textContent='✅ Vote créé et publié sur la blockchain !';
+    document.getElementById('vq').value=''; [1,2,3,4].forEach(i=>document.getElementById('vopt'+i).value='');
+    toast('Vote créé !','ok'); loadData();
+  } catch(e) { res.className='form-result err'; res.textContent='❌ '+e.message; }
+}
+
+async function createCoop() {
+  const nom=document.getElementById('mc-nom').value.trim();
+  const obj=parseInt(document.getElementById('mc-obj').value);
+  const lieu=document.getElementById('mc-lieu').value.trim();
+  const cotMin=parseInt(document.getElementById('mc-cotmin').value)||5000;
+  const max=parseInt(document.getElementById('mc-max').value)||20;
+  const desc=document.getElementById('mc-desc').value.trim();
+  if(!nom||!obj||!lieu) { toast('Nom, objectif et localité requis.','err'); return; }
+  try {
+    const r=await fetch(API+'/cooperatives',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({nom,objectif:obj,lieu,description:desc,maxMembres:max,cotMin})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    closeModal('modal-coop'); toast('🌿 Coopérative créée !','ok'); loadData();
+  } catch(e) { toast('❌ '+e.message,'err'); }
+}
+
+async function createCoopAdmin() {
+  const nom=document.getElementById('ac-nom').value.trim();
+  const obj=parseInt(document.getElementById('ac-obj').value);
+  const lieu=document.getElementById('ac-lieu').value.trim();
+  const cotMin=parseInt(document.getElementById('ac-cotmin').value)||5000;
+  const max=parseInt(document.getElementById('ac-max').value)||20;
+  const desc=document.getElementById('ac-desc').value.trim();
+  const res=document.getElementById('coop-admin-result');
+  if(!nom||!obj||!lieu) { res.className='form-result err'; res.textContent='❌ Nom, objectif et localité requis.'; return; }
+  try {
+    const r=await fetch(API+'/cooperatives',{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({nom,objectif:obj,lieu,description:desc,maxMembres:max,cotMin})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    res.className='form-result ok'; res.textContent='✅ Coopérative créée et enregistrée sur blockchain !';
+    toast('Coopérative créée !','ok'); loadData();
+  } catch(e) { res.className='form-result err'; res.textContent='❌ '+e.message; }
+}
 
 // ══ BLOCKCHAIN ══
 function renderBlockchain() {
@@ -1864,15 +1659,12 @@ function updateProfil() {
 function initSocket() {
   if(!token) return;
   try {
-    socket=io(window.location.origin, { auth:{ token }, transports:['websocket','polling']});
+    socket=io(BASE_URL,{auth:{token},transports:['websocket','polling']});
     socket.on('connect',()=>{ loadRooms(); joinRoom('general'); });
     socket.on('new_message',msg=>{ if(msg.room===currentRoom)addMsgToChat(msg); else incUnread(msg.room); });
     socket.on('typing',(data)=>{ if(data.userId!==user?.id&&data.room===currentRoom) showTyping(data.nom); });
     socket.on('cotisation_validated',d=>{ toast(`💰 Cotisation de ${d.nom} validée ! (+${fmtK(d.montant)} FCFA)`, 'ok'); loadData(); });
     socket.on('vote_created',d=>{ toast(`🗳️ Nouveau vote : "${d.question}"`, 'info'); loadData(); });
-    socket.on('vote_cast',()=>{ loadData(); });
-    // BUG FIX : recharger quand un vote expire (notifié en temps réel par le serveur)
-    socket.on('vote_expired',d=>{ toast(`⏰ Le vote "${(d.question||'').substring(0,30)}…" vient de se clôturer.`,'info'); loadData(); });
     socket.on('connect_error',e=>console.warn('Socket indisponible:',e.message));
   } catch(e){ console.warn('Socket.io non disponible'); }
 }
@@ -1977,109 +1769,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
     document.getElementById('login-container').style.display='flex';
   }
 });
-
-  // ══ DARK MODE ══
-  function toggleDarkMode() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
-    document.getElementById('dm-icon').textContent = isDark ? '🌙' : '☀️';
-    localStorage.setItem('ce_theme', isDark ? 'light' : 'dark');
-  }
-  // Restore theme on load
-  (function(){
-    const t = localStorage.getItem('ce_theme');
-    if(t === 'dark') {
-      document.documentElement.setAttribute('data-theme','dark');
-      setTimeout(()=>{ const i=document.getElementById('dm-icon'); if(i) i.textContent='☀️'; },100);
-    }
-  })();
-
-  // ══ NOTIFICATION CENTER ══
-  let notifications = [];
-  let unreadCount = 0;
-
-  function addNotif(ico, icoClass, title, time) {
-    const id = 'n' + Date.now() + Math.random();
-    notifications.unshift({ id, ico, icoClass, title, time: time || 'À l\'instant', read: false });
-    unreadCount++;
-    renderNotifPanel();
-    updateNotifBadge();
-  }
-
-  function renderNotifPanel() {
-    const list = document.getElementById('notif-list');
-    if(!list) return;
-    if(notifications.length === 0) {
-      list.innerHTML = '<div class="notif-empty"><p>🔕 Aucune notification</p></div>';
-      return;
-    }
-    list.innerHTML = notifications.map(n => `
-      <div class="notif-item ${n.read?'':'unread'}" onclick="markRead('${n.id}')">
-        <div class="notif-ico ${n.icoClass}">${n.ico}</div>
-        <div class="notif-body">
-          <div class="notif-title">${n.title}</div>
-          <div class="notif-time">${n.time}</div>
-        </div>
-        ${!n.read ? '<div class="notif-dot"></div>' : ''}
-      </div>`).join('');
-  }
-
-  function markRead(id) {
-    const n = notifications.find(x => x.id === id);
-    if(n && !n.read) { n.read = true; unreadCount = Math.max(0, unreadCount-1); }
-    renderNotifPanel();
-    updateNotifBadge();
-  }
-
-  function markAllRead() {
-    notifications.forEach(n => n.read = true);
-    unreadCount = 0;
-    renderNotifPanel();
-    updateNotifBadge();
-  }
-
-  function clearAllNotifs() {
-    notifications = []; unreadCount = 0;
-    renderNotifPanel();
-    updateNotifBadge();
-  }
-
-  function updateNotifBadge() {
-    const badge = document.getElementById('notif-badge');
-    if(!badge) return;
-    if(unreadCount > 0) {
-      badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-      badge.classList.add('show');
-    } else {
-      badge.classList.remove('show');
-    }
-  }
-
-  function toggleNotifPanel() {
-    const panel = document.getElementById('notif-panel');
-    panel.classList.toggle('open');
-  }
-
-  // Close notif panel on outside click
-  document.addEventListener('click', function(e) {
-    const panel = document.getElementById('notif-panel');
-    const bell = document.getElementById('notif-bell');
-    if(panel && bell && !panel.contains(e.target) && !bell.contains(e.target)) {
-      panel.classList.remove('open');
-    }
-  });
-
-  // Hook into existing socket events to add notifications
-  const _origToast = toast;
-  function toast(msg, type='ok') {
-    _origToast(msg, type);
-    // Auto-add to notif panel for important events
-    if(type === 'ok') addNotif('✅', 'ni-green', msg);
-    else if(type === 'err') addNotif('❌', 'ni-red', msg);
-    else if(type === 'warn') addNotif('⚠️', 'ni-amber', msg);
-    else if(type === 'info') addNotif('ℹ️', 'ni-blue', msg);
-  }
-
 </script>
 </body>
 </html>
+
