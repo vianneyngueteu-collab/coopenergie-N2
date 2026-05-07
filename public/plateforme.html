@@ -768,7 +768,10 @@
 </div>
 
 <script>
-const API = 'http://localhost:3000/api';
+const API = (window.location.hostname === 'localhost') 
+? 'http://localhost:3000/api' 
+: window.location.origin + '/api';
+    
 let token = localStorage.getItem('ce_token');
 let user = null, role = 'membre', socket = null;
 let currentRoom = 'general', chatOpen = false;
@@ -1861,7 +1864,7 @@ function updateProfil() {
 function initSocket() {
   if(!token) return;
   try {
-    socket=io('http://localhost:3000',{auth:{token},transports:['websocket','polling']});
+    socket=io(window.location.origin, { auth:{ token }, transports:['websocket','polling']});
     socket.on('connect',()=>{ loadRooms(); joinRoom('general'); });
     socket.on('new_message',msg=>{ if(msg.room===currentRoom)addMsgToChat(msg); else incUnread(msg.room); });
     socket.on('typing',(data)=>{ if(data.userId!==user?.id&&data.room===currentRoom) showTyping(data.nom); });
